@@ -1,0 +1,718 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Simulador educativo de consórcio baseado na composição de Fundo Comum, Taxa de Administração, Fundo de Reserva, redutor, adesão e lance.">
+<title>Simulador de Consórcio — Extrato Simulado</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=IBM+Plex+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#0F2438;--ink-2:#16324A;--parchment:#F4EEDD;--parchment-2:#EAE0C4;
+  --gold:#B98A2E;--gold-light:#D9AE5D;--green:#1F5C4B;--red:#9C3B34;
+  --text:#221B10;--text-soft:#6b6047;
+  --serif:'Fraunces',serif;--sans:'IBM Plex Sans',sans-serif;--mono:'IBM Plex Mono',monospace;
+}
+*{box-sizing:border-box}
+html,body{min-height:100%}
+body{margin:0;font-family:var(--sans);color:var(--text);background:linear-gradient(180deg,#07121a 0%,#0b1b27 100%);-webkit-font-smoothing:antialiased;font-size:16px;line-height:1.45}
+.wrap{max-width:900px;margin:0 auto;padding:0 24px 64px}
+header.hero{background:radial-gradient(circle at 15% 20%,rgba(217,174,93,.12),transparent 40%),linear-gradient(180deg,var(--ink) 0%,var(--ink-2) 100%);color:var(--parchment);padding:44px 24px 56px;border-bottom:1px solid rgba(217,174,93,.16)}
+header.hero .inner{max-width:900px;margin:0 auto;text-align:center}
+.eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--gold-light);display:flex;align-items:center;gap:10px;justify-content:center;margin-bottom:18px}.eyebrow:before{content:'';width:26px;height:1px;background:var(--gold-light);display:inline-block}
+h1{font-family:var(--serif);font-weight:600;font-size:clamp(26px,3.6vw,40px);line-height:1.06;margin:0 0 12px}header.hero p.lede{max-width:650px;font-size:16px;line-height:1.6;color:#C9D2DB;margin:0 auto}
+.panel{background:linear-gradient(180deg,var(--parchment) 0%,#FBF8EE 100%);border-radius:8px;box-shadow:0 18px 40px rgba(2,6,12,.28);margin-top:-40px}.form-panel{padding:30px 30px 16px}
+.panel h2{font-family:var(--serif);font-size:21px;font-weight:600;margin:0 0 4px;color:var(--ink)}.section-note{font-size:12.5px;color:var(--text-soft);margin:0 0 20px;line-height:1.5}
+fieldset{border:none;border-top:1px solid var(--parchment-2);padding:20px 0 4px;margin:0 0 4px}fieldset:first-of-type{border-top:none;padding-top:0}
+legend{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);padding:0;margin-bottom:14px}
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}.field{display:flex;flex-direction:column;gap:6px}.field label{font-size:12.5px;color:var(--text-soft)}
+.field input[type=number],.field select{font-family:var(--mono);font-size:15px;color:var(--ink);background:transparent;border:none;border-bottom:1.25px solid rgba(17,14,10,.08);padding:6px 2px;outline:none;transition:border-color .15s;width:100%}.field input[type=number]:focus,.field select:focus{border-bottom-color:var(--gold)}
+.inline-note{font-size:11.5px;color:var(--text-soft);line-height:1.5;margin:-6px 0 14px;border-left:2px solid var(--parchment-2);padding-left:10px}
+.radio-group{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}.radio-group label{font-family:var(--mono);font-size:12.5px;border:1px solid var(--parchment-2);padding:7px 12px;border-radius:20px;cursor:pointer;color:var(--text-soft);transition:.15s;display:flex;align-items:center;gap:6px}.radio-group input{accent-color:var(--gold)}.radio-group label:has(input:checked){background:var(--ink);color:var(--parchment);border-color:var(--ink)}
+.checkbox-line{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text-soft);margin-bottom:14px}.checkbox-line input{accent-color:var(--gold)}
+#redutorCustomField,#adesaoMesesField{display:none}
+.action-bar{display:flex;gap:10px;align-items:center;margin-bottom:18px;flex-wrap:wrap}.btn{display:inline-block;font-family:var(--mono);font-size:13px;border:none;border-radius:8px;padding:9px 16px;cursor:pointer;transition:transform .06s,box-shadow .12s,background .12s}.btn:hover{transform:translateY(-2px);box-shadow:0 8px 22px rgba(2,6,12,.14)}.btn-gold{background:var(--gold);color:var(--ink);box-shadow:0 6px 18px rgba(185,138,46,.18)}.btn-dark{background:var(--ink);color:var(--parchment)}.btn-ghost{background:transparent;border:1px solid rgba(15,36,56,.12);color:var(--ink-2)}.btn-sm{padding:6px 12px;font-size:12px;border-radius:6px}
+/* RESULTADO — padrão visual anterior */
+.result-panel{display:none;background:var(--parchment);border-radius:8px;box-shadow:0 24px 60px rgba(2,6,12,.32);margin-top:24px;padding:30px;background-image:repeating-linear-gradient(180deg,transparent,transparent 27px,rgba(0,0,0,.025) 28px)}.result-panel.active{display:block;animation:fadeUp .3s ease both}@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.result-panel-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}.headline-tag{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--red)}
+.headline-numbers{display:grid;grid-template-columns:1fr 1fr;gap:20px;padding-bottom:22px;margin-bottom:22px;border-bottom:1px dashed var(--gold)}.headline-label{font-size:13px;color:var(--text-soft);margin-bottom:4px}.headline-value{font-family:var(--mono);font-size:clamp(20px,3.2vw,32px);font-weight:700;color:var(--ink-2);line-height:1.04}.headline-sub{font-size:11.5px;color:var(--text-soft);margin-top:4px}
+/* Destaques limpos */
+.key-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:0 0 24px}.key-card{padding:13px 12px;border:1px solid var(--parchment-2);border-radius:4px;background:rgba(255,255,255,.30)}.key-card .k{font-size:10.5px;color:var(--text-soft);margin-bottom:5px}.key-card .v{font-family:var(--mono);font-size:15px;font-weight:700;color:var(--ink)}.key-card .s{font-size:10.5px;color:var(--text-soft);margin-top:3px;line-height:1.35}
+.seal-row{display:flex;gap:22px;align-items:center;padding-bottom:20px;border-bottom:1px dashed var(--gold);margin-bottom:22px;flex-wrap:wrap}.seal{width:108px;height:108px;border-radius:50%;flex:none;display:flex;flex-direction:column;align-items:center;justify-content:center;background:radial-gradient(circle at 35% 30%,rgba(255,255,255,.5),transparent 55%),linear-gradient(135deg,var(--ink) 0%,var(--ink-2) 100%);color:var(--parchment);border:2px dashed rgba(185,138,46,.28);text-align:center}.seal .num{font-family:var(--mono);font-size:19px;font-weight:600;color:var(--gold-light);line-height:1}.seal .lbl{font-family:var(--serif);font-size:10px;line-height:1.25;max-width:84px;margin-top:6px}.seal-desc h3{font-family:var(--serif);font-size:17px;margin:0 0 5px;color:var(--ink)}.seal-desc p{font-size:12px;color:var(--text-soft);line-height:1.55;margin:0;max-width:520px}
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:26px;margin-bottom:24px}.ledger h4,.section-block h4{font-family:var(--mono);font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:var(--gold);margin:0 0 12px}.section-block{margin-bottom:22px}.ledger-line{display:flex;align-items:baseline;gap:8px;margin-bottom:9px}.ledger-line .lbl{font-size:12.5px;color:var(--text-soft);white-space:nowrap}.ledger-line .fill{flex:1;border-bottom:1px dotted #b9ac83;margin-bottom:3px}.ledger-line .val{font-family:var(--mono);font-size:13px;color:var(--ink);white-space:nowrap}.ledger-line.total .lbl,.ledger-line.total .val{color:var(--ink);font-weight:600;font-size:14px}.ledger-line.total .fill{border-bottom-color:var(--ink)}.ledger-line.hi .val{color:var(--red)}.ledger-line.ok .val{color:var(--green)}
+.formula{font-size:12px;line-height:1.7;color:var(--ink-2);padding:14px;border:1px solid rgba(21,68,97,.12);border-radius:4px;background:#F8F5EA;margin-bottom:22px}.formula strong{color:var(--ink)}.formula .final{font-weight:700;color:var(--red)}
+.lance-info{font-size:12.5px;line-height:1.65;color:var(--ink-2);padding:14px;border:1px solid rgba(21,68,97,.12);border-radius:4px;background:#F8F5EA;margin-bottom:22px}.lance-info strong{color:var(--ink)}
+.chart-wrap{background:rgba(255,255,255,.35);border:1px solid var(--parchment-2);border-radius:3px;padding:16px 16px 10px;margin-bottom:22px}.chart-wrap h4{font-family:var(--mono);font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:var(--gold);margin:0 0 10px}canvas{width:100%;height:180px;display:block;border-radius:4px}
+.evolution-actions{display:flex;justify-content:center;margin:8px 0 22px}.evolution-panel{display:none;margin-bottom:22px}.evolution-panel.active{display:block;animation:fadeUp .25s ease both}.evolution-note{font-size:11.5px;color:var(--text-soft);line-height:1.55;margin:0 0 12px}.evolution-table-wrap{max-height:360px;overflow:auto;border:1px solid var(--parchment-2);border-radius:4px;background:rgba(255,255,255,.35)}.evolution-table{width:100%;border-collapse:collapse;font-size:12px}.evolution-table th,.evolution-table td{padding:9px 10px;border-bottom:1px solid rgba(15,36,56,.08);text-align:right;white-space:nowrap}.evolution-table th:first-child,.evolution-table td:first-child,.evolution-table th:nth-child(2),.evolution-table td:nth-child(2){text-align:left}.evolution-table th{position:sticky;top:0;background:#F4EEDD;color:var(--ink);font-family:var(--mono);font-size:10.5px;text-transform:uppercase;letter-spacing:.05em;z-index:1}.evolution-table tr.contemplacao-row td{font-weight:600;color:var(--red);background:rgba(185,138,46,.07)}
+.summary-strip{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:22px}.stat{border:1px solid var(--parchment-2);border-radius:3px;padding:14px;background:rgba(255,255,255,.3)}.stat .k{font-size:11px;color:var(--text-soft);margin-bottom:6px}.stat .v{font-family:var(--mono);font-size:16px;color:var(--ink);font-weight:600}
+#separatedPanel{display:none;border:1px solid rgba(15,36,56,.06);padding:12px;border-radius:6px;background:#fff;margin-bottom:18px}#separatedPanel .sep-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;gap:8px}#separatedPanel .sep-actions{display:flex;gap:8px}#separatedResults{font-family:var(--mono);font-size:12px;color:var(--ink-2);white-space:pre-wrap;max-height:240px;overflow:auto;padding:6px;background:#FBF9F2;border-radius:4px;border:1px dashed var(--parchment-2)}
+.disclaimer{max-width:900px;margin:28px auto 0;padding:18px 24px;color:#93a3b0;font-size:12px;line-height:1.6}.disclaimer strong{color:var(--gold-light)}
+@media(max-width:800px){.key-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:700px){.field-row{grid-template-columns:1fr;gap:12px}.cols{grid-template-columns:1fr;gap:18px}.headline-numbers{grid-template-columns:1fr}.summary-strip{grid-template-columns:1fr 1fr}.action-bar{flex-direction:column;align-items:stretch}.btn{width:100%}.seal{display:none}.key-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:480px){.form-panel,.result-panel{padding:16px}.summary-strip{grid-template-columns:1fr}.key-grid{grid-template-columns:1fr}.wrap{padding:0 12px 40px}}
+</style>
+</head>
+<body>
+<header class="hero">
+  <div class="inner">
+    <div class="eyebrow">Simulador não-oficial</div>
+    <h1>Veja o que a sua parcela vira depois da contemplação.</h1>
+    <p class="lede">Modelo educativo baseado na composição do Fundo Comum, Taxa de Administração, Fundo de Reserva, redutor, taxa antecipada e lance.</p>
+  </div>
+</header>
+
+<div class="wrap">
+<section class="panel form-panel">
+  <h2>Dados da simulação</h2>
+  <p class="section-note">Use os números do contrato. O modelo abaixo segue as contas definidas em “a + b + c”.</p>
+  <div class="action-bar">
+    <button type="button" id="loadExample" class="btn btn-dark">Carregar exemplo</button>
+    <button type="button" id="btnShowResults" class="btn btn-gold">Calcular e ver resultado ↓</button>
+  </div>
+
+  <form id="calcForm">
+    <fieldset>
+      <legend>Plano</legend>
+      <div class="field-row"><div class="field"><label for="credito">Valor do crédito (R$)</label><input type="number" id="credito" value="45000" min="1" step="100"></div><div class="field"><label for="prazo">Prazo total (meses)</label><input type="number" id="prazo" value="100" min="1" step="1"></div></div>
+      <div class="field-row"><div class="field"><label for="ta">Taxa de administração total (%)</label><input type="number" id="ta" value="16" min="0" step="0.1"></div><div class="field"><label for="fr">Fundo de reserva total (%)</label><input type="number" id="fr" value="3" min="0" step="0.1"></div></div>
+      <div class="field-row"><div class="field"><label for="seguroPct">Seguro mensal (% do crédito — 0 se não houver)</label><input type="number" id="seguroPct" value="0" min="0" step="0.001"></div><div class="field"><label for="mesContemplacao">Contemplação na parcela nº</label><input type="number" id="mesContemplacao" value="10" min="1" step="1"></div></div>
+      <div class="field-row"><div class="field"><label for="tipoBem">Tipo de bem</label><select id="tipoBem"><option value="imovel">Imóvel — 0,5% do saldo devedor</option><option value="auto">Automóvel — 1% do saldo devedor</option></select></div><div class="field"><label>Regra pós-contemplação</label><div class="inline-note" style="margin:0">Parcela pós = percentual do saldo devedor. A diferença restante do redutor é tratada separadamente.</div></div></div>
+      <div class="inline-note">Seguro não entra no exemplo-base. Atualização do crédito/parcela não é projetada: a decomposição oficial do contrato prevalece.</div>
+    </fieldset>
+
+    <fieldset>
+      <legend>Plano redutor</legend>
+      <div class="radio-group"><label><input type="radio" name="redutor" value="0"> Sem redução</label><label><input type="radio" name="redutor" value="25"> 25%</label><label><input type="radio" name="redutor" value="50" checked> 50%</label><label><input type="radio" name="redutor" value="custom"> Outro %</label></div>
+      <div class="field" id="redutorCustomField"><label for="redutorCustom">Percentual do redutor (%)</label><input type="number" id="redutorCustom" value="50" min="0" max="95" step="1"></div>
+      <p class="inline-note">O redutor reduz Fundo Comum e Fundo de Reserva. A Taxa de Administração não sofre o redutor.</p>
+    </fieldset>
+
+    <fieldset>
+      <legend>Taxa de adesão antecipada</legend>
+      <div class="field"><label for="adesaoPct">Percentual antecipado, dentro da TA total (%)</label><input type="number" id="adesaoPct" value="2" min="0" step="0.1"></div>
+      <div class="radio-group"><label><input type="radio" name="adesaoForma" value="avista" checked> À vista, na 1ª parcela</label><label><input type="radio" name="adesaoForma" value="diluida"> Diluída</label></div>
+      <div class="field" id="adesaoMesesField"><label for="adesaoMeses">Diluir em quantas parcelas</label><input type="number" id="adesaoMeses" value="12" min="1" step="1"></div>
+      <p class="inline-note">Exemplo-base: 2% do crédito = R$ 900,00. Como os 2% estão dentro dos 16%, a TA restante é 14%.</p>
+    </fieldset>
+
+    <fieldset>
+      <legend>Lance na contemplação</legend>
+      <div class="field-row"><div class="field"><label for="dinheiro">Lance com recursos próprios (% do crédito)</label><input type="number" id="dinheiro" value="0" min="0" max="100" step="1"></div><div class="field"><label for="embutido">Lance embutido (% do crédito)</label><input type="number" id="embutido" value="0" min="0" max="100" step="1"></div></div>
+      <div class="radio-group"><label><input type="radio" name="restante" value="parcelas" checked> Amortizar parcelas</label><label><input type="radio" name="restante" value="prazo"> Amortizar prazo</label></div>
+      <p class="inline-note">Todo lance utilizado (próprio + embutido) abate o saldo devedor. Por prazo: paga de trás para frente e reduz meses. Por parcela: o lance é diluído nas parcelas restantes, respeitando o mínimo de 0,5% do saldo no imóvel e 1% no automóvel.</p>
+    </fieldset>
+  </form>
+</section>
+
+<section class="panel result-panel" id="resultsPanel">
+  <div class="result-panel-top"><div class="headline-tag" id="headlineTag">Extrato simulado</div><button type="button" class="btn btn-ghost btn-sm" id="btnHideResults">Ocultar ↑</button></div>
+
+  <div class="headline-numbers">
+    <div><div class="headline-label">1ª parcela</div><div class="headline-value" id="headline1a">—</div><div class="headline-sub" id="headline1aSub"></div></div>
+    <div><div class="headline-label">Parcela pós-contemplação</div><div class="headline-value" id="headlinePos">—</div><div class="headline-sub" id="headlinePosSub"></div></div>
+  </div>
+
+  <div class="key-grid">
+    <div class="key-card"><div class="k">Pago em parcelas até contemplar</div><div class="v" id="keyPagoParcelas">—</div><div class="s" id="keyPagoSub">—</div></div>
+    <div class="key-card"><div class="k">Lance próprio</div><div class="v" id="keyProprio">—</div><div class="s">recurso próprio</div></div>
+    <div class="key-card"><div class="k">Lance embutido</div><div class="v" id="keyEmbutido">—</div><div class="s">reduz o crédito líquido</div></div>
+    <div class="key-card"><div class="k">Lance somado</div><div class="v" id="keySomado">—</div><div class="s">próprio + embutido</div></div>
+    <div class="key-card"><div class="k">Meses restantes</div><div class="v" id="keyMeses">—</div><div class="s">após contemplação</div></div>
+    <div class="key-card"><div class="k">Saldo devedor pós-lance</div><div class="v" id="keySaldoDevedor">—</div><div class="s" id="keySaldoSub">base da parcela pós</div></div>
+    <div class="key-card"><div class="k">Crédito líquido</div><div class="v" id="keyCredito">—</div><div class="s">crédito − embutido</div></div>
+    <div class="key-card"><div class="k">Diferença acumulada</div><div class="v" id="keyDiferenca">—</div><div class="s">redutor até a contemplação</div></div>
+    <div class="key-card"><div class="k">Total nominal do plano</div><div class="v" id="keyPlano">—</div><div class="s">crédito + TA + FR</div></div>
+  </div>
+
+  <div class="seal-row">
+    <div class="seal"><div class="num" id="sealTaxa">—</div><div class="lbl">taxa real pós-contemplação</div></div>
+    <div class="seal-desc"><h3>Extrato simulado</h3><p id="sealText">—</p></div>
+  </div>
+
+  <div class="cols">
+    <div class="ledger"><h4>Parcela pré-contemplação</h4><div class="ledger-line"><span class="lbl">Fundo Comum (reduzido)</span><span class="fill"></span><span class="val" id="preFundo">—</span></div><div class="ledger-line"><span class="lbl">Taxa Adm. diluída</span><span class="fill"></span><span class="val" id="preTA">—</span></div><div class="ledger-line"><span class="lbl">Fundo de Reserva (reduzido)</span><span class="fill"></span><span class="val" id="preFR">—</span></div><div class="ledger-line"><span class="lbl">Seguro</span><span class="fill"></span><span class="val" id="preSeguro">—</span></div><div class="ledger-line total"><span class="lbl">Parcela mensal</span><span class="fill"></span><span class="val" id="preTotal">—</span></div></div>
+    <div class="ledger"><h4>Parcela pós-contemplação</h4><div class="ledger-line"><span class="lbl">Saldo devedor</span><span class="fill"></span><span class="val" id="posFundo">—</span></div><div class="ledger-line"><span class="lbl">Percentual pós-contemplação</span><span class="fill"></span><span class="val" id="posTA">—</span></div><div class="ledger-line"><span class="lbl">Parcela-base pelo saldo</span><span class="fill"></span><span class="val" id="posFR">—</span></div><div class="ledger-line"><span class="lbl">Diferença diluída</span><span class="fill"></span><span class="val" id="posDiluicao">—</span></div><div class="ledger-line total"><span class="lbl">Parcela mensal</span><span class="fill"></span><span class="val" id="posTotal">—</span></div></div>
+  </div>
+
+  <div class="section-block"><h4>Contemplação e lance</h4><div class="ledger-line"><span class="lbl">Parcela da contemplação</span><span class="fill"></span><span class="val" id="contemplacaoParcela">—</span></div><div class="ledger-line"><span class="lbl">Pago em parcelas até contemplar</span><span class="fill"></span><span class="val" id="pagoAte">—</span></div><div class="ledger-line"><span class="lbl">Lance próprio</span><span class="fill"></span><span class="val" id="lanceProprio">—</span></div><div class="ledger-line"><span class="lbl">Lance embutido</span><span class="fill"></span><span class="val" id="lanceEmbutido">—</span></div><div class="ledger-line total"><span class="lbl">Lance somado</span><span class="fill"></span><span class="val" id="lanceSomado">—</span></div></div>
+
+  <div class="section-block"><h4>Diferença do redutor</h4><div class="ledger-line"><span class="lbl">Diferença mensal</span><span class="fill"></span><span class="val" id="difMensal">—</span></div><div class="ledger-line"><span class="lbl">Diferença acumulada</span><span class="fill"></span><span class="val" id="difAcumulada">—</span></div><div class="ledger-line"><span class="lbl">Diferença diluída no pós</span><span class="fill"></span><span class="val" id="difDiluida">—</span></div></div>
+
+  <div class="section-block"><h4>Crédito, saldo e prazo</h4><div class="ledger-line"><span class="lbl">Crédito contratado</span><span class="fill"></span><span class="val" id="creditoContratado">—</span></div><div class="ledger-line"><span class="lbl">Lance embutido</span><span class="fill"></span><span class="val" id="creditoEmbutido">—</span></div><div class="ledger-line total"><span class="lbl">Crédito líquido recebido</span><span class="fill"></span><span class="val" id="creditoLiquido">—</span></div><div class="ledger-line"><span class="lbl">Saldo devedor antes do lance</span><span class="fill"></span><span class="val" id="saldoAntesLance">—</span></div><div class="ledger-line ok"><span class="lbl">Lance utilizado no saldo</span><span class="fill"></span><span class="val" id="lanceUtilizado">—</span></div><div class="ledger-line total"><span class="lbl">Saldo devedor após o lance</span><span class="fill"></span><span class="val" id="saldoDepoisLance">—</span></div><div class="ledger-line"><span class="lbl">Meses contratuais restantes</span><span class="fill"></span><span class="val" id="mesesRestantesContrato">—</span></div><div class="ledger-line"><span class="lbl">Meses economizados</span><span class="fill"></span><span class="val" id="mesesEconomizados">—</span></div><div class="ledger-line total"><span class="lbl">Meses pós-contemplação</span><span class="fill"></span><span class="val" id="mesesPos">—</span></div><div class="ledger-line"><span class="lbl">Lance não utilizado</span><span class="fill"></span><span class="val" id="lanceNaoUtilizado">—</span></div></div>
+
+  <div class="formula" id="formula">—</div>
+  <div class="lance-info" id="lanceInfo">—</div>
+
+  <div class="evolution-actions">
+    <button type="button" id="btnToggleEvolution" class="btn btn-gold">Ver evolução das parcelas ↓</button>
+  </div>
+
+  <div class="evolution-panel" id="evolutionPanel">
+    <div class="chart-wrap">
+      <h4>Evolução das parcelas — reajuste de 5% a.a.</h4>
+      <p class="evolution-note">A cada 12 meses, crédito e parcela recebem o mesmo fator de reajuste de 5%. O valor-base da parcela continua seguindo as regras da simulação.</p>
+      <canvas id="chart" width="900" height="150"></canvas>
+    </div>
+    <div class="evolution-table-wrap">
+      <table class="evolution-table">
+        <thead><tr><th>Mês</th><th>Fase</th><th>Reajuste</th><th>Crédito equivalente</th><th>Parcela equivalente</th></tr></thead>
+        <tbody id="evolutionRows"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="summary-strip"><div class="stat"><div class="k">Total pago em parcelas</div><div class="v" id="statTotalParcelas">—</div></div><div class="stat"><div class="k">Total de desembolso + lance próprio</div><div class="v" id="statDesembolso">—</div></div><div class="stat"><div class="k">Taxa real anual equivalente</div><div class="v" id="statTaxa">—</div></div></div>
+
+  <div class="action-bar"><button type="button" id="btnSeparate" class="btn btn-gold">Ver JSON</button><button type="button" id="btnExportJSON" class="btn btn-dark">Exportar JSON</button><button type="button" id="btnExportCSV" class="btn btn-dark">Exportar CSV</button></div>
+  <div id="separatedPanel"><div class="sep-head"><strong>Dados da simulação</strong><div class="sep-actions"><button type="button" id="btnCopySeparated" class="btn btn-sm btn-dark">Copiar</button><button type="button" id="btnExportOutflowCSV" class="btn btn-sm btn-dark">Parcelas CSV</button><button type="button" id="btnCloseSeparated" class="btn btn-sm btn-ghost">Fechar</button></div></div><div id="separatedResults"></div></div>
+</section>
+
+<p class="disclaimer"><strong>Sobre esta simulação:</strong> ferramenta educacional independente. As contas seguem o modelo didático de “a + b + c”. Regras reais de cobrança, atualização do crédito, contemplação e amortização devem ser confirmadas na decomposição dos pagamentos e no contrato da administradora.</p>
+</div>
+
+<script>
+/* =============================================================
+   MODELO A + B + C
+   ============================================================= */
+function calc(inp){
+  const credito=Math.max(0,Number(inp.credito)||0);
+  const N=Math.max(1,Math.floor(Number(inp.prazo)||1));
+  const taPct=Math.max(0,Number(inp.taPct)||0);
+  const frPct=Math.max(0,Number(inp.frPct)||0);
+  const seguroPct=Math.max(0,Number(inp.seguroPct)||0);
+  const seguro=credito*seguroPct/100;
+
+  let redutorPct=Number(inp.redutorPct);
+  if(inp.redutorPct==='custom') redutorPct=Number(inp.redutorCustomPct)||0;
+  redutorPct=Math.min(Math.max(redutorPct,0),95);
+
+  const k=Math.min(Math.max(Math.floor(Number(inp.mesContemplacao)||1),1),N);
+  const tipoBem=inp.tipoBem==='auto'?'auto':'imovel';
+  const percentualPos=tipoBem==='auto'?0.01:0.005;
+
+  /* A — taxa antecipada dentro da TA total */
+  const adesaoPct=Math.min(Math.max(Number(inp.adesaoPct)||0,0),taPct);
+  const adesaoValor=credito*adesaoPct/100;
+  const taRestantePct=Math.max(0,taPct-adesaoPct);
+  const adesaoForma=inp.adesaoForma==='diluida'?'diluida':'avista';
+  let adesaoMeses=adesaoForma==='avista'?1:Math.max(1,Math.floor(Number(inp.adesaoMeses)||1));
+  adesaoMeses=Math.min(adesaoMeses,N);
+  const adesaoPorParcela=adesaoMeses>0?adesaoValor/adesaoMeses:0;
+
+  /* B — componentes mensais */
+  const fundoComumMensal=credito/N;
+  const frMensalCheio=credito*frPct/100/N;
+  const taMensal=credito*taRestantePct/100/N;
+  const fatorRedutor=1-redutorPct/100;
+  const fundoComumReduzido=fundoComumMensal*fatorRedutor;
+  const frReduzido=frMensalCheio*fatorRedutor;
+
+  const parcelaReduzida=fundoComumReduzido+frReduzido+taMensal+seguro;
+
+  /* C — diferença criada pelo redutor */
+  const diferencaMensal=(fundoComumMensal-fundoComumReduzido)+(frMensalCheio-frReduzido);
+  const diferencaAcumulada=diferencaMensal*k;
+
+  /* Lance: próprio + embutido = valor total utilizado para amortizar o saldo. */
+  const proprioPct=Math.min(Math.max(Number(inp.dinheiroPct)||0,0),100);
+  const embutidoPct=Math.min(Math.max(Number(inp.embutidoPct)||0,0),100);
+  const lanceProprio=credito*proprioPct/100;
+  const lanceEmbutido=credito*embutidoPct/100;
+  const lanceSomado=lanceProprio+lanceEmbutido;
+
+  /* Crédito líquido: o embutido reduz o crédito que será disponibilizado. */
+  const creditoLiquido=Math.max(0,credito-lanceEmbutido);
+
+  const mesesRestantesContrato=Math.max(0,N-k);
+
+  /* Saldo devedor antes do lance.
+     Mantemos a lógica do modelo A+B+C: o principal já recolhido vem do
+     Fundo Comum reduzido durante as parcelas com redutor. */
+  const principalRecolhido=fundoComumReduzido*k;
+  const saldoDevedorAntesLance=Math.max(0,credito-principalRecolhido);
+
+  /* Todo lance (próprio + embutido) é usado para abater o saldo. */
+  const lanceUtilizado=Math.min(lanceSomado,saldoDevedorAntesLance);
+  const lanceNaoUtilizado=Math.max(0,lanceSomado-lanceUtilizado);
+  const saldoDevedor=Math.max(0,saldoDevedorAntesLance-lanceUtilizado);
+
+  /* Apenas para informar de onde veio o lance utilizado. */
+  const embutidoUtilizado=Math.min(lanceEmbutido,lanceUtilizado);
+  const proprioUtilizado=Math.min(
+    lanceProprio,
+    Math.max(0,lanceUtilizado-embutidoUtilizado)
+  );
+
+  /* Diferença criada pelo redutor. Ela é uma obrigação separada e,
+     no modo por parcela, é diluída junto das parcelas pós-contemplação. */
+  const diferencaDiluidaBase=mesesRestantesContrato>0
+    ? diferencaAcumulada/mesesRestantesContrato
+    : 0;
+
+  /*
+     PARCELA PÓS — base antes de amortizar o lance:
+     percentual sobre o saldo devedor ANTES do lance + diferença do redutor.
+     O lance será aplicado de duas formas, conforme a escolha do usuário:
+       - parcelas: divide o lance pelo prazo restante e reduz a parcela;
+       - prazo: usa o lance para pagar parcelas de trás para frente.
+  */
+  /* A parcela que amortizaria o saldo antes do lance, distribuída no prazo restante.
+     O lance reduz essa parcela em lance ÷ meses.
+     Com o mesmo prazo, o resultado equivale a saldo pós-lance ÷ meses. */
+  const parcelaAmortizacaoAntesLance=mesesRestantesContrato>0
+    ? saldoDevedorAntesLance/mesesRestantesContrato
+    : 0;
+  const parcelaBaseAntesAmortizacao=
+    parcelaAmortizacaoAntesLance+
+    diferencaDiluidaBase;
+
+  /* Piso da parcela = percentual do saldo depois que o lance foi abatido. */
+  const parcelaMinima=
+    saldoDevedor*percentualPos;
+
+  let parcelaPos=parcelaBaseAntesAmortizacao;
+  let reducaoParcela=0;
+  let mesesEconomizados=0;
+  let mesesPosContemplacao=mesesRestantesContrato;
+  let prazoEfetivo=N;
+  let mesesDiluidos=mesesRestantesContrato;
+  let mesesExtras=0;
+
+  if(mesesRestantesContrato>0){
+
+    if(inp.formaRestante==='parcelas'){
+      /*
+         Amortização por parcela:
+         1) começa com o prazo restante contratual;
+         2) divide TODO o lance utilizado por esse número de meses;
+         3) reduz a parcela pelo valor encontrado;
+         4) se ficar abaixo do piso, acrescenta 1 parcela ao prazo e repete
+            até que a parcela fique >= ao piso.
+      */
+      mesesDiluidos=Math.max(1,mesesRestantesContrato);
+
+      while(true){
+        reducaoParcela=lanceUtilizado/mesesDiluidos;
+        parcelaPos=parcelaBaseAntesAmortizacao-reducaoParcela;
+
+        if(parcelaPos>=parcelaMinima || mesesDiluidos>=N+1200) break;
+        mesesDiluidos++;
+      }
+
+      parcelaPos=Math.max(parcelaPos,parcelaMinima);
+      mesesPosContemplacao=mesesDiluidos;
+      mesesExtras=Math.max(0,mesesDiluidos-mesesRestantesContrato);
+      prazoEfetivo=k+mesesPosContemplacao;
+
+    }else{
+      /*
+         Amortização por prazo:
+         paga parcelas de trás para frente. Cada parcela quitada pelo lance
+         reduz 1 mês do prazo restante.
+      */
+      const valorParcelaParaPrazo=Math.max(parcelaBaseAntesAmortizacao,0.01);
+
+      mesesEconomizados=Math.min(
+        mesesRestantesContrato,
+        Math.floor(lanceUtilizado/valorParcelaParaPrazo)
+      );
+
+      mesesPosContemplacao=
+        mesesRestantesContrato-mesesEconomizados;
+
+      prazoEfetivo=
+        k+mesesPosContemplacao;
+
+      parcelaPos=parcelaBaseAntesAmortizacao;
+    }
+
+  }else if(lanceUtilizado<saldoDevedorAntesLance){
+    /* Contemplação no último mês: eventual saldo remanescente exige prazo extra. */
+    if(inp.formaRestante==='parcelas'){
+      mesesDiluidos=1;
+      while(true){
+        reducaoParcela=lanceUtilizado/mesesDiluidos;
+        parcelaPos=parcelaBaseAntesAmortizacao-reducaoParcela;
+        if(parcelaPos>=parcelaMinima || mesesDiluidos>=1200) break;
+        mesesDiluidos++;
+      }
+      parcelaPos=Math.max(parcelaPos,parcelaMinima);
+      mesesPosContemplacao=mesesDiluidos;
+      mesesExtras=mesesDiluidos;
+      prazoEfetivo=N+mesesExtras;
+    }else{
+      const valorParcelaParaPrazo=Math.max(parcelaBaseAntesAmortizacao,0.01);
+      mesesExtras=Math.max(
+        1,
+        Math.ceil(saldoDevedor/valorParcelaParaPrazo)
+      );
+      mesesPosContemplacao=mesesExtras;
+      prazoEfetivo=N+mesesExtras;
+      parcelaPos=parcelaBaseAntesAmortizacao;
+    }
+  }
+
+  /* Fluxo das parcelas. A parcela da contemplação é a k-ésima. */
+  const outflow=new Array(prazoEfetivo+1).fill(0);
+  for(let t=1;t<=prazoEfetivo;t++){
+    const adesao=t<=adesaoMeses?adesaoPorParcela:0;
+    if(t<=k) outflow[t]=parcelaReduzida+adesao;
+    else outflow[t]=parcelaPos+adesao;
+  }
+
+  /*
+     PAGO ANTES DA CONTEMPLAÇÃO
+     Se contempla na 12ª, são 11 parcelas + adesão.
+     A parcela da contemplação fica fora deste indicador.
+  */
+  /* Somente a parcela-base entra aqui. A adesão é somada separadamente.
+     Assim: contemplação na 12ª = 11 parcelas + adesão. */
+  /*
+     Regra do valor pago antes da contemplação:
+     contemplação na parcela k = (k - 1) parcelas + adesão já paga.
+
+     Exemplo: contemplação na 10ª parcela:
+       9 × parcela + 1 × adesão
+
+     A parcela da contemplação NÃO entra neste total.
+  */
+  const parcelasPagasAntesContemplacao=Math.max(0,k-1);
+  const valorParcelasAntesContemplacao=
+    parcelaReduzida*parcelasPagasAntesContemplacao;
+
+  const adesaoPagaAteContemplacao = adesaoForma==='avista'
+    ? (parcelasPagasAntesContemplacao > 0 ? adesaoValor : adesaoValor)
+    : adesaoPorParcela*Math.min(
+        adesaoMeses,
+        parcelasPagasAntesContemplacao
+      );
+
+  const pagoAntesContemplacao =
+    valorParcelasAntesContemplacao + adesaoPagaAteContemplacao;
+
+  /* Desembolso total: parcelas + lance próprio efetivamente desembolsado. */
+  const desembolsoAteContemplacao=pagoAntesContemplacao+proprioUtilizado;
+
+  /* Total de parcelas + desembolso de lance próprio. */
+  const totalPagoParcelas=outflow
+    .slice(1)
+    .reduce((s,v)=>s+v,0);
+  const totalDesembolso=totalPagoParcelas+lanceProprio;
+
+  /*
+     TAXA REAL PÓS-CONTEMPLAÇÃO
+
+     Não recalculamos a taxa do plano inteiro.
+     A pergunta aqui é: "quanto eu recebo na contemplação em relação
+     ao que ainda vou desembolsar depois dela?"
+
+     No instante da contemplação (t = 0):
+       entrada líquida = crédito líquido − lance próprio
+
+     Depois da contemplação:
+       saídas = parcelas pós + eventuais parcelas de adesão ainda não pagas
+
+     A taxa mensal é a taxa que faz o VPL do fluxo pós-contemplação ser zero.
+     Depois, anualizamos pela capitalização de 12 meses.
+  */
+  const mesesPos=Math.max(0,mesesPosContemplacao);
+  const posCashflows=new Array(mesesPos+1).fill(0);
+
+  /*
+     Para a taxa pós, o valor que ainda está sendo financiado é o saldo
+     devedor DEPOIS do lance. O lance já foi descontado desse saldo, então
+     não pode ser descontado novamente da entrada.
+  */
+  const valorFinanciadoPos=saldoDevedor;
+  posCashflows[0]=valorFinanciadoPos;
+
+  let totalPagoPos=0;
+  for(let m=1;m<=mesesPos;m++){
+    const t=k+m;
+    const adesaoFutura=t<=adesaoMeses?adesaoPorParcela:0;
+    const pagamento=parcelaPos+adesaoFutura;
+    posCashflows[m]=-pagamento;
+    totalPagoPos+=pagamento;
+  }
+
+  function npvPos(rate){
+    let s=posCashflows[0];
+    for(let m=1;m<posCashflows.length;m++){
+      s+=posCashflows[m]/Math.pow(1+rate,m);
+    }
+    return s;
+  }
+
+  /* Para um único recebimento hoje e pagamentos futuros, o fluxo tem uma
+     raiz econômica única para taxa >= 0. Usamos bisseção diretamente. */
+  let taxaPosMensal=null;
+  const npvZero=npvPos(0);
+
+  if(valorFinanciadoPos>0 && npvZero<0){
+    /* NPV(0) < 0 e, em uma taxa positiva suficientemente alta, o valor
+       presente dos pagamentos cai até ficar menor que o saldo inicial. */
+    let lo=0,hi=1;
+    while(npvPos(hi)<0 && hi<1000000) hi*=2;
+
+    if(npvPos(hi)>=0){
+      for(let i=0;i<220;i++){
+        const mid=(lo+hi)/2;
+        if(npvPos(mid)>0) hi=mid;
+        else lo=mid;
+      }
+      taxaPosMensal=(lo+hi)/2;
+    }
+  }else if(valorFinanciadoPos>0 && Math.abs(npvZero)<1e-9){
+    taxaPosMensal=0;
+  }
+
+  const taxaRealPosAnual=taxaPosMensal===null
+    ? null
+    : (Math.pow(1+taxaPosMensal,12)-1)*100;
+
+  return {
+    credito,N,k,taPct,frPct,seguroPct,seguro,redutorPct,
+    adesaoPct,adesaoValor,adesaoForma,adesaoMeses,adesaoPorParcela,taRestantePct,
+    fundoComumMensal,frMensalCheio,taMensal,fundoComumReduzido,frReduzido,
+    parcelaReduzida,diferencaMensal,diferencaAcumulada,
+    proprioPct,embutidoPct,lanceProprio,lanceEmbutido,lanceSomado,
+    proprioUtilizado,embutidoUtilizado,lanceUtilizado,lanceNaoUtilizado,
+    creditoLiquido,
+    mesesRestantesContrato,principalRecolhido,saldoDevedorAntesLance,saldoDevedor,
+    percentualPos,parcelaMinima,parcelaBaseAntesAmortizacao,diferencaDiluidaBase,
+    diferencaDiluida:diferencaDiluidaBase,
+    reducaoParcela,parcelaPos,
+    tipoBem,formaRestante:inp.formaRestante,
+    mesesEconomizados,mesesPosContemplacao,mesesDiluidos,mesesExtras,prazoEfetivo,
+    parcelasPagasAntesContemplacao,valorParcelasAntesContemplacao,adesaoPagaAteContemplacao,
+    pagoAntesContemplacao,desembolsoAteContemplacao,totalPagoParcelas,totalDesembolso,
+    totalPagoPos,taxaPosMensal,taxaRealPosAnual,outflow
+  };
+}
+
+function fmtBRL(v){return Number.isFinite(v)?v.toLocaleString('pt-BR',{style:'currency',currency:'BRL',minimumFractionDigits:2,maximumFractionDigits:2}):'—'}
+function fmtPct(v,d=2){return Number.isFinite(v)?v.toLocaleString('pt-BR',{minimumFractionDigits:d,maximumFractionDigits:d})+'%':'—'}
+const $id=id=>document.getElementById(id);
+function num(id){const v=parseFloat($id(id).value);return Number.isFinite(v)?v:0}
+function checked(name){return document.querySelector(`input[name="${name}"]:checked`)?.value}
+
+function readInputs(){return{
+  credito:num('credito'),prazo:num('prazo'),taPct:num('ta'),frPct:num('fr'),seguroPct:num('seguroPct'),mesContemplacao:num('mesContemplacao'),tipoBem:$id('tipoBem').value,
+  redutorPct:checked('redutor'),redutorCustomPct:num('redutorCustom'),
+  adesaoPct:num('adesaoPct'),adesaoForma:checked('adesaoForma'),adesaoMeses:num('adesaoMeses'),
+  dinheiroPct:num('dinheiro'),embutidoPct:num('embutido'),formaRestante:checked('restante')
+}}
+
+function updateVisibility(){
+  $id('redutorCustomField').style.display=checked('redutor')==='custom'?'flex':'none';
+  $id('adesaoMesesField').style.display=checked('adesaoForma')==='diluida'?'flex':'none';
+}
+
+function render(r){
+  const primeiraTotal=r.parcelaReduzida+(r.adesaoForma==='avista'?r.adesaoValor:r.adesaoPorParcela);
+
+  $id('headlineTag').textContent=`Contemplação na ${r.k}ª parcela`;
+  $id('headline1a').textContent=fmtBRL(primeiraTotal);
+  $id('headline1aSub').textContent=r.adesaoValor>0
+    ? (r.adesaoForma==='avista'
+      ? `${fmtBRL(r.parcelaReduzida)} + adesão ${fmtBRL(r.adesaoValor)}`
+      : `${fmtBRL(r.parcelaReduzida)} + ${fmtBRL(r.adesaoPorParcela)}/mês de adesão`)
+    : 'Sem taxa antecipada';
+
+  $id('headlinePos').textContent=fmtBRL(r.parcelaPos);
+  $id('headlinePosSub').textContent=
+    `${r.tipoBem==='imovel'?'0,5%':'1,0%'} do saldo devedor • ${r.mesesPosContemplacao} meses pós-contemplação`+
+    (r.mesesEconomizados>0?` • ${r.mesesEconomizados} meses economizados`:'')+
+    (r.formaRestante==='parcelas'?' • lance diluído na parcela':' • lance usado para reduzir prazo');
+
+  /* Cards principais */
+  $id('keyPagoParcelas').textContent=fmtBRL(r.pagoAntesContemplacao);
+  $id('keyPagoSub').textContent=`${r.parcelasPagasAntesContemplacao} parcelas + adesão`;
+  $id('keyProprio').textContent=fmtBRL(r.proprioUtilizado);
+  $id('keyProprio').nextElementSibling.textContent='utilizado no saldo';
+  $id('keyEmbutido').textContent=fmtBRL(r.embutidoUtilizado);
+  $id('keyEmbutido').nextElementSibling.textContent='utilizado no saldo';
+  $id('keySomado').textContent=fmtBRL(r.lanceUtilizado);
+  $id('keySomado').nextElementSibling.textContent='próprio + embutido utilizados';
+  $id('keyMeses').textContent=`${r.mesesPosContemplacao} meses`;
+  $id('keySaldoDevedor').textContent=fmtBRL(r.saldoDevedor);
+  $id('keySaldoSub').textContent=`após lance • ${fmtBRL(r.parcelaMinima)} mínimo`;
+  $id('keyCredito').textContent=fmtBRL(r.creditoLiquido);
+  $id('keyDiferenca').textContent=fmtBRL(r.diferencaAcumulada);
+  $id('keyPlano').textContent=fmtBRL(r.credito+r.credito*r.taPct/100+r.credito*r.frPct/100);
+
+  /* Selo */
+  $id('sealTaxa').textContent=fmtPct(r.taxaRealPosAnual,1);
+  $id('sealText').textContent=
+    `Pós-contemplação: saldo devedor de ${fmtBRL(r.saldoDevedor)} contra ${fmtBRL(r.totalPagoPos)} de pagamentos futuros em ${r.mesesPosContemplacao} meses. `+
+    `Taxa real equivalente: ${fmtPct(r.taxaRealPosAnual,1)} ao ano.`;
+
+  /* Pré */
+  $id('preFundo').textContent=fmtBRL(r.fundoComumReduzido);
+  $id('preTA').textContent=fmtBRL(r.taMensal);
+  $id('preFR').textContent=fmtBRL(r.frReduzido);
+  $id('preSeguro').textContent=fmtBRL(r.seguro);
+  $id('preTotal').textContent=fmtBRL(r.parcelaReduzida);
+
+  /* Pós */
+  $id('posFundo').textContent=fmtBRL(r.saldoDevedor);
+  $id('posTA').textContent=fmtPct(r.percentualPos*100,1);
+  $id('posFR').textContent=fmtBRL(r.parcelaMinima);
+  $id('posDiluicao').textContent=r.diferencaDiluida>0?`+ ${fmtBRL(r.diferencaDiluida)}`:'não diluída';
+  $id('posTotal').textContent=fmtBRL(r.parcelaPos);
+
+  /* Contemplação e lance */
+  $id('contemplacaoParcela').textContent=fmtBRL(r.parcelaReduzida+(r.k===1?(r.adesaoForma==='avista'?r.adesaoValor:r.adesaoPorParcela):0));
+  $id('pagoAte').textContent=fmtBRL(r.pagoAntesContemplacao);
+  $id('lanceProprio').textContent=fmtBRL(r.lanceProprio);
+  $id('lanceEmbutido').textContent=fmtBRL(r.lanceEmbutido);
+  $id('lanceSomado').textContent=fmtBRL(r.lanceSomado);
+
+  /* Saldo e amortização */
+  $id('saldoAntesLance').textContent=fmtBRL(r.saldoDevedorAntesLance);
+  $id('lanceUtilizado').textContent=fmtBRL(r.lanceUtilizado);
+  $id('saldoDepoisLance').textContent=fmtBRL(r.saldoDevedor);
+  $id('lanceNaoUtilizado').textContent=fmtBRL(r.lanceNaoUtilizado);
+  $id('mesesRestantesContrato').textContent=`${r.mesesRestantesContrato} meses`;
+  $id('mesesEconomizados').textContent=r.mesesEconomizados>0?`− ${r.mesesEconomizados} meses`:'0 meses';
+  $id('mesesPos').textContent=`${r.mesesPosContemplacao} meses`;
+
+  /* Diferença redutor */
+  $id('difMensal').textContent=fmtBRL(r.diferencaMensal);
+  $id('difAcumulada').textContent=fmtBRL(r.diferencaAcumulada);
+  $id('difDiluida').textContent=r.diferencaDiluida>0?`${fmtBRL(r.diferencaDiluida)}/mês`:'—';
+
+  /* Crédito */
+  $id('creditoContratado').textContent=fmtBRL(r.credito);
+  $id('creditoEmbutido').textContent=fmtBRL(r.lanceEmbutido);
+  $id('creditoLiquido').textContent=fmtBRL(r.creditoLiquido);
+
+  const taTotal=r.credito*r.taPct/100,frTotal=r.credito*r.frPct/100;
+  $id('formula').innerHTML=`
+    <strong>Conta-base da parcela reduzida</strong><br>
+    Fundo Comum = ${fmtBRL(r.credito)} ÷ ${r.N} = ${fmtBRL(r.fundoComumMensal)}<br>
+    Fundo Comum reduzido = ${fmtBRL(r.fundoComumMensal)} × (1 − ${fmtPct(r.redutorPct,0)}) = ${fmtBRL(r.fundoComumReduzido)}<br>
+    Fundo de Reserva = ${fmtBRL(r.credito)} × ${fmtPct(r.frPct,0)} ÷ ${r.N} = ${fmtBRL(r.frMensalCheio)}<br>
+    Fundo de Reserva reduzido = ${fmtBRL(r.frMensalCheio)} × (1 − ${fmtPct(r.redutorPct,0)}) = ${fmtBRL(r.frReduzido)}<br>
+    TA diluída = (${fmtPct(r.taPct,0)} − ${fmtPct(r.adesaoPct,0)}) = ${fmtPct(r.taRestantePct,0)} → ${fmtBRL(r.taMensal)}/mês<br>
+    <span class="final">Parcela reduzida = ${fmtBRL(r.fundoComumReduzido)} + ${fmtBRL(r.frReduzido)} + ${fmtBRL(r.taMensal)}${r.seguro>0?' + '+fmtBRL(r.seguro):''} = ${fmtBRL(r.parcelaReduzida)}</span><br><br>
+    Diferença mensal do redutor = ${fmtBRL(r.diferencaMensal)}<br>
+    Diferença acumulada = ${fmtBRL(r.diferencaMensal)} × ${r.k} = <span class="final">${fmtBRL(r.diferencaAcumulada)}</span><br><br>
+    Saldo antes do lance = ${fmtBRL(r.saldoDevedorAntesLance)}<br>
+    Lance utilizado = ${fmtBRL(r.lanceUtilizado)}<br>
+    Saldo após o lance = <span class="final">${fmtBRL(r.saldoDevedor)}</span><br>
+    Parcela-base pós antes do lance = ${fmtBRL(r.saldoDevedorAntesLance)} ÷ ${r.mesesRestantesContrato} + ${fmtBRL(r.diferencaDiluidaBase)} = <span class="final">${fmtBRL(r.parcelaBaseAntesAmortizacao)}</span><br>
+    Piso pós = ${fmtPct(r.percentualPos*100,1)} × ${fmtBRL(r.saldoDevedor)} = <span class="final">${fmtBRL(r.parcelaMinima)}</span><br>
+    ${r.formaRestante==='parcelas'?`Lance ÷ meses diluídos = ${fmtBRL(r.lanceUtilizado)} ÷ ${r.mesesDiluidos} = ${fmtBRL(r.reducaoParcela)}/mês`:`Lance ÷ parcela = ${fmtBRL(r.lanceUtilizado)} ÷ ${fmtBRL(r.parcelaBaseAntesAmortizacao)} = ${Math.floor(r.lanceUtilizado/Math.max(r.parcelaBaseAntesAmortizacao,0.01))} mês(es) abatido(s)`}<br>
+    Taxa real pós = taxa que iguala ${fmtBRL(r.saldoDevedor)} hoje ao valor presente de ${fmtBRL(r.totalPagoPos)} pagos depois da contemplação.
+  `;
+
+  $id('lanceInfo').innerHTML=`
+    <strong>Pago antes da contemplação:</strong> ${fmtBRL(r.valorParcelasAntesContemplacao)} em ${r.parcelasPagasAntesContemplacao} parcelas${r.adesaoPagaAteContemplacao>0?` + adesão ${fmtBRL(r.adesaoPagaAteContemplacao)}`:''} = <strong>${fmtBRL(r.pagoAntesContemplacao)}</strong><br>
+    <strong>Lance próprio:</strong> ${fmtBRL(r.lanceProprio)} → utilizado: ${fmtBRL(r.proprioUtilizado)}<br>
+    <strong>Lance embutido:</strong> ${fmtBRL(r.lanceEmbutido)} → utilizado: ${fmtBRL(r.embutidoUtilizado)}<br>
+    <strong>Lance somado:</strong> ${fmtBRL(r.lanceSomado)} → utilizado: ${fmtBRL(r.lanceUtilizado)}<br>
+    <strong>Saldo devedor antes do lance:</strong> ${fmtBRL(r.saldoDevedorAntesLance)}<br>
+    <strong>Saldo devedor após o lance:</strong> ${fmtBRL(r.saldoDevedor)}<br>
+    <strong>Meses contratuais restantes:</strong> ${r.mesesRestantesContrato}<br>
+    <strong>Meses pós-contemplação:</strong> ${r.mesesPosContemplacao}${r.mesesEconomizados>0?` (− ${r.mesesEconomizados} pelo lance)`:''}${r.mesesExtras>0?` (+ ${r.mesesExtras} extras)`:''}<br><br>
+    ${r.formaRestante==='parcelas'
+      ? `<strong>Amortização por parcela:</strong> lance de ${fmtBRL(r.lanceUtilizado)} ÷ ${r.mesesDiluidos} meses = ${fmtBRL(r.reducaoParcela)}/mês de redução. A parcela ficou em ${fmtBRL(r.parcelaPos)}, respeitando o piso de ${fmtBRL(r.parcelaMinima)}.`
+      : `<strong>Amortização por prazo:</strong> o lance é usado para quitar parcelas do final para o início → ${r.mesesEconomizados} meses economizados.`}
+    ${r.lanceNaoUtilizado>0?`<br><br><strong>Lance não utilizado:</strong> ${fmtBRL(r.lanceNaoUtilizado)} (saldo devedor zerado).`:''}
+  `;
+
+  $id('statTotalParcelas').textContent=fmtBRL(r.totalPagoParcelas);
+  $id('statDesembolso').textContent=fmtBRL(r.totalDesembolso);
+  $id('statTaxa').textContent=fmtPct(r.taxaRealPosAnual,1);
+
+  drawChart(r);
+  renderEvolution(r);
+  window.currentResult=r;
+}
+
+function reajusteAnual5(month){
+  return Math.pow(1.05,Math.floor((Math.max(1,month)-1)/12));
+}
+
+function parcelaBaseDoMes(r,month){
+  return month<=r.k ? r.parcelaReduzida : r.parcelaPos;
+}
+
+function renderEvolution(r){
+  const rows=$id('evolutionRows');
+  if(!rows) return;
+  const html=[];
+  for(let month=1;month<=r.prazoEfetivo;month++){
+    const fator=reajusteAnual5(month);
+    const creditoEq=r.credito*fator;
+    const parcelaEq=parcelaBaseDoMes(r,month)*fator;
+    const fase=month<r.k?'Pré':(month===r.k?'Contemplação':'Pós');
+    const reajuste=(fator-1)*100;
+    html.push(`<tr${month===r.k?' class="contemplacao-row"':''}><td>${month}</td><td>${fase}</td><td>${fmtPct(reajuste,1)}</td><td>${fmtBRL(creditoEq)}</td><td>${fmtBRL(parcelaEq)}</td></tr>`);
+  }
+  rows.innerHTML=html.join('');
+}
+
+function drawChart(r){
+  const canvas=$id('chart'),ctx=canvas.getContext('2d');
+  const W=canvas.width,H=canvas.height;ctx.clearRect(0,0,W,H);
+  const vals=[];
+  for(let month=1;month<=r.prazoEfetivo;month++){
+    vals.push(parcelaBaseDoMes(r,month)*reajusteAnual5(month));
+  }
+  const maxV=Math.max(...vals,1),pL=6,pR=6,pT=10,pB=18,pW=W-pL-pR,pH=H-pT-pB;
+  ctx.strokeStyle='rgba(34,27,16,.15)';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(pL,H-pB);ctx.lineTo(W-pR,H-pB);ctx.stroke();
+  const kx=pL+((r.k-1)/Math.max(r.prazoEfetivo-1,1))*pW;
+  ctx.strokeStyle='#B98A2E';ctx.setLineDash([3,3]);ctx.beginPath();ctx.moveTo(kx,pT);ctx.lineTo(kx,H-pB);ctx.stroke();ctx.setLineDash([]);
+  ctx.fillStyle='#B98A2E';ctx.font='10px monospace';ctx.fillText('contemplação',Math.min(kx+4,W-90),pT+10);
+  ctx.strokeStyle='#0F2438';ctx.lineWidth=2;ctx.beginPath();
+  vals.forEach((v,i)=>{const x=pL+(i/Math.max(vals.length-1,1))*pW,y=H-pB-(v/maxV)*pH;i?ctx.lineTo(x,y):ctx.moveTo(x,y)});ctx.stroke();
+}
+
+
+const panel=$id('resultsPanel');
+function showResults(){render(calc(readInputs()));panel.classList.add('active');setTimeout(()=>panel.scrollIntoView({behavior:'smooth',block:'start'}),50)}
+$id('btnShowResults').addEventListener('click',showResults);
+$id('btnHideResults').addEventListener('click',()=>{panel.classList.remove('active');document.querySelector('.form-panel').scrollIntoView({behavior:'smooth',block:'start'})});
+let debounce;
+function onFormChange(){updateVisibility();if(panel.classList.contains('active')){clearTimeout(debounce);debounce=setTimeout(()=>render(calc(readInputs())),180)}}
+$id('calcForm').addEventListener('input',onFormChange);$id('calcForm').addEventListener('change',onFormChange);
+
+
+const evolutionPanel=$id('evolutionPanel');
+const btnToggleEvolution=$id('btnToggleEvolution');
+btnToggleEvolution.addEventListener('click',()=>{
+  const isOpen=evolutionPanel.classList.toggle('active');
+  btnToggleEvolution.textContent=isOpen?'Ocultar evolução ↑':'Ver evolução das parcelas ↓';
+  if(isOpen && window.currentResult){
+    drawChart(window.currentResult);
+    renderEvolution(window.currentResult);
+    setTimeout(()=>evolutionPanel.scrollIntoView({behavior:'smooth',block:'nearest'}),30);
+  }
+});
+
+$id('loadExample').addEventListener('click',()=>{
+  $id('credito').value=45000;$id('prazo').value=100;$id('ta').value=16;$id('fr').value=3;$id('seguroPct').value=0;$id('mesContemplacao').value=10;if($id('tipoBem'))$id('tipoBem').value='imovel';
+  document.querySelector('input[name="redutor"][value="50"]').checked=true;$id('redutorCustom').value=50;
+  $id('adesaoPct').value=2;document.querySelector('input[name="adesaoForma"][value="avista"]').checked=true;$id('adesaoMeses').value=12;
+  $id('dinheiro').value=0;$id('embutido').value=0;document.querySelector('input[name="restante"][value="parcelas"]').checked=true;
+  updateVisibility();showResults();
+});
+
+function timestamp(){return new Date().toISOString().replace(/[:.]/g,'-')}
+function download(name,text,type='text/plain'){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([text],{type:type+';charset=utf-8'}));a.download=name;document.body.appendChild(a);a.click();a.remove()}
+function currentResult(){return calc(readInputs())}
+function outflowCsvRows(result){return ['mes;parcela', ...result.outflow.slice(1).map((v,i)=>`${i+1};${v.toFixed(2)}`)]}
+$id('btnSeparate').addEventListener('click',()=>{$id('separatedResults').textContent=JSON.stringify(currentResult(),null,2);$id('separatedPanel').style.display='block'});
+$id('btnCloseSeparated').addEventListener('click',()=>$id('separatedPanel').style.display='none');
+$id('btnCopySeparated').addEventListener('click',async()=>{try{await navigator.clipboard.writeText(JSON.stringify(currentResult(),null,2));const b=$id('btnCopySeparated');b.textContent='Copiado!';setTimeout(()=>b.textContent='Copiar',1400)}catch{alert('Use Exportar JSON.')}});
+$id('btnExportJSON').addEventListener('click',()=>download('simulacao-'+timestamp()+'.json',JSON.stringify(currentResult(),null,2),'application/json'));
+$id('btnExportCSV').addEventListener('click',()=>download('parcelas-'+timestamp()+'.csv',outflowCsvRows(currentResult()).join('\n'),'text/csv'));
+$id('btnExportOutflowCSV').addEventListener('click',()=>download('parcelas-'+timestamp()+'.csv',outflowCsvRows(currentResult()).join('\n'),'text/csv'));
+updateVisibility();
+</script>
+</body>
+</html>
