@@ -4,7 +4,11 @@
   "rewrites": [
     {
       "source": "/simulador",
-      "destination": "/simulador.html"
+      "destination": "/api/simulador"
+    },
+    {
+      "source": "/simulador.html",
+      "destination": "/api/simulador"
     }
   ]
 }
