@@ -78,10 +78,12 @@ function checar(cond, msg) {
     checar(r.totalPago >= r.creditoLiquido, 'totalPago não pode ser menor que o crédito líquido recebido');
     checar(r.outflow.length === r.Nefetivo + 1, 'outflow deveria ter Nefetivo+1 posições (índice 0 em branco)');
     checar(r.parcelaPos >= r.parcelaMinima - 0.01, 'parcelaPos não pode ficar abaixo da parcela mínima');
-    if (formaRestante === 'prazo') {
-      checar(r.Nefetivo <= r.N, 'amortização por prazo não deveria aumentar o prazo total');
+    if (r.totalLance > 0) {
+      checar(r.mesesPosContemplacao < r.mesesRestantesContrato, 'meses pós-contemplação devem reduzir o prazo restante quando há lance');
+      checar(r.Nefetivo <= r.N, 'o prazo total não pode aumentar quando há lance');
     } else {
-      checar(r.Nefetivo >= r.N, 'amortização por parcelas não deveria reduzir o prazo total');
+      checar(r.mesesPosContemplacao === r.mesesRestantesContrato, 'sem lance, o prazo restante deve permanecer igual ao contrato');
+      checar(r.Nefetivo === r.N, 'sem lance, o prazo total não pode diminuir');
     }
   });
 });

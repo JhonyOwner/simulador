@@ -267,47 +267,53 @@ function calc(inp){
     if(inp.formaRestante==='parcelas'){
       /*
          Amortização por parcela:
-         1) começa com o prazo restante contratual;
-         2) divide TODO o lance utilizado por esse número de meses;
-         3) reduz a parcela pelo valor encontrado;
-         4) se ficar abaixo do piso, acrescenta 1 parcela ao prazo e repete
-            até que a parcela fique >= ao piso.
+         - o objetivo é reduzir a parcela e, ao mesmo tempo, nunca deixar o
+           prazo pós-contemplação igual ao contrato;
+         - se houver lance, o prazo restante deve cair pelo menos 1 mês;
+         - a parcela nunca pode ficar abaixo do piso mínimo sobre o saldo.
       */
-      mesesDiluidos=Math.max(1,mesesRestantesContrato);
+      const mesesMinimos = Math.max(0, mesesRestantesContrato - 1);
+      mesesDiluidos = Math.max(1, mesesRestantesContrato);
 
-      while(true){
-        reducaoParcela=lanceUtilizado/mesesDiluidos;
-        parcelaPos=parcelaBaseAntesAmortizacao-reducaoParcela;
+      while (mesesDiluidos > mesesMinimos) {
+        reducaoParcela = lanceUtilizado / mesesDiluidos;
+        parcelaPos = parcelaBaseAntesAmortizacao - reducaoParcela;
 
-        if(parcelaPos>=parcelaMinima || mesesDiluidos>=N+1200) break;
-        mesesDiluidos++;
+        if (parcelaPos >= parcelaMinima) {
+          break;
+        }
+
+        mesesDiluidos--;
       }
 
-      parcelaPos=Math.max(parcelaPos,parcelaMinima);
-      mesesPosContemplacao=mesesDiluidos;
-      mesesExtras=Math.max(0,mesesDiluidos-mesesRestantesContrato);
-      prazoEfetivo=k+mesesPosContemplacao;
+      if (lanceUtilizado > 0 && mesesDiluidos >= mesesRestantesContrato) {
+        mesesDiluidos = mesesMinimos;
+      }
+
+      reducaoParcela = lanceUtilizado / Math.max(1, mesesDiluidos);
+      parcelaPos = Math.max(parcelaMinima, parcelaBaseAntesAmortizacao - reducaoParcela);
+      mesesPosContemplacao = mesesDiluidos;
+      mesesExtras = Math.max(0, mesesDiluidos - mesesRestantesContrato);
+      prazoEfetivo = k + mesesPosContemplacao;
 
     }else{
       /*
          Amortização por prazo:
          paga parcelas de trás para frente. Cada parcela quitada pelo lance
-         reduz 1 mês do prazo restante.
+         reduz 1 mês do prazo restante, e nunca deixa o restante igual ao
+         contrato.
       */
-      const valorParcelaParaPrazo=Math.max(parcelaBaseAntesAmortizacao,0.01);
+      const valorParcelaParaPrazo = Math.max(parcelaBaseAntesAmortizacao, 0.01);
+      const abatimentoMaximo = Math.max(0, mesesRestantesContrato - 1);
 
-      mesesEconomizados=Math.min(
-        mesesRestantesContrato,
-        Math.floor(lanceUtilizado/valorParcelaParaPrazo)
+      mesesEconomizados = Math.min(
+        abatimentoMaximo,
+        Math.max(0, Math.floor(lanceUtilizado / valorParcelaParaPrazo))
       );
 
-      mesesPosContemplacao=
-        mesesRestantesContrato-mesesEconomizados;
-
-      prazoEfetivo=
-        k+mesesPosContemplacao;
-
-      parcelaPos=parcelaBaseAntesAmortizacao;
+      mesesPosContemplacao = Math.max(0, mesesRestantesContrato - mesesEconomizados);
+      prazoEfetivo = k + mesesPosContemplacao;
+      parcelaPos = parcelaBaseAntesAmortizacao;
     }
 
   }else if(lanceUtilizado<saldoDevedorAntesLance){
