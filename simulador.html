@@ -63,16 +63,6 @@ legend{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transfor
 .result-panel.compact-mode .headline-numbers{margin-bottom:12px;padding-bottom:12px}
 .result-panel.compact-mode .result-panel-top{margin-bottom:12px}
 
-.result-panel .seal-row,
-.result-panel .cols,
-.result-panel .section-block,
-.result-panel .formula,
-.result-panel .lance-info,
-.result-panel .evolution-actions,
-.result-panel .evolution-panel,
-.result-panel .summary-strip,
-.result-panel #separatedPanel{display:none !important}
-
 @media(max-width:800px){.key-grid{grid-template-columns:1fr 1fr}}
 @media(max-width:700px){.field-row{grid-template-columns:1fr;gap:12px}.cols{grid-template-columns:1fr;gap:18px}.headline-numbers{grid-template-columns:1fr}.summary-strip{grid-template-columns:1fr 1fr}.action-bar{flex-direction:column;align-items:stretch}.btn{width:100%}.seal{display:none}.key-grid{grid-template-columns:1fr 1fr}}
 @media(max-width:480px){.form-panel,.result-panel{padding:16px}.summary-strip{grid-template-columns:1fr}.key-grid{grid-template-columns:1fr}.wrap{padding:0 12px 40px}}
@@ -92,8 +82,8 @@ legend{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transfor
   <h2>Dados da simulação</h2>
   <p class="section-note">Use os números do contrato. O modelo abaixo segue as contas definidas em “a + b + c”.</p>
   <div class="action-bar">
-    <button type="button" id="loadExample" class="btn btn-dark">Carregar exemplo</button>
     <button type="button" id="btnShowResults" class="btn btn-gold">Calcular e ver resultado ↓</button>
+    <button type="button" id="loadExample" class="btn btn-dark">Carregar exemplo</button>
   </div>
 
   <form id="calcForm">
@@ -102,7 +92,7 @@ legend{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transfor
       <div class="field-row"><div class="field"><label for="credito">Valor do crédito (R$)</label><input type="number" id="credito" value="45000" min="1" step="100"></div><div class="field"><label for="prazo">Prazo total (meses)</label><input type="number" id="prazo" value="100" min="1" step="1"></div></div>
       <div class="field-row"><div class="field"><label for="ta">Taxa de administração total (%)</label><input type="number" id="ta" value="16" min="0" step="0.1"></div><div class="field"><label for="fr">Fundo de reserva total (%)</label><input type="number" id="fr" value="3" min="0" step="0.1"></div></div>
       <div class="field-row"><div class="field"><label for="seguroPct">Seguro mensal (% do crédito — 0 se não houver)</label><input type="number" id="seguroPct" value="0" min="0" step="0.001"></div><div class="field"><label for="mesContemplacao">Contemplação na parcela nº</label><input type="number" id="mesContemplacao" value="10" min="1" step="1"></div></div>
-      <div class="field-row"><div class="field"><label for="tipoBem">Tipo de bem</label><select id="tipoBem"><option value="imovel">Imóvel — 0,5% do saldo devedor</option><option value="auto">Automóvel — 1% do saldo devedor</option></select></div><div class="field"><label>Regra pós-contemplação</label><div class="inline-note" style="margin:0">Parcela pós = percentual do saldo devedor. A diferença restante do redutor é tratada separadamente.</div></div></div>
+      <div class="field-row"><div class="field"><label for="tipoBem">Tipo de bem</label><select id="tipoBem"><option value="auto" selected>Automóvel — 1% do saldo devedor</option><option value="imovel">Imóvel — 0,5% do saldo devedor</option></select></div><div class="field"><label>Regra pós-contemplação</label><div class="inline-note" style="margin:0">Parcela pós = percentual do saldo devedor. A diferença restante do redutor é tratada separadamente.</div></div></div>
       <div class="inline-note">Seguro não entra no exemplo-base. Atualização do crédito/parcela não é projetada: a decomposição oficial do contrato prevalece.</div>
     </fieldset>
 
@@ -139,8 +129,8 @@ legend{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transfor
   </div>
 
   <div class="key-grid">
-    <div class="key-card"><div class="k">Lance próprio</div><div class="v" id="keyProprio">—</div><div class="s">utilizado no saldo</div></div>
     <div class="key-card"><div class="k">Lance embutido</div><div class="v" id="keyEmbutido">—</div><div class="s">utilizado no saldo</div></div>
+    <div class="key-card"><div class="k">Lance próprio</div><div class="v" id="keyProprio">—</div><div class="s">utilizado no saldo</div></div>
     <div class="key-card"><div class="k">Meses restantes</div><div class="v" id="keyMeses">—</div><div class="s">após contemplação</div></div>
     <div class="key-card"><div class="k">Crédito líquido</div><div class="v" id="keyCredito">—</div><div class="s">crédito − embutido</div></div>
   </div>
@@ -662,17 +652,20 @@ function drawChart(r){
 
 
 const panel=$id('resultsPanel');
-function showResults(){render(calc(readInputs()));panel.classList.add('active');setTimeout(()=>panel.scrollIntoView({behavior:'smooth',block:'start'}),50)}
-$id('btnShowResults').addEventListener('click',showResults);
-$id('btnHideResults').addEventListener('click',()=>{panel.classList.remove('active');document.querySelector('.form-panel').scrollIntoView({behavior:'smooth',block:'start'})});
+const btnShowResults=$id('btnShowResults');
+const btnHideResults=$id('btnHideResults');
+function showResults(){if(!panel)return;render(calc(readInputs()));panel.classList.add('active');setTimeout(()=>panel.scrollIntoView({behavior:'smooth',block:'start'}),50)}
+if(btnShowResults) btnShowResults.addEventListener('click',showResults);
+if(btnHideResults) btnHideResults.addEventListener('click',()=>{if(!panel)return;panel.classList.remove('active');const formPanel=document.querySelector('.form-panel');if(formPanel) formPanel.scrollIntoView({behavior:'smooth',block:'start'})});
 let debounce;
-function onFormChange(){updateVisibility();if(panel.classList.contains('active')){clearTimeout(debounce);debounce=setTimeout(()=>render(calc(readInputs())),180)}}
-$id('calcForm').addEventListener('input',onFormChange);$id('calcForm').addEventListener('change',onFormChange);
+function onFormChange(){updateVisibility();if(panel && panel.classList.contains('active')){clearTimeout(debounce);debounce=setTimeout(()=>render(calc(readInputs())),180)}}
+const calcForm=$id('calcForm');
+if(calcForm){calcForm.addEventListener('input',onFormChange);calcForm.addEventListener('change',onFormChange);}
 
 
 const evolutionPanel=$id('evolutionPanel');
 const btnToggleEvolution=$id('btnToggleEvolution');
-btnToggleEvolution.addEventListener('click',()=>{
+if(btnToggleEvolution && evolutionPanel){btnToggleEvolution.addEventListener('click',()=>{
   const isOpen=evolutionPanel.classList.toggle('active');
   btnToggleEvolution.textContent=isOpen?'Ocultar evolução ↑':'Ver evolução das parcelas ↓';
   if(isOpen && window.currentResult){
@@ -680,26 +673,33 @@ btnToggleEvolution.addEventListener('click',()=>{
     renderEvolution(window.currentResult);
     setTimeout(()=>evolutionPanel.scrollIntoView({behavior:'smooth',block:'nearest'}),30);
   }
-});
+});}
 
-$id('loadExample').addEventListener('click',()=>{
-  $id('credito').value=45000;$id('prazo').value=100;$id('ta').value=16;$id('fr').value=3;$id('seguroPct').value=0;$id('mesContemplacao').value=10;if($id('tipoBem'))$id('tipoBem').value='imovel';
+const btnLoadExample=$id('loadExample');
+if(btnLoadExample){btnLoadExample.addEventListener('click',()=>{
+  $id('credito').value=45000;$id('prazo').value=100;$id('ta').value=16;$id('fr').value=3;$id('seguroPct').value=0;$id('mesContemplacao').value=10;if($id('tipoBem'))$id('tipoBem').value='auto';
   document.querySelector('input[name="redutor"][value="50"]').checked=true;$id('redutorCustom').value=50;
   $id('adesaoPct').value=2;document.querySelector('input[name="adesaoForma"][value="avista"]').checked=true;$id('adesaoMeses').value=12;
   $id('dinheiro').value=0;$id('embutido').value=0;document.querySelector('input[name="restante"][value="parcelas"]').checked=true;
   updateVisibility();showResults();
-});
+});}
 
 function timestamp(){return new Date().toISOString().replace(/[:.]/g,'-')}
 function download(name,text,type='text/plain'){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([text],{type:type+';charset=utf-8'}));a.download=name;document.body.appendChild(a);a.click();a.remove()}
 function currentResult(){return calc(readInputs())}
 function outflowCsvRows(result){return ['mes;parcela', ...result.outflow.slice(1).map((v,i)=>`${i+1};${v.toFixed(2)}`)]}
-$id('btnSeparate').addEventListener('click',()=>{$id('separatedResults').textContent=JSON.stringify(currentResult(),null,2);$id('separatedPanel').style.display='block'});
-$id('btnCloseSeparated').addEventListener('click',()=>$id('separatedPanel').style.display='none');
-$id('btnCopySeparated').addEventListener('click',async()=>{try{await navigator.clipboard.writeText(JSON.stringify(currentResult(),null,2));const b=$id('btnCopySeparated');b.textContent='Copiado!';setTimeout(()=>b.textContent='Copiar',1400)}catch{alert('Use Exportar JSON.')}});
-$id('btnExportJSON').addEventListener('click',()=>download('simulacao-'+timestamp()+'.json',JSON.stringify(currentResult(),null,2),'application/json'));
-$id('btnExportCSV').addEventListener('click',()=>download('parcelas-'+timestamp()+'.csv',outflowCsvRows(currentResult()).join('\n'),'text/csv'));
-$id('btnExportOutflowCSV').addEventListener('click',()=>download('parcelas-'+timestamp()+'.csv',outflowCsvRows(currentResult()).join('\n'),'text/csv'));
+const btnSeparate=$id('btnSeparate');
+const btnCloseSeparated=$id('btnCloseSeparated');
+const btnCopySeparated=$id('btnCopySeparated');
+const btnExportJSON=$id('btnExportJSON');
+const btnExportCSV=$id('btnExportCSV');
+const btnExportOutflowCSV=$id('btnExportOutflowCSV');
+if(btnSeparate){btnSeparate.addEventListener('click',()=>{$id('separatedResults').textContent=JSON.stringify(currentResult(),null,2);$id('separatedPanel').style.display='block'});}
+if(btnCloseSeparated){btnCloseSeparated.addEventListener('click',()=>$id('separatedPanel').style.display='none');}
+if(btnCopySeparated){btnCopySeparated.addEventListener('click',async()=>{try{await navigator.clipboard.writeText(JSON.stringify(currentResult(),null,2));const b=$id('btnCopySeparated');b.textContent='Copiado!';setTimeout(()=>b.textContent='Copiar',1400)}catch{alert('Use Exportar JSON.')}});}
+if(btnExportJSON){btnExportJSON.addEventListener('click',()=>download('simulacao-'+timestamp()+'.json',JSON.stringify(currentResult(),null,2),'application/json'));}
+if(btnExportCSV){btnExportCSV.addEventListener('click',()=>download('parcelas-'+timestamp()+'.csv',outflowCsvRows(currentResult()).join('\n'),'text/csv'));}
+if(btnExportOutflowCSV){btnExportOutflowCSV.addEventListener('click',()=>download('parcelas-'+timestamp()+'.csv',outflowCsvRows(currentResult()).join('\n'),'text/csv'));}
 updateVisibility();
 </script>
 </body>
