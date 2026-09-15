@@ -49,6 +49,30 @@ legend{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transfor
 .summary-strip{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:22px}.stat{border:1px solid var(--parchment-2);border-radius:3px;padding:14px;background:rgba(255,255,255,.3)}.stat .k{font-size:11px;color:var(--text-soft);margin-bottom:6px}.stat .v{font-family:var(--mono);font-size:16px;color:var(--ink);font-weight:600}
 #separatedPanel{display:none;border:1px solid rgba(15,36,56,.06);padding:12px;border-radius:6px;background:#fff;margin-bottom:18px}#separatedPanel .sep-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;gap:8px}#separatedPanel .sep-actions{display:flex;gap:8px}#separatedResults{font-family:var(--mono);font-size:12px;color:var(--ink-2);white-space:pre-wrap;max-height:240px;overflow:auto;padding:6px;background:#FBF9F2;border-radius:4px;border:1px dashed var(--parchment-2)}
 .disclaimer{max-width:900px;margin:28px auto 0;padding:18px 24px;color:#93a3b0;font-size:12px;line-height:1.6}.disclaimer strong{color:var(--gold-light)}
+/* Modo compacto: mantém somente o resumo financeiro principal */
+.result-panel.compact-mode .key-grid,
+.result-panel.compact-mode .seal-row,
+.result-panel.compact-mode .cols,
+.result-panel.compact-mode .section-block,
+.result-panel.compact-mode .formula,
+.result-panel.compact-mode .lance-info,
+.result-panel.compact-mode .evolution-actions,
+.result-panel.compact-mode .evolution-panel,
+.result-panel.compact-mode .summary-strip,
+.result-panel.compact-mode #separatedPanel{display:none !important}
+.result-panel.compact-mode .headline-numbers{margin-bottom:12px;padding-bottom:12px}
+.result-panel.compact-mode .result-panel-top{margin-bottom:12px}
+
+.result-panel .seal-row,
+.result-panel .cols,
+.result-panel .section-block,
+.result-panel .formula,
+.result-panel .lance-info,
+.result-panel .evolution-actions,
+.result-panel .evolution-panel,
+.result-panel .summary-strip,
+.result-panel #separatedPanel{display:none !important}
+
 @media(max-width:800px){.key-grid{grid-template-columns:1fr 1fr}}
 @media(max-width:700px){.field-row{grid-template-columns:1fr;gap:12px}.cols{grid-template-columns:1fr;gap:18px}.headline-numbers{grid-template-columns:1fr}.summary-strip{grid-template-columns:1fr 1fr}.action-bar{flex-direction:column;align-items:stretch}.btn{width:100%}.seal{display:none}.key-grid{grid-template-columns:1fr 1fr}}
 @media(max-width:480px){.form-panel,.result-panel{padding:16px}.summary-strip{grid-template-columns:1fr}.key-grid{grid-template-columns:1fr}.wrap{padding:0 12px 40px}}
@@ -115,58 +139,16 @@ legend{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transfor
   </div>
 
   <div class="key-grid">
-    <div class="key-card"><div class="k">Pago em parcelas até contemplar</div><div class="v" id="keyPagoParcelas">—</div><div class="s" id="keyPagoSub">—</div></div>
-    <div class="key-card"><div class="k">Lance próprio</div><div class="v" id="keyProprio">—</div><div class="s">recurso próprio</div></div>
-    <div class="key-card"><div class="k">Lance embutido</div><div class="v" id="keyEmbutido">—</div><div class="s">reduz o crédito líquido</div></div>
-    <div class="key-card"><div class="k">Lance somado</div><div class="v" id="keySomado">—</div><div class="s">próprio + embutido</div></div>
+    <div class="key-card"><div class="k">Lance próprio</div><div class="v" id="keyProprio">—</div><div class="s">utilizado no saldo</div></div>
+    <div class="key-card"><div class="k">Lance embutido</div><div class="v" id="keyEmbutido">—</div><div class="s">utilizado no saldo</div></div>
     <div class="key-card"><div class="k">Meses restantes</div><div class="v" id="keyMeses">—</div><div class="s">após contemplação</div></div>
-    <div class="key-card"><div class="k">Saldo devedor pós-lance</div><div class="v" id="keySaldoDevedor">—</div><div class="s" id="keySaldoSub">base da parcela pós</div></div>
     <div class="key-card"><div class="k">Crédito líquido</div><div class="v" id="keyCredito">—</div><div class="s">crédito − embutido</div></div>
-    <div class="key-card"><div class="k">Diferença acumulada</div><div class="v" id="keyDiferenca">—</div><div class="s">redutor até a contemplação</div></div>
-    <div class="key-card"><div class="k">Total nominal do plano</div><div class="v" id="keyPlano">—</div><div class="s">crédito + TA + FR</div></div>
   </div>
 
-  <div class="seal-row">
-    <div class="seal"><div class="num" id="sealTaxa">—</div><div class="lbl">taxa real pós-contemplação</div></div>
-    <div class="seal-desc"><h3>Extrato simulado</h3><p id="sealText">—</p></div>
-  </div>
+  <div class="summary-strip" style="display:none"><div class="stat"><div class="k">Total pago em parcelas</div><div class="v" id="statTotalParcelas">—</div></div><div class="stat"><div class="k">Total de desembolso + lance próprio</div><div class="v" id="statDesembolso">—</div></div><div class="stat"><div class="k">Taxa real anual equivalente</div><div class="v" id="statTaxa">—</div></div></div>
 
-  <div class="cols">
-    <div class="ledger"><h4>Parcela pré-contemplação</h4><div class="ledger-line"><span class="lbl">Fundo Comum (reduzido)</span><span class="fill"></span><span class="val" id="preFundo">—</span></div><div class="ledger-line"><span class="lbl">Taxa Adm. diluída</span><span class="fill"></span><span class="val" id="preTA">—</span></div><div class="ledger-line"><span class="lbl">Fundo de Reserva (reduzido)</span><span class="fill"></span><span class="val" id="preFR">—</span></div><div class="ledger-line"><span class="lbl">Seguro</span><span class="fill"></span><span class="val" id="preSeguro">—</span></div><div class="ledger-line total"><span class="lbl">Parcela mensal</span><span class="fill"></span><span class="val" id="preTotal">—</span></div></div>
-    <div class="ledger"><h4>Parcela pós-contemplação</h4><div class="ledger-line"><span class="lbl">Saldo devedor</span><span class="fill"></span><span class="val" id="posFundo">—</span></div><div class="ledger-line"><span class="lbl">Percentual pós-contemplação</span><span class="fill"></span><span class="val" id="posTA">—</span></div><div class="ledger-line"><span class="lbl">Parcela-base pelo saldo</span><span class="fill"></span><span class="val" id="posFR">—</span></div><div class="ledger-line"><span class="lbl">Diferença diluída</span><span class="fill"></span><span class="val" id="posDiluicao">—</span></div><div class="ledger-line total"><span class="lbl">Parcela mensal</span><span class="fill"></span><span class="val" id="posTotal">—</span></div></div>
-  </div>
-
-  <div class="section-block"><h4>Contemplação e lance</h4><div class="ledger-line"><span class="lbl">Parcela da contemplação</span><span class="fill"></span><span class="val" id="contemplacaoParcela">—</span></div><div class="ledger-line"><span class="lbl">Pago em parcelas até contemplar</span><span class="fill"></span><span class="val" id="pagoAte">—</span></div><div class="ledger-line"><span class="lbl">Lance próprio</span><span class="fill"></span><span class="val" id="lanceProprio">—</span></div><div class="ledger-line"><span class="lbl">Lance embutido</span><span class="fill"></span><span class="val" id="lanceEmbutido">—</span></div><div class="ledger-line total"><span class="lbl">Lance somado</span><span class="fill"></span><span class="val" id="lanceSomado">—</span></div></div>
-
-  <div class="section-block"><h4>Diferença do redutor</h4><div class="ledger-line"><span class="lbl">Diferença mensal</span><span class="fill"></span><span class="val" id="difMensal">—</span></div><div class="ledger-line"><span class="lbl">Diferença acumulada</span><span class="fill"></span><span class="val" id="difAcumulada">—</span></div><div class="ledger-line"><span class="lbl">Diferença diluída no pós</span><span class="fill"></span><span class="val" id="difDiluida">—</span></div></div>
-
-  <div class="section-block"><h4>Crédito, saldo e prazo</h4><div class="ledger-line"><span class="lbl">Crédito contratado</span><span class="fill"></span><span class="val" id="creditoContratado">—</span></div><div class="ledger-line"><span class="lbl">Lance embutido</span><span class="fill"></span><span class="val" id="creditoEmbutido">—</span></div><div class="ledger-line total"><span class="lbl">Crédito líquido recebido</span><span class="fill"></span><span class="val" id="creditoLiquido">—</span></div><div class="ledger-line"><span class="lbl">Saldo devedor antes do lance</span><span class="fill"></span><span class="val" id="saldoAntesLance">—</span></div><div class="ledger-line ok"><span class="lbl">Lance utilizado no saldo</span><span class="fill"></span><span class="val" id="lanceUtilizado">—</span></div><div class="ledger-line total"><span class="lbl">Saldo devedor após o lance</span><span class="fill"></span><span class="val" id="saldoDepoisLance">—</span></div><div class="ledger-line"><span class="lbl">Meses contratuais restantes</span><span class="fill"></span><span class="val" id="mesesRestantesContrato">—</span></div><div class="ledger-line"><span class="lbl">Meses economizados</span><span class="fill"></span><span class="val" id="mesesEconomizados">—</span></div><div class="ledger-line total"><span class="lbl">Meses pós-contemplação</span><span class="fill"></span><span class="val" id="mesesPos">—</span></div><div class="ledger-line"><span class="lbl">Lance não utilizado</span><span class="fill"></span><span class="val" id="lanceNaoUtilizado">—</span></div></div>
-
-  <div class="formula" id="formula">—</div>
-  <div class="lance-info" id="lanceInfo">—</div>
-
-  <div class="evolution-actions">
-    <button type="button" id="btnToggleEvolution" class="btn btn-gold">Ver evolução das parcelas ↓</button>
-  </div>
-
-  <div class="evolution-panel" id="evolutionPanel">
-    <div class="chart-wrap">
-      <h4>Evolução das parcelas — reajuste de 5% a.a.</h4>
-      <p class="evolution-note">A cada 12 meses, crédito e parcela recebem o mesmo fator de reajuste de 5%. O valor-base da parcela continua seguindo as regras da simulação.</p>
-      <canvas id="chart" width="900" height="150"></canvas>
-    </div>
-    <div class="evolution-table-wrap">
-      <table class="evolution-table">
-        <thead><tr><th>Mês</th><th>Fase</th><th>Reajuste</th><th>Crédito equivalente</th><th>Parcela equivalente</th></tr></thead>
-        <tbody id="evolutionRows"></tbody>
-      </table>
-    </div>
-  </div>
-
-  <div class="summary-strip"><div class="stat"><div class="k">Total pago em parcelas</div><div class="v" id="statTotalParcelas">—</div></div><div class="stat"><div class="k">Total de desembolso + lance próprio</div><div class="v" id="statDesembolso">—</div></div><div class="stat"><div class="k">Taxa real anual equivalente</div><div class="v" id="statTaxa">—</div></div></div>
-
-  <div class="action-bar"><button type="button" id="btnSeparate" class="btn btn-gold">Ver JSON</button><button type="button" id="btnExportJSON" class="btn btn-dark">Exportar JSON</button><button type="button" id="btnExportCSV" class="btn btn-dark">Exportar CSV</button></div>
-  <div id="separatedPanel"><div class="sep-head"><strong>Dados da simulação</strong><div class="sep-actions"><button type="button" id="btnCopySeparated" class="btn btn-sm btn-dark">Copiar</button><button type="button" id="btnExportOutflowCSV" class="btn btn-sm btn-dark">Parcelas CSV</button><button type="button" id="btnCloseSeparated" class="btn btn-sm btn-ghost">Fechar</button></div></div><div id="separatedResults"></div></div>
+  <div class="action-bar" style="display:none"><button type="button" id="btnSeparate" class="btn btn-gold">Ver JSON</button><button type="button" id="btnExportJSON" class="btn btn-dark">Exportar JSON</button><button type="button" id="btnExportCSV" class="btn btn-dark">Exportar CSV</button></div>
+  <div id="separatedPanel" style="display:none"><div class="sep-head"><strong>Dados da simulação</strong><div class="sep-actions"><button type="button" id="btnCopySeparated" class="btn btn-sm btn-dark">Copiar</button><button type="button" id="btnExportOutflowCSV" class="btn btn-sm btn-dark">Parcelas CSV</button><button type="button" id="btnCloseSeparated" class="btn btn-sm btn-ghost">Fechar</button></div></div><div id="separatedResults"></div></div>
 </section>
 
 <p class="disclaimer"><strong>Sobre esta simulação:</strong> ferramenta educacional independente. As contas seguem o modelo didático de “a + b + c”. Regras reais de cobrança, atualização do crédito, contemplação e amortização devem ser confirmadas na decomposição dos pagamentos e no contrato da administradora.</p>

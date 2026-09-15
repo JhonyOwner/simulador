@@ -233,6 +233,8 @@
     clearTimeout(calcTimer);
     calcAndRender(); // sempre recalcula na hora de abrir, sem esperar o debounce
     $resultsOverlay.classList.add('active');
+    const panel = document.getElementById('resultsPanel');
+    if (panel) panel.classList.add('compact-mode');
     $resultsOverlay.scrollTop = 0;
     document.body.style.overflow = 'hidden';
   }
@@ -240,6 +242,8 @@
   function closeResultsPanel() {
     if (!$resultsOverlay) return;
     $resultsOverlay.classList.remove('active');
+    const panel = document.getElementById('resultsPanel');
+    if (panel) panel.classList.remove('compact-mode');
     document.body.style.overflow = '';
   }
 
