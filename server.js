@@ -4,7 +4,7 @@ const http = require('http');
 const fs = require('fs');
 const path = require('path');
 const port = process.env.PORT || 8080;
-const root = process.cwd();
+const root = __dirname;
 
 function contentType(file){
   const ext = path.extname(file).toLowerCase();
