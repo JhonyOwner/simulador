@@ -25,6 +25,7 @@ const srv = http.createServer((req,res)=>{
   try{
     let urlPath = decodeURIComponent(req.url.split('?')[0]);
     if(urlPath === '/' || urlPath === '') urlPath = '/index.html';
+    if(urlPath === '/simulador') urlPath = '/simulador.html';
     const filePath = path.join(root, urlPath);
     if(!filePath.startsWith(root)) { res.statusCode = 403; return res.end('Forbidden'); }
     fs.stat(filePath, (err,stats)=>{
