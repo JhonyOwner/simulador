@@ -89,10 +89,10 @@ legend{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transfor
   <form id="calcForm">
     <fieldset>
       <legend>Plano</legend>
-      <div class="field-row"><div class="field"><label for="credito">Valor do crédito (R$)</label><input type="number" id="credito" value="45000" min="1" step="100"></div><div class="field"><label for="prazo">Prazo total (meses)</label><input type="number" id="prazo" value="100" min="1" step="1"></div></div>
-      <div class="field-row"><div class="field"><label for="ta">Taxa de administração total (%)</label><input type="number" id="ta" value="16" min="0" step="0.1"></div><div class="field"><label for="fr">Fundo de reserva total (%)</label><input type="number" id="fr" value="3" min="0" step="0.1"></div></div>
-      <div class="field-row"><div class="field"><label for="seguroPct">Seguro mensal (% do crédito — 0 se não houver)</label><input type="number" id="seguroPct" value="0" min="0" step="0.001"></div><div class="field"><label for="mesContemplacao">Contemplação na parcela nº</label><input type="number" id="mesContemplacao" value="10" min="1" step="1"></div></div>
-      <div class="field-row"><div class="field"><label for="inccPct">INCC / reajuste anual (%)</label><input type="number" id="inccPct" value="5" min="0" step="0.1"></div><div class="field"><label>Aplicação</label><div class="inline-note" style="margin:0">Reajuste aplicado a cada 12 meses no crédito e na parcela da evolução.</div></div></div>
+      <div class="field-row"><div class="field"><label for="credito">Valor do crédito (R$)</label><input type="number" id="credito" value="45000" placeholder="Ex.: 45000" min="1" step="100"></div><div class="field"><label for="prazo">Prazo total (meses)</label><input type="number" id="prazo" value="100" placeholder="Ex.: 100" min="1" step="1"></div></div>
+      <div class="field-row"><div class="field"><label for="ta">Taxa de administração total (%)</label><input type="number" id="ta" value="16" placeholder="Ex.: 16" min="0" step="0.1"></div><div class="field"><label for="fr">Fundo de reserva total (%)</label><input type="number" id="fr" value="3" placeholder="Ex.: 3" min="0" step="0.1"></div></div>
+      <div class="field-row"><div class="field"><label for="seguroPct">Seguro mensal (% do crédito — 0 se não houver)</label><input type="number" id="seguroPct" value="0" placeholder="Ex.: 0" min="0" step="0.001"></div><div class="field"><label for="mesContemplacao">Contemplação na parcela nº</label><input type="number" id="mesContemplacao" value="10" placeholder="Ex.: 10" min="1" step="1"></div></div>
+      <div class="field-row"><div class="field"><label for="inccPct">INCC / reajuste anual (%)</label><input type="number" id="inccPct" value="5" placeholder="Ex.: 5" min="0" step="0.1"></div><div class="field"><label>Aplicação</label><div class="inline-note" style="margin:0">Reajuste aplicado a cada 12 meses no crédito e na parcela da evolução.</div></div></div>
       <div class="field-row"><div class="field"><label for="tipoBem">Tipo de bem</label><select id="tipoBem"><option value="auto" selected>Automóvel — 1% do saldo devedor</option><option value="imovel">Imóvel — 0,5% do saldo devedor</option></select></div><div class="field"><label>Regra pós-contemplação</label><div class="inline-note" style="margin:0">Parcela pós = percentual do saldo devedor. A diferença restante do redutor é tratada separadamente.</div></div></div>
       <div class="inline-note">Seguro não entra no exemplo-base. Atualização do crédito/parcela não é projetada: a decomposição oficial do contrato prevalece.</div>
     </fieldset>
@@ -100,21 +100,21 @@ legend{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transfor
     <fieldset>
       <legend>Plano redutor</legend>
       <div class="radio-group"><label><input type="radio" name="redutor" value="0"> Sem redução</label><label><input type="radio" name="redutor" value="25"> 25%</label><label><input type="radio" name="redutor" value="50" checked> 50%</label><label><input type="radio" name="redutor" value="custom"> Outro %</label></div>
-      <div class="field" id="redutorCustomField"><label for="redutorCustom">Percentual do redutor (%)</label><input type="number" id="redutorCustom" value="50" min="0" max="95" step="1"></div>
+      <div class="field" id="redutorCustomField"><label for="redutorCustom">Percentual do redutor (%)</label><input type="number" id="redutorCustom" value="50" placeholder="Ex.: 50" min="0" max="95" step="1"></div>
       <p class="inline-note">O redutor reduz Fundo Comum e Fundo de Reserva. A Taxa de Administração não sofre o redutor.</p>
     </fieldset>
 
     <fieldset>
       <legend>Taxa de adesão antecipada</legend>
-      <div class="field"><label for="adesaoPct">Percentual antecipado, dentro da TA total (%)</label><input type="number" id="adesaoPct" value="2" min="0" step="0.1"></div>
+      <div class="field"><label for="adesaoPct">Percentual antecipado, dentro da TA total (%)</label><input type="number" id="adesaoPct" value="2" placeholder="Ex.: 2" min="0" step="0.1"></div>
       <div class="radio-group"><label><input type="radio" name="adesaoForma" value="avista" checked> À vista, na 1ª parcela</label><label><input type="radio" name="adesaoForma" value="diluida"> Diluída</label></div>
-      <div class="field" id="adesaoMesesField"><label for="adesaoMeses">Diluir em quantas parcelas</label><input type="number" id="adesaoMeses" value="12" min="1" step="1"></div>
+      <div class="field" id="adesaoMesesField"><label for="adesaoMeses">Diluir em quantas parcelas</label><input type="number" id="adesaoMeses" value="12" placeholder="Ex.: 12" min="1" step="1"></div>
       <p class="inline-note">Exemplo-base: 2% do crédito = R$ 900,00. Como os 2% estão dentro dos 16%, a TA restante é 14%.</p>
     </fieldset>
 
     <fieldset>
       <legend>Lance na contemplação</legend>
-      <div class="field-row"><div class="field"><label for="dinheiro">Lance com recursos próprios (R$)</label><input type="number" id="dinheiro" value="0" min="0" step="100"></div><div class="field"><label for="embutido">Lance embutido (R$)</label><input type="number" id="embutido" value="0" min="0" step="100"></div></div>
+      <div class="field-row"><div class="field"><label for="dinheiro">Lance com recursos próprios (R$)</label><input type="number" id="dinheiro" value="0" placeholder="Ex.: 5000" min="0" step="100"></div><div class="field"><label for="embutido">Lance embutido (R$)</label><input type="number" id="embutido" value="0" placeholder="Ex.: 3000" min="0" step="100"></div></div>
       <div class="radio-group"><label><input type="radio" name="restante" value="parcelas" checked> Amortizar parcelas</label><label><input type="radio" name="restante" value="prazo"> Amortizar prazo</label></div>
       <p class="inline-note">Todo lance utilizado (próprio + embutido) abate o saldo devedor. Por prazo: paga de trás para frente e reduz meses. Por parcela: o lance é diluído nas parcelas restantes, respeitando o mínimo de 0,5% do saldo no imóvel e 1% no automóvel.</p>
     </fieldset>
@@ -200,6 +200,8 @@ function calc(inp){
   const frReduzido=frMensalCheio*fatorRedutor;
 
   const parcelaReduzida=fundoComumReduzido+frReduzido+taMensal+seguro;
+  const primeiraParcela=parcelaReduzida+
+    (adesaoForma==='avista'?adesaoValor:adesaoPorParcela);
 
   /* C — diferença criada pelo redutor */
   const diferencaMensal=(fundoComumMensal-fundoComumReduzido)+(frMensalCheio-frReduzido);
@@ -221,11 +223,28 @@ function calc(inp){
 
   const mesesRestantesContrato=Math.max(0,N-k);
 
-  /* Saldo devedor antes do lance.
-     Mantemos a lógica do modelo A+B+C: o principal já recolhido vem do
-     Fundo Comum reduzido durante as parcelas com redutor. */
-  const principalRecolhido=fundoComumReduzido*k;
-  const saldoDevedorAntesLance=Math.max(0,credito-principalRecolhido);
+  /* Saldo devedor antes do lance: crédito + taxas contratadas,
+     menos as parcelas efetivamente pagas antes da contemplação. */
+  const taxasTotais=credito*(taPct+frPct)/100+seguro*N;
+  const parcelasPagasAntesContemplacao=Math.min(k,N);
+  const parcelasNormaisDepoisDaPrimeira=Math.max(0,parcelasPagasAntesContemplacao-1);
+  const valorPrimeiraParcelaPaga=parcelasPagasAntesContemplacao>0
+    ? primeiraParcela
+    : 0;
+  const adesaoPagaDepoisDaPrimeira=adesaoForma==='diluida'
+    ? adesaoPorParcela*Math.min(
+        Math.max(0,parcelasPagasAntesContemplacao-1),
+        Math.max(0,adesaoMeses-1)
+      )
+    : 0;
+  const valorParcelasPagasAntes=
+    valorPrimeiraParcelaPaga+
+    parcelaReduzida*parcelasNormaisDepoisDaPrimeira+
+    adesaoPagaDepoisDaPrimeira;
+  const saldoDevedorAntesLance=Math.max(
+    0,
+    credito+taxasTotais-valorParcelasPagasAntes
+  );
 
   /* Todo lance (próprio + embutido) é usado para abater o saldo. */
   const lanceUtilizado=Math.min(lanceSomado,saldoDevedorAntesLance);
@@ -281,10 +300,12 @@ function calc(inp){
          Amortização por parcela:
          - o objetivo é reduzir a parcela e, ao mesmo tempo, nunca deixar o
            prazo pós-contemplação igual ao contrato;
-         - se houver lance, o prazo restante deve cair pelo menos 1 mês;
+         - se houver lance, o prazo restante deve cair até a parcela alcançar o piso;
          - a parcela nunca pode ficar abaixo do piso mínimo sobre o saldo.
       */
-      const mesesMinimos = Math.max(0, mesesRestantesContrato - 1);
+      const mesesMinimos = lanceUtilizado>0
+        ? Math.max(1, mesesRestantesContrato - 1)
+        : mesesRestantesContrato;
       mesesDiluidos = Math.max(1, mesesRestantesContrato);
 
       while (mesesDiluidos > mesesMinimos) {
@@ -296,10 +317,6 @@ function calc(inp){
         }
 
         mesesDiluidos--;
-      }
-
-      if (lanceUtilizado > 0 && mesesDiluidos >= mesesRestantesContrato) {
-        mesesDiluidos = mesesMinimos;
       }
 
       reducaoParcela = lanceUtilizado / Math.max(1, mesesDiluidos);
@@ -362,35 +379,15 @@ function calc(inp){
     else outflow[t]=parcelaPos+adesao;
   }
 
-  /*
-     PAGO ANTES DA CONTEMPLAÇÃO
-     Se contempla na 12ª, são 11 parcelas + adesão.
-     A parcela da contemplação fica fora deste indicador.
-  */
-  /* Somente a parcela-base entra aqui. A adesão é somada separadamente.
-     Assim: contemplação na 12ª = 11 parcelas + adesão. */
-  /*
-     Regra do valor pago antes da contemplação:
-     contemplação na parcela k = (k - 1) parcelas + adesão já paga.
-
-     Exemplo: contemplação na 10ª parcela:
-       9 × parcela + 1 × adesão
-
-     A parcela da contemplação NÃO entra neste total.
-  */
-  const parcelasPagasAntesContemplacao=Math.max(0,k-1);
-  const valorParcelasAntesContemplacao=
-    parcelaReduzida*parcelasPagasAntesContemplacao;
+  /* A contemplação na parcela k deixa k - 1 parcelas pagas.
+     A primeira delas já contém a adesão. */
+  const valorParcelasAntesContemplacao=valorParcelasPagasAntes;
 
   const adesaoPagaAteContemplacao = adesaoForma==='avista'
-    ? (parcelasPagasAntesContemplacao > 0 ? adesaoValor : adesaoValor)
-    : adesaoPorParcela*Math.min(
-        adesaoMeses,
-        parcelasPagasAntesContemplacao
-      );
+    ? (parcelasPagasAntesContemplacao>0 ? adesaoValor : 0)
+    : adesaoPorParcela*Math.min(adesaoMeses,parcelasPagasAntesContemplacao);
 
-  const pagoAntesContemplacao =
-    valorParcelasAntesContemplacao + adesaoPagaAteContemplacao;
+  const pagoAntesContemplacao=valorParcelasAntesContemplacao;
 
   /* Desembolso total: parcelas + lance próprio efetivamente desembolsado. */
   const desembolsoAteContemplacao=pagoAntesContemplacao+proprioUtilizado;
@@ -476,11 +473,11 @@ function calc(inp){
     credito,N,k,taPct,frPct,seguroPct,seguro,inccPct,redutorPct,
     adesaoPct,adesaoValor,adesaoForma,adesaoMeses,adesaoPorParcela,taRestantePct,
     fundoComumMensal,frMensalCheio,taMensal,fundoComumReduzido,frReduzido,
-    parcelaReduzida,diferencaMensal,diferencaAcumulada,
+    parcelaReduzida,primeiraParcela,diferencaMensal,diferencaAcumulada,
     proprioPct,embutidoPct,lanceProprio,lanceEmbutido,lanceSomado,
     proprioUtilizado,embutidoUtilizado,lanceUtilizado,lanceNaoUtilizado,
     creditoLiquido,
-    mesesRestantesContrato,principalRecolhido,saldoDevedorAntesLance,saldoDevedor,
+    mesesRestantesContrato,taxasTotais,valorParcelasPagasAntes,valorParcelasAntesContemplacao,saldoDevedorAntesLance,saldoDevedor,
     percentualPos,parcelaMinima,parcelaBaseAntesAmortizacao,diferencaDiluidaBase,
     diferencaDiluida:diferencaDiluidaBase,
     reducaoParcela,parcelaPos,
@@ -513,7 +510,7 @@ function updateVisibility(){
 }
 
 function render(r){
-  const primeiraTotal=r.parcelaReduzida+(r.adesaoForma==='avista'?r.adesaoValor:r.adesaoPorParcela);
+  const primeiraTotal=r.primeiraParcela;
 
   setText('headlineTag',`Contemplação na ${r.k}ª parcela`);
   setText('headline1a',fmtBRL(primeiraTotal));
