@@ -66,6 +66,14 @@ legend{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transfor
 @media(max-width:800px){.key-grid{grid-template-columns:1fr 1fr}}
 @media(max-width:700px){.field-row{grid-template-columns:1fr;gap:12px}.cols{grid-template-columns:1fr;gap:18px}.headline-numbers{grid-template-columns:1fr}.summary-strip{grid-template-columns:1fr 1fr}.action-bar{flex-direction:column;align-items:stretch}.btn{width:100%}.seal{display:none}.key-grid{grid-template-columns:1fr 1fr}}
 @media(max-width:480px){.form-panel,.result-panel{padding:16px}.summary-strip{grid-template-columns:1fr}.key-grid{grid-template-columns:1fr}.wrap{padding:0 12px 40px}}
+@media print{
+  body{background:#fff;color:#000}
+  header.hero,.form-panel,.evolution-actions,.action-bar,.disclaimer{display:none!important}
+  .wrap{max-width:none;padding:0}
+  .panel{margin:0;box-shadow:none;border-radius:0}
+  #resultsPanel{display:block!important}
+  #evolutionPanel{display:block!important}
+}
 </style>
 </head>
 <body>
@@ -154,8 +162,7 @@ legend{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transfor
 
   <div class="summary-strip"><div class="stat"><div class="k">Total pago em parcelas</div><div class="v" id="statTotalParcelas">—</div></div><div class="stat"><div class="k">Total de desembolso + lance próprio</div><div class="v" id="statDesembolso">—</div></div><div class="stat"><div class="k">Taxa real anual equivalente</div><div class="v" id="statTaxa">—</div></div></div>
 
-  <div class="action-bar"><button type="button" id="btnSeparate" class="btn btn-gold">Ver JSON</button><button type="button" id="btnExportJSON" class="btn btn-dark">Exportar JSON</button><button type="button" id="btnExportCSV" class="btn btn-dark">Exportar CSV</button></div>
-  <div id="separatedPanel"><div class="sep-head"><strong>Dados da simulação</strong><div class="sep-actions"><button type="button" id="btnCopySeparated" class="btn btn-sm btn-dark">Copiar</button><button type="button" id="btnExportOutflowCSV" class="btn btn-sm btn-dark">Parcelas CSV</button><button type="button" id="btnCloseSeparated" class="btn btn-sm btn-ghost">Fechar</button></div></div><div id="separatedResults"></div></div>
+  <div class="action-bar"><button type="button" id="btnExportPDF" class="btn btn-gold">Exportar PDF</button></div>
 </section>
 
 <p class="disclaimer"><strong>Sobre esta simulação:</strong> ferramenta educacional independente. As contas seguem o modelo didático de “a + b + c”. Regras reais de cobrança, atualização do crédito, contemplação e amortização devem ser confirmadas na decomposição dos pagamentos e no contrato da administradora.</p>
@@ -701,20 +708,8 @@ if(btnLoadExample){btnLoadExample.addEventListener('click',()=>{
 
 function timestamp(){return new Date().toISOString().replace(/[:.]/g,'-')}
 function download(name,text,type='text/plain'){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([text],{type:type+';charset=utf-8'}));a.download=name;document.body.appendChild(a);a.click();a.remove()}
-function currentResult(){return calc(readInputs())}
-function outflowCsvRows(result){return ['mes;parcela', ...result.outflow.slice(1).map((v,i)=>`${i+1};${v.toFixed(2)}`)]}
-const btnSeparate=$id('btnSeparate');
-const btnCloseSeparated=$id('btnCloseSeparated');
-const btnCopySeparated=$id('btnCopySeparated');
-const btnExportJSON=$id('btnExportJSON');
-const btnExportCSV=$id('btnExportCSV');
-const btnExportOutflowCSV=$id('btnExportOutflowCSV');
-if(btnSeparate){btnSeparate.addEventListener('click',()=>{$id('separatedResults').textContent=JSON.stringify(currentResult(),null,2);$id('separatedPanel').style.display='block'});}
-if(btnCloseSeparated){btnCloseSeparated.addEventListener('click',()=>$id('separatedPanel').style.display='none');}
-if(btnCopySeparated){btnCopySeparated.addEventListener('click',async()=>{try{await navigator.clipboard.writeText(JSON.stringify(currentResult(),null,2));const b=$id('btnCopySeparated');b.textContent='Copiado!';setTimeout(()=>b.textContent='Copiar',1400)}catch{alert('Use Exportar JSON.')}});}
-if(btnExportJSON){btnExportJSON.addEventListener('click',()=>download('simulacao-'+timestamp()+'.json',JSON.stringify(currentResult(),null,2),'application/json'));}
-if(btnExportCSV){btnExportCSV.addEventListener('click',()=>download('parcelas-'+timestamp()+'.csv',outflowCsvRows(currentResult()).join('\n'),'text/csv'));}
-if(btnExportOutflowCSV){btnExportOutflowCSV.addEventListener('click',()=>download('parcelas-'+timestamp()+'.csv',outflowCsvRows(currentResult()).join('\n'),'text/csv'));}
+const btnExportPDF=$id('btnExportPDF');
+if(btnExportPDF){btnExportPDF.addEventListener('click',()=>window.print());}
 updateVisibility();
 </script>
 </body>
