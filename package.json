@@ -9,6 +9,7 @@
     "test": "node TESTES/calc.test.js"
   },
   "dependencies": {
+    "@supabase/supabase-js": "^2.57.0",
     "bcryptjs": "^2.4.3",
     "better-sqlite3": "^11.7.0",
     "pg": "^8.23.0"
