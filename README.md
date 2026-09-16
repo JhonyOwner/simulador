@@ -22,7 +22,6 @@ anual equivalente do plano (calculada por TIR).
 │   └── app.js               # Camada de UI: formulário, popup, gráfico, exportação
 ├── server.js              # Servidor HTTP + autenticação e proteção do simulador
 ├── auth.js                # SQLite, hash de senha, sessões e aprovação de usuários
-├── data/access.sqlite     # Banco local criado automaticamente (não versionar)
 ├── package.json           # Dependências do backend
 ├── tests/
 │   └── calc.test.js        # Teste de regressão de js/calc.js
@@ -44,10 +43,12 @@ Por padrão o servidor sobe em `http://localhost:8080`. Para usar outra porta:
 ```bash
 PORT=3000 ADMIN_KEY="defina-uma-chave-forte" node server.js
 
-O banco SQLite é criado em `data/access.sqlite`. O cadastro cria um usuário
-pendente; somente usuários aprovados na seção **Gestão de acessos** da página
-inicial conseguem abrir `/simulador`. A chave usada nessa seção é a variável
-`ADMIN_KEY`, que deve ser definida fora do código e nunca compartilhada.
+O backend usa o PostgreSQL do Supabase pela variável `DATABASE_URL`. Na
+primeira execução, as tabelas `users` e `sessions` são criadas automaticamente.
+O cadastro cria um usuário pendente; somente usuários aprovados na seção
+**Gestão de acessos** da página inicial conseguem abrir `/simulador`. A chave
+usada nessa seção é a variável `ADMIN_KEY`, que deve ser definida fora do
+código e nunca compartilhada.
 
 O login usa sessões em cookie `HttpOnly`, com expiração de 12 horas, e as
 senhas são armazenadas somente como hash bcrypt. A confirmação de cadastro é

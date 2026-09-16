@@ -31,9 +31,9 @@ function readBody(req){
     req.on('error', reject);
   });
 }
-function currentUser(req){ return auth.getUser(cookies(req).sim_session); }
-function protectSimulator(req, res){
-  if (currentUser(req)) return false;
+async function currentUser(req){ return auth.getUser(cookies(req).sim_session); }
+async function protectSimulator(req, res){
+  if (await currentUser(req)) return false;
   res.writeHead(302, { Location: '/' });
   res.end();
   return true;
@@ -61,34 +61,35 @@ function contentType(file){
   }
 }
 
-const srv = http.createServer((req,res)=>{
+const srv = http.createServer(async (req,res)=>{
   try{
     let urlPath = decodeURIComponent(req.url.split('?')[0]);
     if(urlPath === '/' || urlPath === '') urlPath = '/index.html';
-    if(req.method === 'POST' && urlPath === '/api/register') return readBody(req).then(body => {
-      const result = auth.createUser(body);
+    if(req.method === 'POST' && urlPath === '/api/register') return readBody(req).then(async body => {
+      const result = await auth.createUser(body);
       sendJson(res, result.errors ? 400 : 201, result.errors ? result : { message: 'Cadastro recebido. Aguarde a aprovação para acessar o simulador.' });
     }).catch(() => sendJson(res, 400, { message: 'Dados inválidos.' }));
-    if(req.method === 'POST' && urlPath === '/api/login') return readBody(req).then(body => {
-      const result = auth.login(body.email, body.password);
+    if(req.method === 'POST' && urlPath === '/api/login') return readBody(req).then(async body => {
+      const result = await auth.login(body.email, body.password);
       if(result.error) return sendJson(res, 401, result);
       sendJson(res, 200, { user: result.user }, { 'Set-Cookie': `sim_session=${result.token}; HttpOnly; SameSite=Lax; Path=/; Max-Age=43200` });
     }).catch(() => sendJson(res, 400, { message: 'Dados inválidos.' }));
     if(req.method === 'POST' && urlPath === '/api/logout') {
-      auth.logout(cookies(req).sim_session);
+      await auth.logout(cookies(req).sim_session);
       return sendJson(res, 200, { ok: true }, { 'Set-Cookie': 'sim_session=; HttpOnly; SameSite=Lax; Path=/; Max-Age=0' });
     }
-    if(req.method === 'GET' && urlPath === '/api/session') return sendJson(res, 200, { user: currentUser(req) });
+    if(req.method === 'GET' && urlPath === '/api/session') return currentUser(req).then(user => sendJson(res, 200, { user }));
     if(req.method === 'GET' && urlPath === '/api/admin/users') {
       if(req.headers['x-admin-key'] !== adminKey) return sendJson(res, 401, { message: 'Não autorizado.' });
-      return sendJson(res, 200, { users: auth.listUsers() });
+      return auth.listUsers().then(users => sendJson(res, 200, { users }));
     }
-    if(req.method === 'POST' && urlPath === '/api/admin/approval') return readBody(req).then(body => {
+    if(req.method === 'POST' && urlPath === '/api/admin/approval') return readBody(req).then(async body => {
       if(req.headers['x-admin-key'] !== adminKey) return sendJson(res, 401, { message: 'Não autorizado.' });
-      sendJson(res, 200, { ok: auth.setApproval(body.id, body.approved) });
+      const ok = await auth.setApproval(body.id, body.approved);
+      sendJson(res, 200, { ok });
     }).catch(() => sendJson(res, 400, { message: 'Dados inválidos.' }));
     if(urlPath === '/simulador' || urlPath === '/simulador.html') {
-      if(protectSimulator(req, res)) return;
+      if(await protectSimulator(req, res)) return;
       urlPath = '/simulador.html';
     }
     const filePath = path.join(root, urlPath);

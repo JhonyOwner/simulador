@@ -1,32 +1,37 @@
-const fs = require('fs');
-const path = require('path');
 const crypto = require('crypto');
-const Database = require('better-sqlite3');
 const bcrypt = require('bcryptjs');
+const { Pool } = require('pg');
 
-const dataDir = process.env.VERCEL
-  ? path.join('/tmp', 'simulador-embracon-data')
-  : path.join(__dirname, 'data');
-fs.mkdirSync(dataDir, { recursive: true });
-const db = new Database(path.join(dataDir, 'access.sqlite'));
-db.pragma('journal_mode = WAL');
-db.exec(`
-  CREATE TABLE IF NOT EXISTS users (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    name TEXT NOT NULL,
-    password_hash TEXT NOT NULL,
-    cpf TEXT NOT NULL UNIQUE,
-    email TEXT NOT NULL UNIQUE,
-    phone TEXT NOT NULL,
-    approved INTEGER NOT NULL DEFAULT 0,
-    created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
-  );
-  CREATE TABLE IF NOT EXISTS sessions (
-    token_hash TEXT PRIMARY KEY,
-    user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-    expires_at INTEGER NOT NULL
-  );
-`);
+if (!process.env.DATABASE_URL) {
+  throw new Error('DATABASE_URL não configurada. Defina a conexão do Supabase antes de iniciar.');
+}
+
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+  ssl: { rejectUnauthorized: false },
+  max: 5
+});
+let schemaReady;
+function ensureSchema() {
+  if (!schemaReady) schemaReady = pool.query(`
+    CREATE TABLE IF NOT EXISTS users (
+      id BIGSERIAL PRIMARY KEY,
+      name TEXT NOT NULL,
+      password_hash TEXT NOT NULL,
+      cpf TEXT UNIQUE NOT NULL,
+      email TEXT UNIQUE NOT NULL,
+      phone TEXT NOT NULL,
+      approved BOOLEAN NOT NULL DEFAULT FALSE,
+      created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    );
+    CREATE TABLE IF NOT EXISTS sessions (
+      token_hash TEXT PRIMARY KEY,
+      user_id BIGINT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+      expires_at BIGINT NOT NULL
+    );
+  `);
+  return schemaReady;
+}
 
 const normalize = value => String(value || '').trim();
 const digits = value => normalize(value).replace(/\D/g, '');
@@ -50,13 +55,7 @@ const publicUser = user => ({ id: user.id, name: user.name, email: user.email, a
 const hashToken = token => crypto.createHash('sha256').update(token).digest('hex');
 
 function validateRegistration(input) {
-  const user = {
-    name: normalize(input.name),
-    cpf: digits(input.cpf),
-    email: normalize(input.email).toLowerCase(),
-    phone: digits(input.phone),
-    password: String(input.password || '')
-  };
+  const user = { name: normalize(input.name), cpf: digits(input.cpf), email: normalize(input.email).toLowerCase(), phone: digits(input.phone), password: String(input.password || '') };
   const errors = {};
   if (user.name.length < 3) errors.name = 'Informe seu nome completo.';
   if (!validCPF(user.cpf)) errors.cpf = 'CPF inválido.';
@@ -66,45 +65,39 @@ function validateRegistration(input) {
   return { user, errors };
 }
 
-function createUser(input) {
+async function createUser(input) {
   const { user, errors } = validateRegistration(input);
   if (Object.keys(errors).length) return { errors };
+  await ensureSchema();
   try {
-    db.prepare('INSERT INTO users (name, password_hash, cpf, email, phone) VALUES (?, ?, ?, ?, ?)').run(
-      user.name, bcrypt.hashSync(user.password, 12), user.cpf, user.email, user.phone
-    );
+    await pool.query('INSERT INTO users (name, password_hash, cpf, email, phone) VALUES ($1, $2, $3, $4, $5)', [user.name, await bcrypt.hash(user.password, 12), user.cpf, user.email, user.phone]);
     return { user: { name: user.name, email: user.email } };
   } catch (error) {
-    if (String(error.message).includes('users.email')) return { errors: { email: 'Este e-mail já está cadastrado.' } };
-    if (String(error.message).includes('users.cpf')) return { errors: { cpf: 'Este CPF já está cadastrado.' } };
+    if (error.code === '23505' && error.constraint?.includes('email')) return { errors: { email: 'Este e-mail já está cadastrado.' } };
+    if (error.code === '23505' && error.constraint?.includes('cpf')) return { errors: { cpf: 'Este CPF já está cadastrado.' } };
     throw error;
   }
 }
 
-function login(email, password) {
-  const user = db.prepare('SELECT * FROM users WHERE email = ?').get(normalize(email).toLowerCase());
-  if (!user || !bcrypt.compareSync(String(password || ''), user.password_hash)) return { error: 'E-mail ou senha inválidos.' };
+async function login(email, password) {
+  await ensureSchema();
+  const { rows } = await pool.query('SELECT * FROM users WHERE email = $1', [normalize(email).toLowerCase()]);
+  const user = rows[0];
+  if (!user || !(await bcrypt.compare(String(password || ''), user.password_hash))) return { error: 'E-mail ou senha inválidos.' };
   if (!user.approved) return { error: 'Seu cadastro foi recebido e aguarda aprovação.' };
   const token = crypto.randomBytes(32).toString('hex');
-  db.prepare('INSERT INTO sessions (token_hash, user_id, expires_at) VALUES (?, ?, ?)').run(hashToken(token), user.id, Date.now() + 1000 * 60 * 60 * 12);
+  await pool.query('INSERT INTO sessions (token_hash, user_id, expires_at) VALUES ($1, $2, $3)', [hashToken(token), user.id, Date.now() + 1000 * 60 * 60 * 12]);
   return { token, user: publicUser(user) };
 }
 
-function getUser(token) {
+async function getUser(token) {
   if (!token) return null;
-  const row = db.prepare('SELECT users.* FROM sessions JOIN users ON users.id = sessions.user_id WHERE sessions.token_hash = ? AND sessions.expires_at > ?').get(hashToken(token), Date.now());
-  return row ? publicUser(row) : null;
+  await ensureSchema();
+  const { rows } = await pool.query('SELECT users.* FROM sessions JOIN users ON users.id = sessions.user_id WHERE sessions.token_hash = $1 AND sessions.expires_at > $2', [hashToken(token), Date.now()]);
+  return rows[0] ? publicUser(rows[0]) : null;
 }
-
-function logout(token) {
-  if (token) db.prepare('DELETE FROM sessions WHERE token_hash = ?').run(hashToken(token));
-}
-
-function listUsers() {
-  return db.prepare('SELECT id, name, cpf, email, phone, approved, created_at FROM users ORDER BY created_at DESC').all().map(user => ({ ...user, approved: Boolean(user.approved) }));
-}
-function setApproval(id, approved) {
-  return db.prepare('UPDATE users SET approved = ? WHERE id = ?').run(approved ? 1 : 0, Number(id)).changes > 0;
-}
+async function logout(token) { if (token) { await ensureSchema(); await pool.query('DELETE FROM sessions WHERE token_hash = $1', [hashToken(token)]); } }
+async function listUsers() { await ensureSchema(); const { rows } = await pool.query('SELECT id, name, cpf, email, phone, approved, created_at FROM users ORDER BY created_at DESC'); return rows; }
+async function setApproval(id, approved) { await ensureSchema(); const result = await pool.query('UPDATE users SET approved = $1 WHERE id = $2', [Boolean(approved), Number(id)]); return result.rowCount > 0; }
 
 module.exports = { createUser, login, getUser, logout, listUsers, setApproval, validCPF, validEmail, validPhone };
