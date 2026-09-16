@@ -95,9 +95,10 @@ header.hero{background:radial-gradient(circle at 50% 0%,rgba(224,184,92,.18),tra
 .seal-desc{width:min(100%,760px);margin:0 auto}
 .seal-desc p{margin-left:auto;margin-right:auto}
 .cols{grid-template-columns:1fr 1fr;gap:26px}
-.info-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:22px;margin:0 0 24px;align-items:start}
-.info-grid .cols{display:block;margin:0}
-.info-grid .section-block{margin:0;width:100%}
+.info-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));grid-template-areas:'difference parcel credit';gap:22px;margin:0 0 24px;align-items:start}
+.info-grid .cols{display:block;grid-area:parcel;margin:0;width:100%}
+.info-grid .diferenca-block{grid-area:difference;margin:0;width:100%}
+.info-grid .credito-block{grid-area:credit;margin:0;width:100%}
 .ledger,.section-block{width:min(100%,760px);margin-left:auto;margin-right:auto}
 .ledger-line{display:grid;grid-template-columns:max-content max-content;justify-content:center;gap:14px;align-items:baseline}
 .ledger-line .fill{display:none}
@@ -137,8 +138,8 @@ header.hero{background:radial-gradient(circle at 50% 0%,rgba(224,184,92,.18),tra
 .field select:hover,.field select:focus{border-color:var(--gold);background:#fffdf8}
 
 @media(max-width:700px){.yield-result,.summary-strip{grid-template-columns:1fr}.field-row{grid-template-columns:1fr}.cols{grid-template-columns:1fr}}
-@media(max-width:900px){.info-grid{grid-template-columns:1fr 1fr}}
-@media(max-width:600px){.info-grid{grid-template-columns:1fr}}
+@media(max-width:900px){.info-grid{grid-template-columns:1fr 1fr;grid-template-areas:'parcel parcel' 'difference credit'}}
+@media(max-width:600px){.info-grid{grid-template-columns:1fr;grid-template-areas:'parcel' 'difference' 'credit'}}
 
 @media print{
   @page{size:A4 portrait;margin:12mm}
@@ -232,13 +233,13 @@ header.hero{background:radial-gradient(circle at 50% 0%,rgba(224,184,92,.18),tra
   </div>
 
   <div class="info-grid">
-  <div class="cols">
+  <div class="cols parcela-block">
     <div class="ledger"><h4>Parcela pós-contemplação</h4><div class="ledger-line"><span class="lbl">Saldo devedor</span><span class="fill"></span><span class="val" id="posFundo">—</span></div><div class="ledger-line"><span class="lbl">Percentual pós-contemplação</span><span class="fill"></span><span class="val" id="posTA">—</span></div><div class="ledger-line"><span class="lbl">Parcela-base pelo saldo</span><span class="fill"></span><span class="val" id="posFR">—</span></div><div class="ledger-line"><span class="lbl">Diferença diluída</span><span class="fill"></span><span class="val" id="posDiluicao">—</span></div><div class="ledger-line total"><span class="lbl">Parcela mensal</span><span class="fill"></span><span class="val" id="posTotal">—</span></div></div>
   </div>
 
-  <div class="section-block"><h4>Diferença faltante do redutor</h4><div class="ledger-line"><span class="lbl">Diferença mensal</span><span class="fill"></span><span class="val" id="difMensal">—</span></div><div class="ledger-line total"><span class="lbl">Diferença acumulada até contemplação</span><span class="fill"></span><span class="val" id="difAcumulada">—</span></div><div class="ledger-line"><span class="lbl">Diferença diluída no pós</span><span class="fill"></span><span class="val" id="difDiluida">—</span></div></div>
+  <div class="section-block diferenca-block"><h4>Diferença faltante do redutor</h4><div class="ledger-line"><span class="lbl">Diferença mensal</span><span class="fill"></span><span class="val" id="difMensal">—</span></div><div class="ledger-line total"><span class="lbl">Diferença acumulada até contemplação</span><span class="fill"></span><span class="val" id="difAcumulada">—</span></div><div class="ledger-line"><span class="lbl">Diferença diluída no pós</span><span class="fill"></span><span class="val" id="difDiluida">—</span></div></div>
 
-  <div class="section-block"><h4>Crédito, saldo e prazo</h4><div class="ledger-line"><span class="lbl">Crédito contratado</span><span class="fill"></span><span class="val" id="creditoContratado">—</span></div><div class="ledger-line"><span class="lbl">Lance embutido</span><span class="fill"></span><span class="val" id="creditoEmbutido">—</span></div><div class="ledger-line total"><span class="lbl">Crédito líquido recebido</span><span class="fill"></span><span class="val" id="creditoLiquido">—</span></div><div class="ledger-line"><span class="lbl">Saldo antes do lance</span><span class="fill"></span><span class="val" id="saldoAntesLance">—</span></div><div class="ledger-line ok"><span class="lbl">Lance utilizado no saldo</span><span class="fill"></span><span class="val" id="lanceUtilizado">—</span></div><div class="ledger-line total"><span class="lbl">Saldo após o lance</span><span class="fill"></span><span class="val" id="saldoDepoisLance">—</span></div><div class="ledger-line"><span class="lbl">Meses contratuais restantes</span><span class="fill"></span><span class="val" id="mesesRestantesContrato">—</span></div><div class="ledger-line"><span class="lbl">Meses economizados</span><span class="fill"></span><span class="val" id="mesesEconomizados">—</span></div><div class="ledger-line total"><span class="lbl">Meses pós-contemplação</span><span class="fill"></span><span class="val" id="mesesPos">—</span></div><div class="ledger-line"><span class="lbl">Lance não utilizado</span><span class="fill"></span><span class="val" id="lanceNaoUtilizado">—</span></div></div>
+  <div class="section-block credito-block"><h4>Crédito, saldo e prazo</h4><div class="ledger-line"><span class="lbl">Crédito contratado</span><span class="fill"></span><span class="val" id="creditoContratado">—</span></div><div class="ledger-line"><span class="lbl">Lance embutido</span><span class="fill"></span><span class="val" id="creditoEmbutido">—</span></div><div class="ledger-line total"><span class="lbl">Crédito líquido recebido</span><span class="fill"></span><span class="val" id="creditoLiquido">—</span></div><div class="ledger-line"><span class="lbl">Saldo antes do lance</span><span class="fill"></span><span class="val" id="saldoAntesLance">—</span></div><div class="ledger-line ok"><span class="lbl">Lance utilizado no saldo</span><span class="fill"></span><span class="val" id="lanceUtilizado">—</span></div><div class="ledger-line total"><span class="lbl">Saldo após o lance</span><span class="fill"></span><span class="val" id="saldoDepoisLance">—</span></div><div class="ledger-line"><span class="lbl">Meses contratuais restantes</span><span class="fill"></span><span class="val" id="mesesRestantesContrato">—</span></div><div class="ledger-line"><span class="lbl">Meses economizados</span><span class="fill"></span><span class="val" id="mesesEconomizados">—</span></div><div class="ledger-line total"><span class="lbl">Meses pós-contemplação</span><span class="fill"></span><span class="val" id="mesesPos">—</span></div><div class="ledger-line"><span class="lbl">Lance não utilizado</span><span class="fill"></span><span class="val" id="lanceNaoUtilizado">—</span></div></div>
   </div>
 
   <div class="evolution-actions"><button type="button" id="btnToggleEvolution" class="btn btn-gold">Ver evolução com reajuste anual ↓</button></div>
