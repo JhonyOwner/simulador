@@ -537,7 +537,27 @@ function fmtPct(v,d=2){return Number.isFinite(v)?fmtNum(v,d)+'%':'—'}
 const $id=id=>document.getElementById(id);
 function setText(id,value){const element=$id(id);if(element) element.textContent=value}
 function setHTML(id,value){const element=$id(id);if(element) element.innerHTML=value}
-function num(id){const v=parseFloat($id(id).value);return Number.isFinite(v)?v:0}
+function parseInputNumber(value){
+  const text=String(value??'').trim();
+  if(!text) return 0;
+  if(text.includes("'")) return Number(text.replace(/\./g,'').replace(String.fromCharCode(39),'.'))||0;
+  return Number(text.replace(',','.'))||0;
+}
+function num(id){return parseInputNumber($id(id).value)}
+function formatInputNumber(input){
+  const decimals=['credito','dinheiro'].includes(input.id)?2:(input.step&&input.step.includes('.')?1:0);
+  input.value=fmtNum(parseInputNumber(input.value),decimals);
+}
+function setupFormattedInputs(){
+  document.querySelectorAll('.field input').forEach(input=>{
+    if(input.type==='number'){
+      input.type='text';
+      input.inputMode='decimal';
+      input.addEventListener('blur',()=>formatInputNumber(input));
+    }
+    formatInputNumber(input);
+  });
+}
 function checked(name){return document.querySelector(`input[name="${name}"]:checked`)?.value}
 
 function readInputs(){return{
@@ -735,7 +755,7 @@ function drawChart(r){
 const panel=$id('resultsPanel');
 const btnShowResults=$id('btnShowResults');
 const btnHideResults=$id('btnHideResults');
-function showResults(){if(!panel)return;render(calc(readInputs()));panel.classList.add('active');setTimeout(()=>panel.scrollIntoView({behavior:'smooth',block:'start'}),50)}
+function showResults(){if(!panel)return;setupFormattedInputs();render(calc(readInputs()));panel.classList.add('active');setTimeout(()=>panel.scrollIntoView({behavior:'smooth',block:'start'}),50)}
 if(btnShowResults) btnShowResults.addEventListener('click',showResults);
 if(btnHideResults) btnHideResults.addEventListener('click',()=>{if(!panel)return;panel.classList.remove('active');const formPanel=document.querySelector('.form-panel');if(formPanel) formPanel.scrollIntoView({behavior:'smooth',block:'start'})});
 let debounce;
@@ -777,6 +797,7 @@ if(rendimentoAtivo){rendimentoAtivo.addEventListener('change',()=>{if(panel && p
 if(rendimentoPct){rendimentoPct.addEventListener('input',()=>{if(panel && panel.classList.contains('active'))render(calc(readInputs()))});}
 if(rendimentoMeses){rendimentoMeses.addEventListener('input',()=>{if(panel && panel.classList.contains('active'))render(calc(readInputs()))});}
 updateVisibility();
+setupFormattedInputs();
 </script>
 </body>
 </html>
