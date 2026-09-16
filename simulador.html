@@ -102,6 +102,30 @@ header.hero{background:radial-gradient(circle at 50% 0%,rgba(224,184,92,.18),tra
 .summary-strip{grid-template-columns:repeat(3,1fr)}
 .disclaimer{text-align:center}
 
+/* Campos formatados: o script troca number por text para permitir a máscara. */
+.field input[type=text]{
+  width:min(100%,280px);
+  height:44px;
+  padding:9px 14px;
+  border:1px solid rgba(184,138,43,.35);
+  border-radius:6px;
+  background:rgba(255,255,255,.7);
+  color:#17130C;
+  font-family:var(--mono);
+  font-size:16px;
+  font-weight:600;
+  letter-spacing:.02em;
+  text-align:center;
+  outline:none;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.8),0 3px 10px rgba(15,12,7,.06);
+  transition:border-color .15s,box-shadow .15s,background .15s;
+}
+.field input[type=text]:hover{border-color:rgba(184,138,43,.65);background:#fffdf8}
+.field input[type=text]:focus{border-color:var(--gold);background:#fffdf8;box-shadow:0 0 0 3px rgba(184,138,43,.16),0 5px 14px rgba(15,12,7,.08)}
+.field input[type=text]::placeholder{color:#9A8D76;font-weight:400}
+.field select{height:44px;min-width:min(100%,280px);padding:9px 14px;border:1px solid rgba(184,138,43,.35);border-radius:6px;background:rgba(255,255,255,.7);text-align:center;box-shadow:inset 0 1px 0 rgba(255,255,255,.8),0 3px 10px rgba(15,12,7,.06)}
+.field select:hover,.field select:focus{border-color:var(--gold);background:#fffdf8}
+
 @media(max-width:700px){.yield-result,.summary-strip{grid-template-columns:1fr}.field-row{grid-template-columns:1fr}.cols{grid-template-columns:1fr}}
 </style>
 </head>
