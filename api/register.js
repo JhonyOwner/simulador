@@ -4,5 +4,5 @@ module.exports = async (req, res) => {
   try {
     const result = auth.createUser(await body(req));
     return json(res, result.errors ? 400 : 201, result.errors ? result : { message: 'Cadastro recebido. Aguarde a aprovação para acessar o simulador.' });
-  } catch { return json(res, 400, { message: 'Dados inválidos.' }); }
+  } catch (error) { return json(res, 503, { message: error.message || 'Banco de dados indisponível.' }); }
 };

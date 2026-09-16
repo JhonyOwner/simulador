@@ -6,5 +6,5 @@ module.exports = async (req, res) => {
     const result = auth.login(input.email, input.password);
     if (result.error) return json(res, 401, result);
     return json(res, 200, { user: result.user }, { 'Set-Cookie': `sim_session=${result.token}; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=43200` });
-  } catch { return json(res, 400, { message: 'Dados inválidos.' }); }
+  } catch (error) { return json(res, 503, { message: error.message || 'Banco de dados indisponível.' }); }
 };

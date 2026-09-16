@@ -2,17 +2,14 @@ const crypto = require('crypto');
 const bcrypt = require('bcryptjs');
 const { Pool } = require('pg');
 
-if (!process.env.DATABASE_URL) {
-  throw new Error('DATABASE_URL não configurada. Defina a conexão do Supabase antes de iniciar.');
-}
-
-const pool = new Pool({
+const pool = process.env.DATABASE_URL ? new Pool({
   connectionString: process.env.DATABASE_URL,
   ssl: { rejectUnauthorized: false },
   max: 5
-});
+}) : null;
 let schemaReady;
 function ensureSchema() {
+  if (!pool) return Promise.reject(new Error('DATABASE_URL não configurada na Vercel.'));
   if (!schemaReady) schemaReady = pool.query(`
     CREATE TABLE IF NOT EXISTS users (
       id BIGSERIAL PRIMARY KEY,
