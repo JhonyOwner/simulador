@@ -1,13 +1,14 @@
 const fs = require('fs');
 const path = require('path');
-const auth = require('../_lib/auth');
+const { getSession } = require('./_lib/auth');
 
 module.exports = async function handler(req, res) {
   try {
-    const session = await auth.getSession(req);
+    const session = await getSession(req);
 
     if (!session) {
-      res.writeHead(302, { Location: '/' });
+      res.statusCode = 302;
+      res.setHeader('Location', '/');
       return res.end();
     }
 
@@ -20,16 +21,24 @@ module.exports = async function handler(req, res) {
     }
 
     const filePath = path.join(process.cwd(), 'simulador.html');
+
+    if (!fs.existsSync(filePath)) {
+      res.statusCode = 404;
+      res.setHeader('Content-Type', 'text/plain; charset=utf-8');
+      return res.end('Arquivo simulador.html não encontrado.');
+    }
+
     const html = fs.readFileSync(filePath, 'utf8');
 
+    res.statusCode = 200;
     res.setHeader('Content-Type', 'text/html; charset=utf-8');
-    return res.status(200).send(html);
+    return res.end(html);
 
   } catch (error) {
     console.error('Erro ao validar sessão do simulador:', error);
 
-    res.statusCode = 503;
+    res.statusCode = 500;
     res.setHeader('Content-Type', 'text/plain; charset=utf-8');
-    return res.end(error.message);
+    return res.end('Erro ao validar a sessão: ' + error.message);
   }
 };
