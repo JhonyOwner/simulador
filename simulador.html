@@ -20,7 +20,7 @@ html,body{min-height:100%}
 body{margin:0;font-family:var(--sans);color:var(--text);background:linear-gradient(180deg,#050505 0%,#17130D 100%);-webkit-font-smoothing:antialiased;font-size:16px;line-height:1.45}
 .wrap{max-width:900px;margin:0 auto;padding:0 24px 64px}
 header.hero{background:radial-gradient(circle at 50% 0%,rgba(224,184,92,.14),transparent 42%),linear-gradient(180deg,#050505 0%,#17130D 100%);color:var(--parchment);padding:44px 24px 56px;border-bottom:1px solid rgba(224,184,92,.28)}
-header.hero .inner{max-width:900px;margin:0 auto;text-align:center}
+header.hero .inner{max-width:900px;margin:0 auto;text-align:center}.hero-actions{display:flex;justify-content:flex-end;margin-bottom:-30px}.btn-logout{border:1px solid rgba(224,184,92,.35);background:rgba(0,0,0,.25);color:var(--gold-light);padding:7px 13px;font-size:11px}.btn-logout:hover{background:rgba(224,184,92,.1)}
 .brand-lockup{display:flex;flex-direction:column;align-items:center;gap:14px;margin-bottom:22px}.brand-logo{width:88px;height:88px;display:block}.brand-name{font-family:var(--mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold-light)}
 .eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--gold-light);display:flex;align-items:center;gap:10px;justify-content:center;margin-bottom:18px}.eyebrow:before{content:'';width:26px;height:1px;background:var(--gold-light);display:inline-block}
 h1{font-family:var(--serif);font-weight:600;font-size:clamp(26px,3.6vw,40px);line-height:1.06;margin:0 0 12px}header.hero p.lede{max-width:650px;font-size:16px;line-height:1.6;color:#C9D2DB;margin:0 auto}
@@ -166,6 +166,7 @@ header.hero{background:radial-gradient(circle at 50% 0%,rgba(224,184,92,.18),tra
 <body>
 <header class="hero">
   <div class="inner">
+    <div class="hero-actions"><button type="button" id="btnLogout" class="btn btn-logout">Sair</button></div>
     <div class="brand-lockup"><img class="brand-logo" src="logo.svg" alt="Logo de bússola de João Vitor G."><div class="brand-name">João Vitor G.</div></div>
     <h1>Simulador Consórcio</h1>
     <p class="lede">Modelo educativo baseado na composição do Fundo Comum, Taxa de Administração, Fundo de Reserva, redutor, taxa antecipada e lance.</p>
@@ -863,6 +864,9 @@ if(btnToggleSummary){btnToggleSummary.addEventListener('click',()=>{
 if(rendimentoAtivo){rendimentoAtivo.addEventListener('change',()=>{if(panel && panel.classList.contains('active'))render(calc(readInputs()))});}
 if(rendimentoPct){rendimentoPct.addEventListener('input',()=>{if(panel && panel.classList.contains('active'))render(calc(readInputs()))});}
 if(rendimentoMeses){rendimentoMeses.addEventListener('input',()=>{if(panel && panel.classList.contains('active'))render(calc(readInputs()))});}
+const btnLogout=$id('btnLogout');
+if(btnLogout){btnLogout.addEventListener('click',async()=>{btnLogout.disabled=true;btnLogout.textContent='Saindo...';try{const response=await fetch('/api/logout',{method:'POST',headers:{'Content-Type':'application/json'}});if(!response.ok)throw new Error('logout');}catch(error){}finally{location.href='/';}});}
+
 updateVisibility();
 setupFormattedInputs();
 </script>
