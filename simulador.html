@@ -83,6 +83,7 @@ header.hero{background:radial-gradient(circle at 50% 0%,rgba(224,184,92,.18),tra
 .panel,.result-panel{background:linear-gradient(180deg,#FBF8F0 0%,#F1E9D8 100%);color:#28231B}
 .form-panel,.result-panel{text-align:center}
 .form-panel h2,.panel h2,.headline-label,.headline-value,.headline-sub,.seal-desc,.ledger,.section-block,.formula,.lance-info,.chart-wrap,.yield-panel,.summary-strip,.stat,.key-card,.evolution-panel{text-align:center}
+.headline-numbers{justify-items:center;text-align:center}
 .field-row,.field,.radio-group,.checkbox-line,.yield-controls,.yield-result,.summary-strip,.key-grid,.headline-numbers,.cols,.seal-row{justify-items:center}
 .field-row>.field,.field{align-items:center}
 .field input[type=number],.field select{ text-align:center }
@@ -152,7 +153,7 @@ header.hero{background:radial-gradient(circle at 50% 0%,rgba(224,184,92,.18),tra
       <div class="field-row"><div class="field"><label for="credito">Valor do crédito (R$)</label><input type="number" id="credito" value="45000" placeholder="Ex.: 45000" min="1" step="100"></div><div class="field"><label for="prazo">Prazo total (meses)</label><input type="number" id="prazo" value="100" placeholder="Ex.: 100" min="1" step="1"></div></div>
       <div class="field-row"><div class="field"><label for="ta">Taxa de administração total (%)</label><input type="number" id="ta" value="16" placeholder="Ex.: 16" min="0" step="0.1"></div><div class="field"><label for="fr">Fundo de reserva total (%)</label><input type="number" id="fr" value="3" placeholder="Ex.: 3" min="0" step="0.1"></div></div>
       <div class="field-row"><div class="field"><label for="seguroPct">Seguro mensal (% do crédito — 0 se não houver)</label><input type="number" id="seguroPct" value="0" placeholder="Ex.: 0" min="0" step="0.001"></div><div class="field"><label for="mesContemplacao">Contemplação na parcela nº</label><input type="number" id="mesContemplacao" value="10" placeholder="Ex.: 10" min="1" step="1"></div></div>
-      <div class="field-row"><div class="field"><label for="inccPct"><span id="reajusteLabel">IPCA</span> / reajuste anual (%)</label><input type="number" id="inccPct" value="5" placeholder="Ex.: 5" min="0" step="0.1"></div><div class="field"><label>Aplicação</label><div class="inline-note" style="margin:0">Reajuste aplicado a cada 12 meses no crédito e na parcela da evolução.</div></div></div>
+      <div class="field-row"><div class="field"><label for="inccPct">IPCA / INCC / reajuste anual (%)</label><input type="number" id="inccPct" value="5" placeholder="Ex.: 5" min="0" step="0.1"></div><div class="field"><label>Aplicação</label><div class="inline-note" style="margin:0">Reajuste aplicado a cada 12 meses no crédito e na parcela da evolução.</div></div></div>
       <div class="field-row"><div class="field"><label for="tipoBem">Tipo de bem</label><select id="tipoBem"><option value="auto" selected>Automóvel — 1% do saldo devedor</option><option value="imovel">Imóvel — 0,5% do saldo devedor</option></select></div><div class="field"><label>Regra pós-contemplação</label><div class="inline-note" style="margin:0">Parcela pós = percentual do saldo devedor. A diferença restante do redutor é tratada separadamente.</div></div></div>
       <div class="inline-note">Seguro não entra no exemplo-base. Atualização do crédito/parcela não é projetada: a decomposição oficial do contrato prevalece.</div>
     </fieldset>
@@ -569,12 +570,12 @@ function parseInputNumber(value){
 }
 function num(id){return parseInputNumber($id(id).value)}
 function formatInputNumber(input){
-  const decimals=['credito','dinheiro'].includes(input.id)?2:(input.step&&input.step.includes('.')?1:0);
-  input.value=fmtNum(parseInputNumber(input.value),decimals);
+  if(!['credito','dinheiro'].includes(input.id)) return;
+  input.value=fmtNum(parseInputNumber(input.value),2);
 }
 function setupFormattedInputs(){
   document.querySelectorAll('.field input').forEach(input=>{
-    if(input.type==='number'){
+    if(['credito','dinheiro'].includes(input.id) && input.type==='number'){
       input.type='text';
       input.inputMode='decimal';
       input.addEventListener('blur',()=>formatInputNumber(input));
@@ -600,7 +601,7 @@ function render(r){
   const primeiraTotal=r.primeiraParcela;
 
   const indiceReajuste=r.tipoBem==='imovel'?'INCC':'IPCA';
-  setText('reajusteLabel',indiceReajuste);
+  setText('reajusteLabel','IPCA / INCC');
   setText('headlineTag',`Exemplo de contemplação na parcela ${r.k}`);
   setText('headline1a',fmtBRL(primeiraTotal));
   setText('headline1aSub',r.adesaoValor>0
