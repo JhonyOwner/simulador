@@ -596,6 +596,16 @@ function calc(inp){
 function fmtNum(v,d=2){if(!Number.isFinite(v))return '—';const fixed=Math.abs(v).toFixed(d);let [integer,decimal]=fixed.split('.');integer=integer.replace(/\B(?=(\d{3})+(?!\d))/g,'.');return `${v<0?'-':''}${integer}${d?`'${decimal}`:''}`}
 function fmtBRL(v){return Number.isFinite(v)?`R$ ${fmtNum(v)}`:'—'}
 function fmtPct(v,d=2){return Number.isFinite(v)?fmtNum(v,d)+'%':'—'}
+async function requireSession(){
+  try{
+    const response=await fetch('/api/session',{credentials:'same-origin',cache:'no-store'});
+    const result=await response.json().catch(()=>({}));
+    if(!response.ok || !result.user){ location.href='/'; return false; }
+    return true;
+  }catch(error){ location.href='/'; return false; }
+}
+requireSession();
+
 const $id=id=>document.getElementById(id);
 function setText(id,value){const element=$id(id);if(element) element.textContent=value}
 function setHTML(id,value){const element=$id(id);if(element) element.innerHTML=value}

@@ -1,5 +1,2 @@
-const { auth, json, cookies } = require('./__auth');
-module.exports = async (req, res) => {
-  await auth.logout(cookies(req).sim_session);
-  return json(res, 200, { ok: true }, { 'Set-Cookie': 'sim_session=; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=0' });
-};
+const {logout,json}=require('./_lib/auth');
+module.exports=async(req,res)=>{if(req.method!=='POST')return json(res,405,{message:'Método não permitido.'});return logout(req,res)};

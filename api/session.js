@@ -1,5 +1,2 @@
-const { auth, json, cookies } = require('./__auth');
-module.exports = async (req, res) => {
-  try { return json(res, 200, { user: await auth.getUser(cookies(req).sim_session) }); }
-  catch (error) { return json(res, 503, { message: error.message }); }
-};
+const {getSession,json}=require('./_lib/auth');
+module.exports=async(req,res)=>{if(req.method!=='GET')return json(res,405,{message:'Método não permitido.'});try{const s=await getSession(req);if(!s)return json(res,401,{message:'Sem sessão.'});if(s.locked)return json(res,403,{message:'Conta vinculada a outro dispositivo.'});return json(res,200,{user:s.user});}catch(e){return json(res,500,{message:e.message});}};
