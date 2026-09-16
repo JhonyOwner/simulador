@@ -48,7 +48,9 @@ function json(res,status,payload,headers={}){res.statusCode=status;res.setHeader
 
 async function getSession(req){
   const token=parseCookies(req)[COOKIE]; if(!token) return null;
-  const rows=await db(`sessions?token_hash=eq.${hash(token)}&select=id,user_id,device_id,expires_at&limit=1`);
+const rows=await db(
+  `sessions?token_hash=eq.${encodeURIComponent(hash(token))}&select=user_id,device_id,expires_at&limit=1`
+);
   if(!rows?.[0]) return null;
   if(new Date(rows[0].expires_at)<=new Date()) return null;
   const users=await db(`users?id=eq.${encodeURIComponent(rows[0].user_id)}&select=id,name,email,cpf,phone,approved,active,device_id&limit=1`);
