@@ -4,7 +4,9 @@ const crypto = require('crypto');
 const Database = require('better-sqlite3');
 const bcrypt = require('bcryptjs');
 
-const dataDir = path.join(__dirname, 'data');
+const dataDir = process.env.VERCEL
+  ? path.join('/tmp', 'simulador-embracon-data')
+  : path.join(__dirname, 'data');
 fs.mkdirSync(dataDir, { recursive: true });
 const db = new Database(path.join(dataDir, 'access.sqlite'));
 db.pragma('journal_mode = WAL');
