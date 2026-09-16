@@ -47,6 +47,7 @@ legend{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transfor
 .lance-info{font-size:12.5px;line-height:1.65;color:var(--ink-2);padding:14px;border:1px solid rgba(21,68,97,.12);border-radius:4px;background:#F8F5EA;margin-bottom:22px}.lance-info strong{color:var(--ink)}
 .chart-wrap{background:rgba(255,255,255,.35);border:1px solid var(--parchment-2);border-radius:3px;padding:16px 16px 10px;margin-bottom:22px}.chart-wrap h4{font-family:var(--mono);font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:var(--gold);margin:0 0 10px}canvas{width:100%;height:180px;display:block;border-radius:4px}
 .evolution-actions{display:flex;justify-content:center;margin:8px 0 22px}.evolution-panel{display:none;margin-bottom:22px}.evolution-panel.active{display:block;animation:fadeUp .25s ease both}.evolution-note{font-size:11.5px;color:var(--text-soft);line-height:1.55;margin:0 0 12px}.evolution-table-wrap{max-height:360px;overflow:auto;border:1px solid var(--parchment-2);border-radius:4px;background:rgba(255,255,255,.35)}.evolution-table{width:100%;border-collapse:collapse;font-size:12px}.evolution-table th,.evolution-table td{padding:9px 10px;border-bottom:1px solid rgba(15,36,56,.08);text-align:right;white-space:nowrap}.evolution-table th:first-child,.evolution-table td:first-child,.evolution-table th:nth-child(2),.evolution-table td:nth-child(2){text-align:left}.evolution-table th{position:sticky;top:0;background:#F4EEDD;color:var(--ink);font-family:var(--mono);font-size:10.5px;text-transform:uppercase;letter-spacing:.05em;z-index:1}.evolution-table tr.contemplacao-row td{font-weight:600;color:var(--red);background:rgba(185,138,46,.07)}
+.yield-panel{border:1px solid var(--parchment-2);border-radius:4px;background:rgba(255,255,255,.35);padding:16px;margin-bottom:22px}.yield-panel h4{font-family:var(--mono);font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:var(--gold);margin:0 0 8px}.yield-note{font-size:11.5px;color:var(--text-soft);line-height:1.55;margin:0 0 14px}.yield-controls{display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin-bottom:14px}.yield-toggle{display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--text-soft)}.yield-toggle input{accent-color:var(--gold)}.yield-rate{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--text-soft)}.yield-rate input{width:72px;font-family:var(--mono);font-size:14px;color:var(--ink);background:transparent;border:none;border-bottom:1.25px solid rgba(17,14,10,.08);padding:5px 2px;outline:none}.yield-rate input:focus{border-bottom-color:var(--gold)}.yield-result{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.yield-result .stat{padding:12px}.yield-result .v{font-family:var(--mono);font-size:16px;font-weight:600;color:var(--ink)}
 .summary-strip{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:22px}.stat{border:1px solid var(--parchment-2);border-radius:3px;padding:14px;background:rgba(255,255,255,.3)}.stat .k{font-size:11px;color:var(--text-soft);margin-bottom:6px}.stat .v{font-family:var(--mono);font-size:16px;color:var(--ink);font-weight:600}
 #separatedPanel{display:none;border:1px solid rgba(15,36,56,.06);padding:12px;border-radius:6px;background:#fff;margin-bottom:18px}#separatedPanel .sep-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;gap:8px}#separatedPanel .sep-actions{display:flex;gap:8px}#separatedResults{font-family:var(--mono);font-size:12px;color:var(--ink-2);white-space:pre-wrap;max-height:240px;overflow:auto;padding:6px;background:#FBF9F2;border-radius:4px;border:1px dashed var(--parchment-2)}
 .disclaimer{max-width:900px;margin:28px auto 0;padding:18px 24px;color:#93a3b0;font-size:12px;line-height:1.6}.disclaimer strong{color:var(--gold-light)}
@@ -161,6 +162,8 @@ legend{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transfor
 
   <div class="evolution-actions"><button type="button" id="btnToggleEvolution" class="btn btn-gold">Ver evolução com INCC / reajuste anual ↓</button></div>
   <div class="evolution-panel" id="evolutionPanel"><div class="chart-wrap"><h4>Evolução das parcelas com INCC / reajuste anual</h4><p class="evolution-note">O percentual informado é aplicado a cada 12 meses no crédito e na parcela. Use o índice previsto no contrato.</p><canvas id="chart" width="900" height="150"></canvas></div><div class="evolution-table-wrap"><table class="evolution-table"><thead><tr><th>Mês</th><th>Fase</th><th>Reajuste</th><th>Crédito equivalente</th><th>Parcela equivalente</th></tr></thead><tbody id="evolutionRows"></tbody></table></div></div>
+
+  <div class="yield-panel"><h4>Rendimento da carta contemplada</h4><p class="yield-note">Simulação de rendimento mensal aplicado sobre o valor do crédito contemplado.</p><div class="yield-controls"><label class="yield-toggle"><input type="checkbox" id="rendimentoAtivo" checked> Considerar rendimento</label><label class="yield-rate" for="rendimentoPct">Taxa mensal <input type="number" id="rendimentoPct" value="1" min="0" step="0.1">%</label></div><div class="yield-result"><div class="stat"><div class="k">Crédito contemplado</div><div class="v" id="rendimentoBase">—</div></div><div class="stat"><div class="k">Rendimento mensal</div><div class="v" id="rendimentoMensal">—</div></div><div class="stat"><div class="k">Crédito + rendimento</div><div class="v" id="rendimentoTotal">—</div></div></div></div>
 
   <div class="summary-strip"><div class="stat"><div class="k">Total pago em parcelas</div><div class="v" id="statTotalParcelas">—</div></div><div class="stat"><div class="k">Total de desembolso + lance próprio</div><div class="v" id="statDesembolso">—</div></div><div class="stat"><div class="k">Taxa real anual equivalente</div><div class="v" id="statTaxa">—</div></div></div>
 
@@ -630,7 +633,18 @@ function render(r){
 
   drawChart(r);
   renderEvolution(r);
+  renderRendimento(r);
   window.currentResult=r;
+}
+
+function renderRendimento(r){
+  const rate=$id('rendimentoPct');
+  const active=$id('rendimentoAtivo');
+  const pct=Math.max(0,Number(rate?.value)||0);
+  const rendimento=active?.checked ? r.credito*pct/100 : 0;
+  setText('rendimentoBase',fmtBRL(r.credito));
+  setText('rendimentoMensal',active?.checked ? fmtBRL(rendimento) : 'Desativado');
+  setText('rendimentoTotal',active?.checked ? fmtBRL(r.credito+rendimento) : '—');
 }
 
 function reajusteAnual5(month,inccPct=5){
@@ -711,7 +725,11 @@ if(btnLoadExample){btnLoadExample.addEventListener('click',()=>{
 function timestamp(){return new Date().toISOString().replace(/[:.]/g,'-')}
 function download(name,text,type='text/plain'){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([text],{type:type+';charset=utf-8'}));a.download=name;document.body.appendChild(a);a.click();a.remove()}
 const btnExportPDF=$id('btnExportPDF');
+const rendimentoAtivo=$id('rendimentoAtivo');
+const rendimentoPct=$id('rendimentoPct');
 if(btnExportPDF){btnExportPDF.addEventListener('click',()=>window.print());}
+if(rendimentoAtivo){rendimentoAtivo.addEventListener('change',()=>{if(panel && panel.classList.contains('active'))render(calc(readInputs()))});}
+if(rendimentoPct){rendimentoPct.addEventListener('input',()=>{if(panel && panel.classList.contains('active'))render(calc(readInputs()))});}
 updateVisibility();
 </script>
 </body>
