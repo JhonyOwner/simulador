@@ -103,6 +103,10 @@ header.hero{background:radial-gradient(circle at 50% 0%,rgba(224,184,92,.18),tra
 .ledger-line{display:grid;grid-template-columns:max-content max-content;justify-content:center;gap:14px;align-items:baseline}
 .ledger-line .fill{display:none}
 .ledger-line .lbl,.ledger-line .val{white-space:nowrap}
+.info-grid .ledger-line{grid-template-columns:minmax(0,1fr) max-content;justify-content:stretch;gap:10px;width:100%;}
+.info-grid .ledger-line .lbl{white-space:normal;text-align:right;overflow-wrap:anywhere;}
+.info-grid .ledger-line .val{text-align:left;white-space:nowrap;}
+.info-grid .ledger-line.total .lbl{font-size:13px;}
 .evolution-table th,.evolution-table td{text-align:center!important}
 .evolution-table th:first-child,.evolution-table td:first-child,.evolution-table th:nth-child(2),.evolution-table td:nth-child(2){text-align:center}
 .yield-controls{justify-content:center}
