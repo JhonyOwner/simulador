@@ -20,7 +20,10 @@ anual equivalente do plano (calculada por TIR).
 ├── js/
 │   ├── calc.js             # Lógica de cálculo, função pura (UMD: navegador + Node)
 │   └── app.js               # Camada de UI: formulário, popup, gráfico, exportação
-├── server.js              # Servidor estático simples para rodar localmente
+├── server.js              # Servidor HTTP + autenticação e proteção do simulador
+├── auth.js                # SQLite, hash de senha, sessões e aprovação de usuários
+├── data/access.sqlite     # Banco local criado automaticamente (não versionar)
+├── package.json           # Dependências do backend
 ├── tests/
 │   └── calc.test.js        # Teste de regressão de js/calc.js
 └── README.md
@@ -32,13 +35,24 @@ O simulador é uma aplicação client-side (HTML + CSS + JavaScript puro), sem
 dependências de build. Para rodar localmente:
 
 ```bash
-node server.js
+npm install
+ADMIN_KEY="defina-uma-chave-forte" node server.js
 ```
 
 Por padrão o servidor sobe em `http://localhost:8080`. Para usar outra porta:
 
 ```bash
-PORT=3000 node server.js
+PORT=3000 ADMIN_KEY="defina-uma-chave-forte" node server.js
+
+O banco SQLite é criado em `data/access.sqlite`. O cadastro cria um usuário
+pendente; somente usuários aprovados na seção **Gestão de acessos** da página
+inicial conseguem abrir `/simulador`. A chave usada nessa seção é a variável
+`ADMIN_KEY`, que deve ser definida fora do código e nunca compartilhada.
+
+O login usa sessões em cookie `HttpOnly`, com expiração de 12 horas, e as
+senhas são armazenadas somente como hash bcrypt. A confirmação de cadastro é
+exibida na própria tela; o envio de e-mail transacional exige configurar um
+provedor SMTP antes de ser ativado.
 ```
 
 Também é possível abrir `index.html` ou `simulador.html` diretamente no
