@@ -76,6 +76,33 @@ legend{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transfor
   #resultsPanel{display:block!important}
   #evolutionPanel{display:block!important}
 }
+
+/* Direção visual premium: azul-marinho, marfim e dourado suave. */
+body{background:linear-gradient(180deg,#14263A 0%,#263C52 100%);color:#263342}
+header.hero{background:radial-gradient(circle at 50% 0%,rgba(224,184,92,.2),transparent 42%),linear-gradient(180deg,#14263A 0%,#203B55 100%)}
+.panel,.result-panel{background:linear-gradient(180deg,#FBF8F0 0%,#F1E9D8 100%);color:#263342}
+.form-panel,.result-panel{text-align:center}
+.form-panel h2,.panel h2,.headline-label,.headline-value,.headline-sub,.seal-desc,.ledger,.section-block,.formula,.lance-info,.chart-wrap,.yield-panel,.summary-strip,.stat,.key-card,.evolution-panel{text-align:center}
+.field-row,.field,.radio-group,.checkbox-line,.yield-controls,.yield-result,.summary-strip,.key-grid,.headline-numbers,.cols,.seal-row{justify-items:center}
+.field-row>.field,.field{align-items:center}
+.field input[type=number],.field select{ text-align:center }
+.inline-note{border-left:0;border-top:1px solid var(--parchment-2);padding:8px 0 0;width:100%}
+.radio-group{justify-content:center}
+.action-bar{justify-content:center}
+.headline-numbers>div,.seal-desc{width:100%}
+.seal-row{justify-content:center}
+.cols{grid-template-columns:1fr}
+.ledger-line{justify-content:center}
+.ledger-line .fill{display:none}
+.ledger-line .lbl,.ledger-line .val{white-space:normal}
+.evolution-table th,.evolution-table td{text-align:center!important}
+.evolution-table th:first-child,.evolution-table td:first-child,.evolution-table th:nth-child(2),.evolution-table td:nth-child(2){text-align:center}
+.yield-controls{justify-content:center}
+.yield-result{grid-template-columns:repeat(3,1fr)}
+.summary-strip{grid-template-columns:repeat(3,1fr)}
+.disclaimer{text-align:center}
+
+@media(max-width:700px){.yield-result,.summary-strip{grid-template-columns:1fr}.field-row{grid-template-columns:1fr}.cols{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
