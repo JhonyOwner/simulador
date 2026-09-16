@@ -102,7 +102,7 @@ legend{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transfor
       <div class="field-row"><div class="field"><label for="credito">Valor do crédito (R$)</label><input type="number" id="credito" value="45000" placeholder="Ex.: 45000" min="1" step="100"></div><div class="field"><label for="prazo">Prazo total (meses)</label><input type="number" id="prazo" value="100" placeholder="Ex.: 100" min="1" step="1"></div></div>
       <div class="field-row"><div class="field"><label for="ta">Taxa de administração total (%)</label><input type="number" id="ta" value="16" placeholder="Ex.: 16" min="0" step="0.1"></div><div class="field"><label for="fr">Fundo de reserva total (%)</label><input type="number" id="fr" value="3" placeholder="Ex.: 3" min="0" step="0.1"></div></div>
       <div class="field-row"><div class="field"><label for="seguroPct">Seguro mensal (% do crédito — 0 se não houver)</label><input type="number" id="seguroPct" value="0" placeholder="Ex.: 0" min="0" step="0.001"></div><div class="field"><label for="mesContemplacao">Contemplação na parcela nº</label><input type="number" id="mesContemplacao" value="10" placeholder="Ex.: 10" min="1" step="1"></div></div>
-      <div class="field-row"><div class="field"><label for="inccPct">INCC / reajuste anual (%)</label><input type="number" id="inccPct" value="5" placeholder="Ex.: 5" min="0" step="0.1"></div><div class="field"><label>Aplicação</label><div class="inline-note" style="margin:0">Reajuste aplicado a cada 12 meses no crédito e na parcela da evolução.</div></div></div>
+      <div class="field-row"><div class="field"><label for="inccPct"><span id="reajusteLabel">IPCA</span> / reajuste anual (%)</label><input type="number" id="inccPct" value="5" placeholder="Ex.: 5" min="0" step="0.1"></div><div class="field"><label>Aplicação</label><div class="inline-note" style="margin:0">Reajuste aplicado a cada 12 meses no crédito e na parcela da evolução.</div></div></div>
       <div class="field-row"><div class="field"><label for="tipoBem">Tipo de bem</label><select id="tipoBem"><option value="auto" selected>Automóvel — 1% do saldo devedor</option><option value="imovel">Imóvel — 0,5% do saldo devedor</option></select></div><div class="field"><label>Regra pós-contemplação</label><div class="inline-note" style="margin:0">Parcela pós = percentual do saldo devedor. A diferença restante do redutor é tratada separadamente.</div></div></div>
       <div class="inline-note">Seguro não entra no exemplo-base. Atualização do crédito/parcela não é projetada: a decomposição oficial do contrato prevalece.</div>
     </fieldset>
@@ -159,10 +159,10 @@ legend{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transfor
 
   <div class="section-block"><h4>Crédito, saldo e prazo</h4><div class="ledger-line"><span class="lbl">Crédito contratado</span><span class="fill"></span><span class="val" id="creditoContratado">—</span></div><div class="ledger-line"><span class="lbl">Lance embutido</span><span class="fill"></span><span class="val" id="creditoEmbutido">—</span></div><div class="ledger-line total"><span class="lbl">Crédito líquido recebido</span><span class="fill"></span><span class="val" id="creditoLiquido">—</span></div><div class="ledger-line"><span class="lbl">Saldo antes do lance</span><span class="fill"></span><span class="val" id="saldoAntesLance">—</span></div><div class="ledger-line ok"><span class="lbl">Lance utilizado no saldo</span><span class="fill"></span><span class="val" id="lanceUtilizado">—</span></div><div class="ledger-line total"><span class="lbl">Saldo após o lance</span><span class="fill"></span><span class="val" id="saldoDepoisLance">—</span></div><div class="ledger-line"><span class="lbl">Meses contratuais restantes</span><span class="fill"></span><span class="val" id="mesesRestantesContrato">—</span></div><div class="ledger-line"><span class="lbl">Meses economizados</span><span class="fill"></span><span class="val" id="mesesEconomizados">—</span></div><div class="ledger-line total"><span class="lbl">Meses pós-contemplação</span><span class="fill"></span><span class="val" id="mesesPos">—</span></div><div class="ledger-line"><span class="lbl">Lance não utilizado</span><span class="fill"></span><span class="val" id="lanceNaoUtilizado">—</span></div></div>
 
-  <div class="evolution-actions"><button type="button" id="btnToggleEvolution" class="btn btn-gold">Ver evolução com INCC / reajuste anual ↓</button></div>
-  <div class="evolution-panel" id="evolutionPanel"><div class="chart-wrap"><h4>Evolução das parcelas com INCC / reajuste anual</h4><p class="evolution-note">O percentual informado é aplicado a cada 12 meses no crédito e na parcela. Use o índice previsto no contrato.</p><canvas id="chart" width="900" height="150"></canvas></div><div class="evolution-table-wrap"><table class="evolution-table"><thead><tr><th>Mês</th><th>Fase</th><th>Reajuste</th><th>Crédito equivalente</th><th>Parcela equivalente</th></tr></thead><tbody id="evolutionRows"></tbody></table></div></div>
+  <div class="evolution-actions"><button type="button" id="btnToggleEvolution" class="btn btn-gold">Ver evolução com reajuste anual ↓</button></div>
+  <div class="evolution-panel" id="evolutionPanel"><div class="chart-wrap"><h4>Evolução das parcelas com reajuste anual</h4><p class="evolution-note">O percentual informado é aplicado a cada 12 meses no crédito e na parcela. Use o índice previsto no contrato.</p><canvas id="chart" width="900" height="150"></canvas></div><div class="evolution-table-wrap"><table class="evolution-table"><thead><tr><th>Mês</th><th>Fase</th><th>Reajuste</th><th>Crédito equivalente</th><th>Parcela equivalente</th></tr></thead><tbody id="evolutionRows"></tbody></table></div></div>
 
-  <div class="yield-panel"><h4>Rendimento da carta contemplada</h4><p class="yield-note">Simulação de rendimento mensal aplicado sobre o valor do crédito contemplado.</p><div class="yield-controls"><label class="yield-toggle"><input type="checkbox" id="rendimentoAtivo" checked> Considerar rendimento</label><label class="yield-rate" for="rendimentoPct">Taxa mensal <input type="number" id="rendimentoPct" value="1" min="0" step="0.1">%</label></div><div class="yield-result"><div class="stat"><div class="k">Crédito contemplado</div><div class="v" id="rendimentoBase">—</div></div><div class="stat"><div class="k">Rendimento mensal</div><div class="v" id="rendimentoMensal">—</div></div><div class="stat"><div class="k">Crédito + rendimento</div><div class="v" id="rendimentoTotal">—</div></div></div></div>
+  <div class="yield-panel"><h4>Rendimento da carta contemplada</h4><p class="yield-note">Simulação de juros compostos mensais aplicados sobre o valor do crédito contemplado.</p><div class="yield-controls"><label class="yield-toggle"><input type="checkbox" id="rendimentoAtivo" checked> Considerar rendimento</label><label class="yield-rate" for="rendimentoPct">Taxa mensal <input type="number" id="rendimentoPct" value="1" min="0" step="0.1">%</label><label class="yield-rate" for="rendimentoMeses">Prazo <input type="number" id="rendimentoMeses" value="12" min="1" step="1"> meses</label></div><div class="yield-result"><div class="stat"><div class="k">Crédito contemplado</div><div class="v" id="rendimentoBase">—</div></div><div class="stat"><div class="k">Rendimento no 1º mês</div><div class="v" id="rendimentoMensal">—</div></div><div class="stat"><div class="k">Valor após o prazo</div><div class="v" id="rendimentoTotal">—</div></div></div></div>
 
   <div class="summary-strip"><div class="stat"><div class="k">Total pago em parcelas</div><div class="v" id="statTotalParcelas">—</div></div><div class="stat"><div class="k">Total de desembolso + lance próprio</div><div class="v" id="statDesembolso">—</div></div><div class="stat"><div class="k">Taxa real anual equivalente</div><div class="v" id="statTaxa">—</div></div></div>
 
@@ -523,7 +523,9 @@ function updateVisibility(){
 function render(r){
   const primeiraTotal=r.primeiraParcela;
 
-  setText('headlineTag',`Contemplação na ${r.k}ª parcela`);
+  const indiceReajuste=r.tipoBem==='imovel'?'INCC':'IPCA';
+  setText('reajusteLabel',indiceReajuste);
+  setText('headlineTag',`Exemplo de contemplação na parcela ${r.k}`);
   setText('headline1a',fmtBRL(primeiraTotal));
   setText('headline1aSub',r.adesaoValor>0
     ? (r.adesaoForma==='avista'
@@ -639,11 +641,13 @@ function render(r){
 function renderRendimento(r){
   const rate=$id('rendimentoPct');
   const active=$id('rendimentoAtivo');
+  const months=Math.max(1,Math.floor(Number($id('rendimentoMeses')?.value)||1));
   const pct=Math.max(0,Number(rate?.value)||0);
   const rendimento=active?.checked ? r.credito*pct/100 : 0;
+  const total=active?.checked ? r.credito*Math.pow(1+pct/100,months) : 0;
   setText('rendimentoBase',fmtBRL(r.credito));
   setText('rendimentoMensal',active?.checked ? fmtBRL(rendimento) : 'Desativado');
-  setText('rendimentoTotal',active?.checked ? fmtBRL(r.credito+rendimento) : '—');
+  setText('rendimentoTotal',active?.checked ? `${fmtBRL(total)} (${months} meses)` : '—');
 }
 
 function reajusteAnual5(month,inccPct=5){
@@ -657,6 +661,11 @@ function parcelaBaseDoMes(r,month){
 function renderEvolution(r){
   const rows=$id('evolutionRows');
   if(!rows) return;
+  const indiceReajuste=r.tipoBem==='imovel'?'INCC':'IPCA';
+  const evolutionTitle=document.querySelector('#evolutionPanel .chart-wrap h4');
+  const evolutionButton=$id('btnToggleEvolution');
+  if(evolutionTitle) evolutionTitle.textContent=`Evolução das parcelas com ${indiceReajuste} / reajuste anual`;
+  if(evolutionButton && !evolutionPanel.classList.contains('active')) evolutionButton.textContent=`Ver evolução com ${indiceReajuste} / reajuste anual ↓`;
   const html=[];
   for(let month=1;month<=r.prazoEfetivo;month++){
     const fator=reajusteAnual5(month,r.inccPct);
@@ -704,7 +713,8 @@ const evolutionPanel=$id('evolutionPanel');
 const btnToggleEvolution=$id('btnToggleEvolution');
 if(btnToggleEvolution && evolutionPanel){btnToggleEvolution.addEventListener('click',()=>{
   const isOpen=evolutionPanel.classList.toggle('active');
-  btnToggleEvolution.textContent=isOpen?'Ocultar evolução ↑':'Ver evolução das parcelas ↓';
+  const indiceReajuste=window.currentResult?.tipoBem==='imovel'?'INCC':'IPCA';
+  btnToggleEvolution.textContent=isOpen?'Ocultar evolução ↑':`Ver evolução com ${indiceReajuste} / reajuste anual ↓`;
   if(isOpen && window.currentResult){
     drawChart(window.currentResult);
     renderEvolution(window.currentResult);
@@ -726,9 +736,11 @@ function download(name,text,type='text/plain'){const a=document.createElement('a
 const btnExportPDF=$id('btnExportPDF');
 const rendimentoAtivo=$id('rendimentoAtivo');
 const rendimentoPct=$id('rendimentoPct');
+const rendimentoMeses=$id('rendimentoMeses');
 if(btnExportPDF){btnExportPDF.addEventListener('click',()=>window.print());}
 if(rendimentoAtivo){rendimentoAtivo.addEventListener('change',()=>{if(panel && panel.classList.contains('active'))render(calc(readInputs()))});}
 if(rendimentoPct){rendimentoPct.addEventListener('input',()=>{if(panel && panel.classList.contains('active'))render(calc(readInputs()))});}
+if(rendimentoMeses){rendimentoMeses.addEventListener('input',()=>{if(panel && panel.classList.contains('active'))render(calc(readInputs()))});}
 updateVisibility();
 </script>
 </body>
