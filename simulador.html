@@ -407,7 +407,11 @@ function calc(inp){
   const totalPagoParcelas=outflow
     .slice(1)
     .reduce((s,v)=>s+v,0);
+  const totalPagoParcelasReajustado=outflow
+    .slice(1)
+    .reduce((s,v, index)=>s+v*reajusteAnual5(index+1,inccPct),0);
   const totalDesembolso=totalPagoParcelas+lanceProprio;
+  const totalDesembolsoReajustado=totalPagoParcelasReajustado+lanceProprio;
 
   /*
      TAXA REAL PÓS-CONTEMPLAÇÃO
@@ -495,7 +499,7 @@ function calc(inp){
     tipoBem,formaRestante:inp.formaRestante,
     mesesEconomizados,mesesPosContemplacao,mesesDiluidos,mesesExtras,prazoEfetivo,
     parcelasPagasAntesContemplacao,valorParcelasAntesContemplacao,adesaoPagaAteContemplacao,
-    pagoAntesContemplacao,desembolsoAteContemplacao,totalPagoParcelas,totalDesembolso,
+    pagoAntesContemplacao,desembolsoAteContemplacao,totalPagoParcelas,totalPagoParcelasReajustado,totalDesembolso,totalDesembolsoReajustado,
     totalPagoPos,taxaPosMensal,taxaRealPosAnual,outflow
   };
 }
@@ -628,8 +632,8 @@ function render(r){
     ${r.lanceNaoUtilizado>0?`<br><br><strong>Lance não utilizado:</strong> ${fmtBRL(r.lanceNaoUtilizado)} (saldo devedor zerado).`:''}
   `);
 
-  setText('statTotalParcelas',fmtBRL(r.totalPagoParcelas));
-  setText('statDesembolso',fmtBRL(r.totalDesembolso));
+  setText('statTotalParcelas',fmtBRL(r.totalPagoParcelasReajustado));
+  setText('statDesembolso',fmtBRL(r.totalDesembolsoReajustado));
   setText('statTaxa',fmtPct(r.taxaRealPosAnual,1));
 
   drawChart(r);
@@ -643,9 +647,10 @@ function renderRendimento(r){
   const active=$id('rendimentoAtivo');
   const months=Math.max(1,Math.floor(Number($id('rendimentoMeses')?.value)||1));
   const pct=Math.max(0,Number(rate?.value)||0);
-  const rendimento=active?.checked ? r.credito*pct/100 : 0;
-  const total=active?.checked ? r.credito*Math.pow(1+pct/100,months) : 0;
-  setText('rendimentoBase',fmtBRL(r.credito));
+  const rendimentoBase=r.creditoLiquido;
+  const rendimento=active?.checked ? rendimentoBase*pct/100 : 0;
+  const total=active?.checked ? rendimentoBase*Math.pow(1+pct/100,months) : 0;
+  setText('rendimentoBase',fmtBRL(rendimentoBase));
   setText('rendimentoMensal',active?.checked ? fmtBRL(rendimento) : 'Desativado');
   setText('rendimentoTotal',active?.checked ? `${fmtBRL(total)} (${months} meses)` : '—');
 }
