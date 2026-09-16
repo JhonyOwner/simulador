@@ -83,14 +83,28 @@ async function login(email, password) {
   if (!user || !(await bcrypt.compare(String(password || ''), user.password_hash))) return { error: 'E-mail ou senha inválidos.' };
   if (!user.approved) return { error: 'Seu cadastro foi recebido e aguarda aprovação.' };
   const token = crypto.randomBytes(32).toString('hex');
-  await pool.query('INSERT INTO sessions (token_hash, user_id, expires_at) VALUES ($1, $2, $3)', [hashToken(token), user.id, Date.now() + 1000 * 60 * 60 * 12]);
+const expiresAt = new Date(
+  Date.now() + 1000 * 60 * 60 * 12
+).toISOString();
+
+await pool.query(
+  'INSERT INTO sessions (token_hash, user_id, expires_at) VALUES ($1, $2, $3)',
+  [hashToken(token), user.id, expiresAt]
+);
   return { token, user: publicUser(user) };
 }
 
 async function getUser(token) {
   if (!token) return null;
   await ensureSchema();
-  const { rows } = await pool.query('SELECT users.* FROM sessions JOIN users ON users.id = sessions.user_id WHERE sessions.token_hash = $1 AND sessions.expires_at > $2', [hashToken(token), Date.now()]);
+const { rows } = await pool.query(
+  `SELECT users.*
+  FROM sessions
+  JOIN users ON users.id = sessions.user_id
+  WHERE sessions.token_hash = $1
+  AND sessions.expires_at > $2`,
+  [hashToken(token), new Date().toISOString()]
+);  
   return rows[0] ? publicUser(rows[0]) : null;
 }
 async function logout(token) { if (token) { await ensureSchema(); await pool.query('DELETE FROM sessions WHERE token_hash = $1', [hashToken(token)]); } }
