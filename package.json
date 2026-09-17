@@ -2,6 +2,9 @@
   "name": "simulador-embracon",
   "version": "1.0.0",
   "private": true,
+  "engines": {
+    "node": ">=20"
+  },
   "description": "Simulador de consorcio com acesso controlado",
   "main": "server.js",
   "scripts": {
