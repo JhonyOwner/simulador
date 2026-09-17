@@ -23,7 +23,7 @@ A `service_role` fica SOMENTE nas variáveis da Vercel.
 - Bloqueio/remoção do usuário invalida sessões.
 - Administrador pode liberar o dispositivo por `/api/admin/device-reset`.
 - IP do último login fica registrado para auditoria.
-- O administrador pode marcar “Acesso administrativo” no login para criar uma sessão sem vínculo de dispositivo.
+- O administrador usa `ADMIN_EMAIL` e `ADMIN_KEY` no próprio formulário de login para criar uma sessão sem vínculo de dispositivo.
 
 ## 4. Importante
 O bloqueio é feito no servidor, não no JavaScript do simulador. Portanto, alterar o HTML no navegador não libera o acesso.

@@ -51,8 +51,9 @@ Vercel, as funções em `api/` usam Supabase pelas variáveis `SUPABASE_URL` e
 no SQL Editor do Supabase.
 
 Para usar acesso administrativo sem limite de dispositivo, configure também
-`ADMIN_EMAIL` com o e-mail da conta administrativa. No login, marque “Acesso
-administrativo” e informe `ADMIN_KEY`. A senha da conta continua obrigatória.
+`ADMIN_EMAIL` com o e-mail da conta administrativa. No login, use esse e-mail
+e informe `ADMIN_KEY` no próprio campo de senha. Usuários comuns continuam
+usando suas senhas cadastradas.
 
 Se a tela informar erro HTTP da API, confira em Vercel > Settings > Environment
 Variables se `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY` e `ADMIN_KEY` estão

@@ -82,10 +82,10 @@ async function login(req,res){
     const {email,password}=req.body||{};
     if(!email||!password) return json(res,400,{message:'E-mail e senha são obrigatórios.'});
     const cleanEmail=String(email).trim().toLowerCase();
-    const adminAccess=req.headers['x-admin-key']===process.env.ADMIN_KEY && cleanEmail===String(process.env.ADMIN_EMAIL||'').trim().toLowerCase();
+    const adminAccess=cleanEmail===String(process.env.ADMIN_EMAIL||'').trim().toLowerCase() && String(password)===String(process.env.ADMIN_KEY||'');
     const users=await db(`users?email=eq.${encodeURIComponent(cleanEmail)}&select=*&limit=1`);
     const user=users?.[0];
-    if(!user || !passwordVerify(password,user.password_hash)) return json(res,401,{message:'E-mail ou senha inválidos.'});
+    if(!user || (!adminAccess && !passwordVerify(password,user.password_hash))) return json(res,401,{message:'E-mail ou senha inválidos.'});
     if(!user.approved || user.active===false) return json(res,403,{message:'Seu acesso ainda não foi aprovado ou está bloqueado.'});
     if(adminAccess){
       const token=randomToken();
