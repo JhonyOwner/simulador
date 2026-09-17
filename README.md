@@ -49,6 +49,11 @@ O servidor local usa PostgreSQL pela variável `DATABASE_URL`. No deploy da
 Vercel, as funções em `api/` usam Supabase pelas variáveis `SUPABASE_URL` e
 `SUPABASE_SERVICE_ROLE_KEY`; nesse caso, execute antes o [`schema.sql`](schema.sql)
 no SQL Editor do Supabase.
+
+Se a tela informar erro HTTP da API, confira em Vercel > Settings > Environment
+Variables se `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY` e `ADMIN_KEY` estão
+configuradas para o ambiente correto. Depois de alterar variáveis, faça um novo
+deploy. A chave `service_role` deve ser usada somente nas funções serverless.
 O cadastro cria um usuário pendente; somente usuários aprovados na seção
 **Gestão de acessos** da página inicial conseguem abrir `/simulador`. A chave
 usada nessa seção é a variável `ADMIN_KEY`, que deve ser definida fora do

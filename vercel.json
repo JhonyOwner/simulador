@@ -1,5 +1,10 @@
 {
   "outputDirectory": ".",
+  "functions": {
+    "api/**/*.js": {
+      "runtime": "nodejs20.x"
+    }
+  },
   "cleanUrls": false,
   "trailingSlash": false,
   "rewrites": [
