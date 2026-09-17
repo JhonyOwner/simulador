@@ -784,7 +784,9 @@ function evolucaoSaldo(r){
     if(month===r.k) saldo=Math.max(0,saldo-r.lanceUtilizado);
     const mesesRestantes=Math.max(1,totalMeses-month+1);
     const adesao=month===1?r.adesaoValor:0;
-    const parcelaBase=month===1||month<r.k?r.parcelaReduzida:r.parcelaPos;
+    const parcelaBase=month===1||month<r.k
+      ? r.parcelaReduzida
+      : saldo*r.percentualPos+r.diferencaDiluidaBase;
     const parcelaPlanejada=parcelaBase+adesao;
     let parcela=month===totalMeses?saldo+adesao:Math.min(parcelaPlanejada,saldo/mesesRestantes+adesao);
     if(month>r.k && month<totalMeses) parcela=Math.min(parcela,parcelaAnterior);
