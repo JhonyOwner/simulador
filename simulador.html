@@ -570,7 +570,7 @@ function parseInputNumber(value){
   if(text.includes("'")) return Number(text.replace(/\./g,'').replace(String.fromCharCode(39),'.'))||0;
   return Number(text.replace(',','.'))||0;
 }
-function num(id){return parseInputNumber($id(id).value)}
+function num(id){const element=$id(id);return element?parseInputNumber(element.value):0}
 function formatInputNumber(input){
   if(!['credito','dinheiro'].includes(input.id)) return;
   input.value=fmtNum(parseInputNumber(input.value),2);
@@ -590,7 +590,7 @@ function checked(name){return document.querySelector(`input[name="${name}"]:chec
 function readInputs(){return{
   credito:num('credito'),prazo:num('prazo'),taPct:num('ta'),frPct:num('fr'),seguroPct:num('seguroPct'),inccPct:num('inccPct'),mesContemplacao:num('mesContemplacao'),tipoBem:$id('tipoBem').value,
   redutorPct:checked('redutor'),redutorCustomPct:num('redutorCustom'),
-  adesaoPct:num('adesaoPct'),adesaoForma:checked('adesaoForma'),adesaoMeses:num('adesaoMeses'),
+  adesaoPct:num('adesaoPct'),adesaoForma:checked('adesaoForma'),adesaoMeses:1,
   dinheiro:num('dinheiro'),embutidoPct:num('embutido'),formaRestante:checked('restante')
 }}
 
