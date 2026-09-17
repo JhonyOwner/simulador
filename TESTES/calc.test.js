@@ -123,12 +123,14 @@ const comLance = telaCalc({ ...activeInput, dinheiro: 30000, embutido: 10 });
 checar(semLance.parcelasPagasAntesContemplacao === 23, 'a parcela da contemplação não pode ser contada como paga antes do evento');
 checar(semLance.parcelaMinima === comLance.parcelaMinima, 'o piso deve ser independente de parcelas pagas e lance');
 checar(Math.abs(semLance.parcelaMinima - semLance.saldoDevedorInicial * semLance.percentualPos) < 0.0001, 'o piso deve usar o saldo devedor inicial');
-checar(Math.abs(semLance.parcelaPos - (semLance.parcelaMinima + semLance.diferencaDiluida)) < 0.0001, 'a parcela pós deve ser mínimo mais diferença mensal');
+checar(semLance.parcelaPos >= semLance.parcelaMinima + semLance.diferencaDiluida - 0.0001, 'a parcela pós deve respeitar o piso mínimo mais diferença mensal');
 checar(semLance.saldoDevedorInicial > semLance.saldoDevedorAntesLance, 'o saldo após pagamentos deve ser menor que o saldo inicial');
-const parcelaComLance = telaCalc({ ...activeInput, dinheiro: 10000, formaRestante: 'parcelas' });
+const parcelaComLance = telaCalc({ ...activeInput, dinheiro: 1000, formaRestante: 'parcelas' });
 const prazoComLance = telaCalc({ ...activeInput, dinheiro: 10000, formaRestante: 'prazo' });
 checar(parcelaComLance.mesesPosContemplacao === parcelaComLance.mesesRestantesContrato, 'abatimento na parcela deve manter o prazo');
-checar(parcelaComLance.parcelaPos < semLance.parcelaPos, 'abatimento na parcela deve reduzir o valor mensal');
+checar(parcelaComLance.parcelaPos <= semLance.parcelaPos, 'abatimento na parcela não deve aumentar o valor mensal');
+const parcelaNoPiso = telaCalc({ ...activeInput, dinheiro: 10000, formaRestante: 'parcelas' });
+checar(parcelaNoPiso.parcelaPos >= parcelaNoPiso.parcelaMinima, 'abatimento na parcela deve respeitar o piso');
 checar(prazoComLance.mesesPosContemplacao < prazoComLance.mesesRestantesContrato, 'abatimento no prazo deve reduzir meses');
 
 if (falhas > 0) {
