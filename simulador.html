@@ -115,6 +115,30 @@ fieldset{border-top-color:rgba(16,40,50,.16);padding-top:25px}legend{color:#197b
 .disclaimer{color:#75918f}
 @media(max-width:700px){header.hero{padding:42px 18px 76px}.wrap{padding:0 14px 48px}.form-panel,.result-panel{padding:24px 18px}.form-panel::before,header.hero::after{display:none}.field{padding:13px 12px}.field input[type=number],.field input[type=text],.field select{font-size:16px}.result-panel-top{align-items:flex-start}.evolution-panel{padding-left:8px}}
 
+/* Modo minimalista: foco nos dados, sem molduras excessivas. */
+body::before{display:none}
+header.hero{background:linear-gradient(180deg,#071016,#0b2028);padding-bottom:82px}
+header.hero::after{display:none}
+.wrap{max-width:1040px}
+.panel{border:0;border-radius:0;box-shadow:0 18px 45px rgba(0,0,0,.2)}
+.form-panel{margin-top:-36px;padding:42px 52px 24px}
+.form-panel::before{display:none}
+.form-panel h2,.section-note,.field label,.inline-note,.action-bar{text-align:center}
+fieldset{padding:30px 0 12px;border-top:1px solid rgba(25,123,121,.1)}
+.field-row{gap:28px;margin-bottom:22px}
+.field{padding:10px 4px 4px;border:0;border-bottom:1px solid rgba(25,123,121,.2);border-radius:0;background:transparent;box-shadow:none}
+.field:focus-within{transform:none;border-color:var(--cyan);box-shadow:0 8px 18px rgba(87,217,208,.08)}
+.field input[type=number],.field input[type=text],.field select{height:58px;border:0;border-bottom:2px solid rgba(25,123,121,.24);border-radius:0;background:transparent;text-align:center;font-size:22px;box-shadow:none}
+.field input[type=number]:focus,.field input[type=text]:focus,.field select:focus{border-color:var(--cyan);background:transparent;box-shadow:0 6px 20px rgba(87,217,208,.1)}
+.radio-group{justify-content:center}.radio-group label{border:0;border-bottom:2px solid transparent;border-radius:0;background:transparent;padding:10px 15px}.radio-group label:has(input:checked){background:transparent;border-color:var(--cyan);color:#0b5558;box-shadow:none}
+.btn{padding:14px 24px;font-size:12px}.action-bar{justify-content:center}
+.result-panel{margin-top:18px;padding:42px 52px;background:#edf6f1}
+.headline-numbers{gap:44px;padding:24px 0 30px}.headline-value{font-size:clamp(28px,4vw,46px)}
+.key-card,.stat,.yield-panel,.chart-wrap,.evolution-table-wrap{border:0;border-bottom:1px solid rgba(25,123,121,.16);border-radius:0;background:transparent;box-shadow:none}
+.info-grid{gap:34px}.ledger-line{margin-bottom:13px}.ledger-line .lbl{font-size:12px}.ledger-line .val{font-size:15px}
+.evolution-panel{border-left:0;padding-left:0}.chart-wrap{padding-left:0;padding-right:0}
+@media(max-width:700px){.form-panel,.result-panel{padding-left:22px;padding-right:22px}.field-row{gap:18px}.field input[type=number],.field input[type=text],.field select{font-size:19px}.headline-numbers{gap:20px}}
+
 /* Direção visual premium: preto suavizado, grafite, marfim e dourado. */
 body{background:linear-gradient(180deg,#101010 0%,#27231D 100%);color:#28231B}
 header.hero{background:radial-gradient(circle at 50% 0%,rgba(224,184,92,.18),transparent 42%),linear-gradient(180deg,#101010 0%,#25211B 100%)}
@@ -224,7 +248,7 @@ header.hero{background:radial-gradient(circle at 50% 0%,rgba(224,184,92,.18),tra
       <legend>Plano</legend>
       <div class="field-row"><div class="field"><label for="credito">Valor do crédito (R$)</label><input type="number" id="credito" value="45000" placeholder="Ex.: 45000" min="1" step="100"></div><div class="field"><label for="prazo">Prazo total (meses)</label><input type="number" id="prazo" value="100" placeholder="Ex.: 100" min="1" step="1"></div></div>
       <div class="field-row"><div class="field"><label for="ta">Taxa de administração total (%)</label><input type="number" id="ta" value="16" placeholder="Ex.: 16" min="0" step="0.1"></div><div class="field"><label for="fr">Fundo de reserva total (%)</label><input type="number" id="fr" value="3" placeholder="Ex.: 3" min="0" step="0.1"></div></div>
-      <div class="field-row"><div class="field"><label for="seguroPct">Seguro mensal (% do crédito — 0 se não houver)</label><input type="number" id="seguroPct" value="0" placeholder="Ex.: 0" min="0" step="0.001"></div><div class="field"><label for="mesContemplacao">Contemplação na parcela nº</label><input type="number" id="mesContemplacao" value="10" placeholder="Ex.: 10" min="1" step="1"></div></div>
+      <div class="field-row"><div class="field"><label for="mesContemplacao">Contemplação na parcela nº</label><input type="number" id="mesContemplacao" value="10" placeholder="Ex.: 10" min="1" step="1"></div></div>
       <div class="field-row"><div class="field"><label for="inccPct">IPCA / INCC / reajuste anual (%)</label><input type="number" id="inccPct" value="5" placeholder="Ex.: 5" min="0" step="0.1"></div><div class="field"><label>Aplicação</label><div class="inline-note" style="margin:0">Reajuste proporcional aplicado sobre o saldo devedor remanescente. A parcela é recalculada para diminuir até zerar.</div></div></div>
       <div class="field-row"><div class="field"><label for="tipoBem">Tipo de bem</label><select id="tipoBem"><option value="auto" selected>Automóvel — 1% do saldo devedor</option><option value="imovel">Imóvel — 0,5% do saldo devedor</option></select></div><div class="field"><label>Regra pós-contemplação</label><div class="inline-note" style="margin:0">Parcela pós = parcela mínima + diferença mensal do redutor. Ela passa a valer no mês da contemplação.</div></div></div>
       <div class="inline-note">Seguro não entra no exemplo-base. Atualização do crédito/parcela não é projetada: a decomposição oficial do contrato prevalece.</div>
@@ -626,7 +650,7 @@ function setupFormattedInputs(){
 function checked(name){return document.querySelector(`input[name="${name}"]:checked`)?.value}
 
 function readInputs(){return{
-  credito:num('credito'),prazo:num('prazo'),taPct:num('ta'),frPct:num('fr'),seguroPct:num('seguroPct'),inccPct:num('inccPct'),mesContemplacao:num('mesContemplacao'),tipoBem:$id('tipoBem').value,
+  credito:num('credito'),prazo:num('prazo'),taPct:num('ta'),frPct:num('fr'),seguroPct:0,inccPct:num('inccPct'),mesContemplacao:num('mesContemplacao'),tipoBem:$id('tipoBem').value,
   redutorPct:checked('redutor'),redutorCustomPct:num('redutorCustom'),
   adesaoPct:num('adesaoPct'),adesaoForma:checked('adesaoForma'),adesaoMeses:1,
   dinheiro:num('dinheiro'),embutidoPct:num('embutido'),formaRestante:checked('restante')
@@ -853,7 +877,7 @@ if(btnToggleEvolution && evolutionPanel){btnToggleEvolution.addEventListener('cl
 
 const btnLoadExample=$id('loadExample');
 if(btnLoadExample){btnLoadExample.addEventListener('click',()=>{
-  $id('credito').value=45000;$id('prazo').value=100;$id('ta').value=16;$id('fr').value=3;$id('seguroPct').value=0;$id('mesContemplacao').value=10;if($id('tipoBem'))$id('tipoBem').value='auto';
+  $id('credito').value=45000;$id('prazo').value=100;$id('ta').value=16;$id('fr').value=3;$id('mesContemplacao').value=10;if($id('tipoBem'))$id('tipoBem').value='auto';
   document.querySelector('input[name="redutor"][value="50"]').checked=true;$id('redutorCustom').value=50;
   $id('adesaoPct').value=2;document.querySelector('input[name="adesaoForma"][value="avista"]').checked=true;$id('adesaoMeses').value=12;
   $id('dinheiro').value=0;$id('embutido').value=0;document.querySelector('input[name="restante"][value="parcelas"]').checked=true;
