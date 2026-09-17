@@ -407,8 +407,8 @@ function calc(inp){
       */
       mesesDiluidos = mesesRestantesContrato;
       reducaoParcela = lanceUtilizado / Math.max(1, mesesDiluidos);
-      const baseAposLance=Math.max(parcelaMinimaComDiferenca, parcelaBaseAntesAmortizacao-reducaoParcela);
-      parcelaPos = baseAposLance+diferencaDiluidaBase;
+      const parcelaBase=parcelaBaseAntesAmortizacao-diferencaDiluidaBase;
+      parcelaPos = parcelaBase+Math.max(0,diferencaDiluidaBase-reducaoParcela);
       mesesPosContemplacao = mesesRestantesContrato;
       prazoEfetivo = N;
     }
@@ -427,8 +427,8 @@ function calc(inp){
     }else{
       mesesDiluidos=1;
       reducaoParcela=lanceUtilizado;
-      const baseAposLance=Math.max(parcelaMinimaComDiferenca,parcelaBaseAntesAmortizacao-reducaoParcela);
-      parcelaPos=baseAposLance+diferencaDiluidaBase;
+      const parcelaBase=parcelaBaseAntesAmortizacao-diferencaDiluidaBase;
+      parcelaPos=parcelaBase+Math.max(0,diferencaDiluidaBase-reducaoParcela);
       mesesPosContemplacao=mesesDiluidos;
       mesesExtras=mesesDiluidos;
       prazoEfetivo=N+mesesExtras;
@@ -689,7 +689,7 @@ function render(r){
     Saldo antes do lance = ${fmtBRL(r.saldoDevedorAntesLance)}<br>
     Lance utilizado = ${fmtBRL(r.lanceUtilizado)}<br>
     Saldo após o lance = <span class="final">${fmtBRL(r.saldoDevedor)}</span><br>
-    Parcela pós-base = saldo diluído + diferença mensal = <span class="final">${fmtBRL(r.parcelaBaseAntesAmortizacao)}</span><br>
+    Parcela-base protegida = ${fmtBRL(r.parcelaBaseAntesAmortizacao-r.diferencaDiluidaBase)}<br>
     Piso pós = mínimo ${fmtBRL(r.parcelaMinima)} + diferença mensal ${fmtBRL(r.diferencaDiluidaBase)} = <span class="final">${fmtBRL(r.parcelaMinimaComDiferenca)}</span><br>
     Piso pós = ${fmtPct(r.percentualPos*100,1)} × saldo devedor inicial ${fmtBRL(r.saldoDevedorInicial)} = <span class="final">${fmtBRL(r.parcelaMinima)}</span><br>
     ${r.formaRestante==='parcelas'?`Lance ÷ meses diluídos = ${fmtBRL(r.lanceUtilizado)} ÷ ${r.mesesDiluidos} = ${fmtBRL(r.reducaoParcela)}/mês`:`Lance ÷ parcela = ${fmtBRL(r.lanceUtilizado)} ÷ ${fmtBRL(r.parcelaBaseAntesAmortizacao)} = ${Math.floor(r.lanceUtilizado/Math.max(r.parcelaBaseAntesAmortizacao,0.01))} mês(es) abatido(s)`}<br>

@@ -131,6 +131,7 @@ checar(parcelaComLance.mesesPosContemplacao === parcelaComLance.mesesRestantesCo
 checar(parcelaComLance.parcelaPos <= semLance.parcelaPos, 'abatimento na parcela não deve aumentar o valor mensal');
 const parcelaNoPiso = telaCalc({ ...activeInput, dinheiro: 10000, formaRestante: 'parcelas' });
 checar(parcelaNoPiso.parcelaPos >= parcelaNoPiso.parcelaMinima, 'abatimento na parcela deve respeitar o piso');
+checar(parcelaComLance.parcelaPos < prazoComLance.parcelaPos, 'abatimento na parcela deve custar menos que abatimento no prazo');
 checar(prazoComLance.mesesPosContemplacao < prazoComLance.mesesRestantesContrato, 'abatimento no prazo deve reduzir meses');
 
 if (falhas > 0) {
