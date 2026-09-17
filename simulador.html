@@ -251,7 +251,7 @@ header.hero{background:radial-gradient(circle at 50% 0%,rgba(224,184,92,.18),tra
   </div>
 
   <div class="evolution-actions"><button type="button" id="btnToggleEvolution" class="btn btn-gold">Ver evolução com reajuste anual ↓</button></div>
-  <div class="evolution-panel" id="evolutionPanel"><div class="chart-wrap"><h4>Evolução do saldo e das parcelas</h4><p class="evolution-note">O reajuste incide sobre o saldo remanescente. Cada parcela amortiza o saldo, o lance reduz a dívida na contemplação e o último pagamento encerra o saldo.</p><canvas id="chart" width="900" height="150"></canvas></div><div class="evolution-table-wrap"><table class="evolution-table"><thead><tr><th>Mês</th><th>Fase</th><th>Reajuste no saldo</th><th>Saldo remanescente</th><th>Parcela decrescente</th></tr></thead><tbody id="evolutionRows"></tbody></table></div></div>
+  <div class="evolution-panel" id="evolutionPanel"><div class="chart-wrap"><h4>Evolução do saldo e das parcelas</h4><p class="evolution-note">A evolução usa a parcela calculada após a contemplação. O reajuste anual é aplicado sobre ela e o lance é abatido conforme a opção escolhida: parcela ou prazo.</p><canvas id="chart" width="900" height="150"></canvas></div><div class="evolution-table-wrap"><table class="evolution-table"><thead><tr><th>Mês</th><th>Fase</th><th>Reajuste no saldo</th><th>Saldo remanescente</th><th>Parcela pós calculada</th></tr></thead><tbody id="evolutionRows"></tbody></table></div></div>
 
   <div class="yield-panel"><h4>Rendimento da carta contemplada</h4><p class="yield-note">Simulação de juros compostos mensais aplicados sobre o valor do crédito contemplado.</p><div class="yield-controls"><label class="yield-toggle"><input type="checkbox" id="rendimentoAtivo" checked> Considerar rendimento</label><label class="yield-rate" for="rendimentoPct">Taxa mensal <input type="number" id="rendimentoPct" value="1" min="0" step="0.1">%</label><label class="yield-rate" for="rendimentoMeses">Prazo <input type="number" id="rendimentoMeses" value="12" min="1" step="1"> meses</label></div><div class="yield-result"><div class="stat"><div class="k">Crédito contemplado</div><div class="v" id="rendimentoBase">—</div></div><div class="stat"><div class="k">Rendimento no 1º mês</div><div class="v" id="rendimentoMensal">—</div></div><div class="stat"><div class="k">Valor após o prazo</div><div class="v" id="rendimentoTotal">—</div></div></div></div>
 
@@ -317,8 +317,6 @@ function calc(inp){
   const lanceEmbutido=inp.embutidoPct!==undefined
     ? credito*Math.min(Math.max(Number(inp.embutidoPct)||0,0),100)/100
     : Math.min(Math.max(Number(inp.embutido)||0,0),credito);
-  const proprioPct=credito>0?lanceProprio/credito*100:0;
-  const embutidoPct=credito>0?lanceEmbutido/credito*100:0;
   const lanceSomado=lanceProprio+lanceEmbutido;
 
   /* Crédito líquido: o embutido reduz o crédito que será disponibilizado. */
@@ -392,54 +390,27 @@ function calc(inp){
 
   if(mesesRestantesContrato>0){
 
-    if(inp.formaRestante==='parcelas'){
+    if(inp.formaRestante==='prazo'){
       /*
-         Amortização por parcela:
-         - o objetivo é reduzir a parcela e, ao mesmo tempo, nunca deixar o
-           prazo pós-contemplação igual ao contrato;
-         - se houver lance, o prazo restante deve cair até a parcela alcançar o piso;
-         - a parcela nunca pode ficar abaixo do piso mínimo sobre o saldo.
-      */
-      const mesesMinimos = lanceUtilizado>0
-        ? Math.max(1, mesesRestantesContrato - 1)
-        : mesesRestantesContrato;
-      mesesDiluidos = Math.max(1, mesesRestantesContrato);
-
-      while (mesesDiluidos > mesesMinimos) {
-        reducaoParcela = lanceUtilizado / mesesDiluidos;
-        parcelaPos = parcelaBaseAntesAmortizacao - reducaoParcela;
-
-        if (parcelaPos >= parcelaMinima) {
-          break;
-        }
-
-        mesesDiluidos--;
-      }
-
-      reducaoParcela = 0;
-      parcelaPos = parcelaBaseAntesAmortizacao;
-      mesesPosContemplacao = mesesDiluidos;
-      mesesExtras = Math.max(0, mesesDiluidos - mesesRestantesContrato);
-      prazoEfetivo = k + mesesPosContemplacao;
-
-    }else{
-      /*
-         Amortização por prazo:
-         paga parcelas de trás para frente. Cada parcela quitada pelo lance
-         reduz 1 mês do prazo restante, e nunca deixa o restante igual ao
-         contrato.
+         Amortização por prazo: o lance quita parcelas do final e reduz meses;
+         o valor pós calculado permanece como referência mensal.
       */
       const valorParcelaParaPrazo = Math.max(parcelaBaseAntesAmortizacao, 0.01);
       const abatimentoMaximo = Math.max(0, mesesRestantesContrato - 1);
-
-      mesesEconomizados = Math.min(
-        abatimentoMaximo,
-        Math.max(0, Math.floor(lanceUtilizado / valorParcelaParaPrazo))
-      );
-
-      mesesPosContemplacao = Math.max(0, mesesRestantesContrato - mesesEconomizados);
+      mesesEconomizados = Math.min(abatimentoMaximo, Math.floor(lanceUtilizado / valorParcelaParaPrazo));
+      mesesPosContemplacao = Math.max(1, mesesRestantesContrato - mesesEconomizados);
       prazoEfetivo = k + mesesPosContemplacao;
       parcelaPos = parcelaBaseAntesAmortizacao;
+    }else{
+      /*
+         Amortização por parcela: o prazo permanece e o lance é dividido
+         pelos meses restantes para reduzir o valor mensal, respeitando o piso.
+      */
+      mesesDiluidos = mesesRestantesContrato;
+      reducaoParcela = lanceUtilizado / Math.max(1, mesesDiluidos);
+      parcelaPos = Math.max(parcelaMinima, parcelaBaseAntesAmortizacao - reducaoParcela);
+      mesesPosContemplacao = mesesRestantesContrato;
+      prazoEfetivo = N;
     }
 
   }else if(lanceUtilizado<saldoDevedorAntesLance){
@@ -494,8 +465,6 @@ function calc(inp){
     .slice(1)
     .reduce((s,v)=>s+v,0);
   const totalPagoParcelasReajustado=totalPagoParcelas;
-  const totalDesembolso=totalPagoParcelas+lanceProprio;
-  const totalDesembolsoReajustado=totalPagoParcelasReajustado+lanceProprio;
 
   /*
      TAXA REAL PÓS-CONTEMPLAÇÃO
@@ -573,7 +542,7 @@ function calc(inp){
     adesaoPct,adesaoValor,adesaoForma,adesaoMeses,adesaoPorParcela,taRestantePct,
     fundoComumMensal,frMensalCheio,taMensal,fundoComumReduzido,frReduzido,
     parcelaReduzida,primeiraParcela,diferencaMensal,diferencaAcumulada,
-    proprioPct,embutidoPct,lanceProprio,lanceEmbutido,lanceSomado,
+    lanceProprio,lanceEmbutido,lanceSomado,
     proprioUtilizado,embutidoUtilizado,lanceUtilizado,lanceNaoUtilizado,
     creditoLiquido,
     mesesRestantesContrato,taxasTotais,saldoDevedorInicial,valorParcelasPagasAntes,valorParcelasAntesContemplacao,saldoDevedorAntesLance,saldoDevedor,
@@ -582,8 +551,8 @@ function calc(inp){
     reducaoParcela,parcelaPos,
     tipoBem,formaRestante:inp.formaRestante,
     mesesEconomizados,mesesPosContemplacao,mesesDiluidos,mesesExtras,prazoEfetivo,
-    parcelasPagasAntesContemplacao,valorParcelasAntesContemplacao,adesaoPagaAteContemplacao,
-    pagoAntesContemplacao,desembolsoAteContemplacao,totalPagoParcelas,totalPagoParcelasReajustado,totalDesembolso,totalDesembolsoReajustado,
+    parcelasPagasAntesContemplacao,adesaoPagaAteContemplacao,
+    pagoAntesContemplacao,desembolsoAteContemplacao,totalPagoParcelas,totalPagoParcelasReajustado,
     totalPagoPos,taxaPosMensal,taxaRealPosAnual,outflow
   };
 }
@@ -777,7 +746,6 @@ function evolucaoSaldo(r){
   const taxaAnual=Math.max(0,r.inccPct)/100;
   let saldo=r.saldoDevedorInicial;
   let acumulado=1;
-  let parcelaAnterior=Infinity;
   const meses=[];
   for(let month=1;month<=totalMeses;month++){
     if(month>1 && (month-1)%12===0){saldo*=1+taxaAnual;acumulado*=1+taxaAnual;}
@@ -786,13 +754,11 @@ function evolucaoSaldo(r){
     const adesao=month===1?r.adesaoValor:0;
     const parcelaBase=month===1||month<r.k
       ? r.parcelaReduzida
-      : saldo*r.percentualPos+r.diferencaDiluidaBase;
-    const parcelaPlanejada=parcelaBase+adesao;
-    let parcela=month===totalMeses?saldo+adesao:Math.min(parcelaPlanejada,saldo/mesesRestantes+adesao);
-    if(month>r.k && month<totalMeses) parcela=Math.min(parcela,parcelaAnterior);
+      : r.parcelaPos;
+    const parcelaCorrigida=parcelaBase*acumulado;
+    let parcela=month===totalMeses?saldo+adesao:Math.min(parcelaCorrigida+adesao,saldo/mesesRestantes+adesao);
     const amortizacao=Math.min(saldo,Math.max(0,parcela-adesao));
     saldo=Math.max(0,saldo-amortizacao);
-    parcelaAnterior=parcela;
     meses.push({month,fator:acumulado,saldo,parcela,lance:month===r.k?r.lanceUtilizado:0,fase:month<r.k?'Pré':(month===r.k?'Contemplação':'Pós')});
   }
   return meses;

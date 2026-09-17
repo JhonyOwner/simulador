@@ -125,6 +125,11 @@ checar(semLance.parcelaMinima === comLance.parcelaMinima, 'o piso deve ser indep
 checar(Math.abs(semLance.parcelaMinima - semLance.saldoDevedorInicial * semLance.percentualPos) < 0.0001, 'o piso deve usar o saldo devedor inicial');
 checar(Math.abs(semLance.parcelaPos - (semLance.parcelaMinima + semLance.diferencaDiluida)) < 0.0001, 'a parcela pós deve ser mínimo mais diferença mensal');
 checar(semLance.saldoDevedorInicial > semLance.saldoDevedorAntesLance, 'o saldo após pagamentos deve ser menor que o saldo inicial');
+const parcelaComLance = telaCalc({ ...activeInput, dinheiro: 10000, formaRestante: 'parcelas' });
+const prazoComLance = telaCalc({ ...activeInput, dinheiro: 10000, formaRestante: 'prazo' });
+checar(parcelaComLance.mesesPosContemplacao === parcelaComLance.mesesRestantesContrato, 'abatimento na parcela deve manter o prazo');
+checar(parcelaComLance.parcelaPos < semLance.parcelaPos, 'abatimento na parcela deve reduzir o valor mensal');
+checar(prazoComLance.mesesPosContemplacao < prazoComLance.mesesRestantesContrato, 'abatimento no prazo deve reduzir meses');
 
 if (falhas > 0) {
   console.error(`\n${falhas} falha(s) encontrada(s).`);
