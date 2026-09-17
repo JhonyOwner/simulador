@@ -15,15 +15,16 @@ anual equivalente do plano (calculada por TIR).
 .
 ├── index.html            # Página inicial
 ├── simulador.html         # Formulário (landing page) + popup de resultados
-├── css/
+├── CSS/
 │   └── simulador.css      # Estilos do simulador
-├── js/
+├── JS/
 │   ├── calc.js             # Lógica de cálculo, função pura (UMD: navegador + Node)
 │   └── app.js               # Camada de UI: formulário, popup, gráfico, exportação
+├── api/                    # Serverless Functions usadas no deploy da Vercel
 ├── server.js              # Servidor HTTP + autenticação e proteção do simulador
-├── auth.js                # SQLite, hash de senha, sessões e aprovação de usuários
+├── auth.js                # PostgreSQL local, hash de senha, sessões e aprovação
 ├── package.json           # Dependências do backend
-├── tests/
+├── TESTES/
 │   └── calc.test.js        # Teste de regressão de js/calc.js
 └── README.md
 ```
@@ -42,9 +43,12 @@ Por padrão o servidor sobe em `http://localhost:8080`. Para usar outra porta:
 
 ```bash
 PORT=3000 ADMIN_KEY="defina-uma-chave-forte" node server.js
+```
 
-O backend usa o PostgreSQL do Supabase pela variável `DATABASE_URL`. Na
-primeira execução, as tabelas `users` e `sessions` são criadas automaticamente.
+O servidor local usa PostgreSQL pela variável `DATABASE_URL`. No deploy da
+Vercel, as funções em `api/` usam Supabase pelas variáveis `SUPABASE_URL` e
+`SUPABASE_SERVICE_ROLE_KEY`; nesse caso, execute antes o [`schema.sql`](schema.sql)
+no SQL Editor do Supabase.
 O cadastro cria um usuário pendente; somente usuários aprovados na seção
 **Gestão de acessos** da página inicial conseguem abrir `/simulador`. A chave
 usada nessa seção é a variável `ADMIN_KEY`, que deve ser definida fora do
@@ -54,16 +58,10 @@ O login usa sessões em cookie `HttpOnly`, com expiração de 12 horas, e as
 senhas são armazenadas somente como hash bcrypt. A confirmação de cadastro é
 exibida na própria tela; o envio de e-mail transacional exige configurar um
 provedor SMTP antes de ser ativado.
-```
-
-Também é possível abrir `index.html` ou `simulador.html` diretamente no
+Também é possível abrir `index.html` diretamente no
 navegador, sem servidor, **desde que os arquivos estejam salvos juntos na
-mesma pasta** (`css/`, `js/` etc. ao lado do `.html`) — links relativos não
-funcionam se os arquivos forem abertos isoladamente, um por um, a partir de
-lugares diferentes (por exemplo, pré-visualizações do Claude, que servem
-cada arquivo de uma origem separada). A única funcionalidade que depende de
-uma origem HTTP de verdade é a cópia para a área de transferência (fallback:
-usar "Exportar JSON").
+mesma pasta** (`CSS/`, `JS/` etc. ao lado do `.html`). O acesso ao
+`simulador.html` exige login quando servido por `server.js` ou pela Vercel.
 
 Ao preencher o formulário e clicar em "Mostrar resultados", o extrato abre
 em um popup (modal) por cima da página — pode ser fechado pelo × no canto,
@@ -80,7 +78,7 @@ pago ≥ crédito líquido, parcela nunca abaixo do piso mínimo etc.), retornan
 código de saída diferente de zero se alguma checagem falhar:
 
 ```bash
-node tests/calc.test.js
+node TESTES/calc.test.js
 ```
 
 ## Como funciona o cálculo, em resumo

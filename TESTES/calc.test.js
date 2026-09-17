@@ -1,4 +1,4 @@
-// Teste de regressão para js/calc.js.
+// Teste de regressão para JS/calc.js.
 //
 // Antes, este teste recortava o código de calc() de dentro do HTML na marra
 // (string slicing + vm.runInContext) e só imprimia o JSON, sem checar nada —
@@ -6,10 +6,22 @@
 // função pura diretamente (SimuladorCalc.calc) e valida algumas invariantes
 // básicas do resultado, encerrando com código de saída != 0 se algo regredir.
 //
-// Uso: node tests/calc.test.js
+// Uso: node TESTES/calc.test.js
 
 const path = require('path');
-const { calc } = require(path.join(__dirname, '..', 'js', 'calc.js'));
+const fs = require('fs');
+const vm = require('vm');
+const { calc } = require(path.join(__dirname, '..', 'JS', 'calc.js'));
+
+function activeCalc() {
+  const html = fs.readFileSync(path.join(__dirname, '..', 'simulador.html'), 'utf8');
+  const start = html.indexOf('function calc(inp)');
+  const end = html.indexOf('function fmtNum', start);
+  if (start < 0 || end < 0) throw new Error('Cálculo ativo não encontrado no simulador.html');
+  const context = {};
+  vm.runInNewContext(`${html.slice(start, end)};this.calc=calc;`, context);
+  return context.calc;
+}
 
 function runCalc(formaRestante, overrides) {
   const input = Object.assign(
@@ -98,3 +110,23 @@ if (falhas > 0) {
   process.exit(1);
 }
 console.log('\nTodos os cenários passaram nas checagens estruturais.');
+
+const telaCalc = activeCalc();
+const activeInput = {
+  credito: 100000, prazo: 120, taPct: 20, frPct: 2, seguroPct: 0,
+  inccPct: 5, mesContemplacao: 24, tipoBem: 'auto', redutorPct: 50,
+  adesaoPct: 0, adesaoForma: 'avista', dinheiro: 0, embutido: 0,
+  formaRestante: 'parcelas'
+};
+const semLance = telaCalc(activeInput);
+const comLance = telaCalc({ ...activeInput, dinheiro: 30000, embutido: 10 });
+checar(semLance.parcelasPagasAntesContemplacao === 23, 'a parcela da contemplação não pode ser contada como paga antes do evento');
+checar(semLance.parcelaMinima === comLance.parcelaMinima, 'o piso deve ser independente de parcelas pagas e lance');
+checar(Math.abs(semLance.parcelaMinima - semLance.saldoDevedorInicial * semLance.percentualPos) < 0.0001, 'o piso deve usar o saldo devedor inicial');
+checar(semLance.saldoDevedorInicial > semLance.saldoDevedorAntesLance, 'o saldo após pagamentos deve ser menor que o saldo inicial');
+
+if (falhas > 0) {
+  console.error(`\n${falhas} falha(s) encontrada(s).`);
+  process.exit(1);
+}
+console.log('Regressões do cálculo ativo passaram.');

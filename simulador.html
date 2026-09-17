@@ -29,6 +29,7 @@ h1{font-family:var(--serif);font-weight:600;font-size:clamp(26px,3.6vw,40px);lin
 fieldset{border:none;border-top:1px solid var(--parchment-2);padding:20px 0 4px;margin:0 0 4px}fieldset:first-of-type{border-top:none;padding-top:0}
 legend{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);padding:0;margin-bottom:14px}
 .field-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}.field{display:flex;flex-direction:column;gap:6px;text-align:center}.field label{font-size:12.5px;color:var(--text-soft)}
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}.field{display:flex;flex-direction:column;gap:6px;text-align:center;padding:14px 12px;border:1px solid rgba(184,138,43,.16);border-radius:8px;background:rgba(255,255,255,.22)}.field label{font-size:12.5px;color:var(--text-soft)}
 .field input[type=number],.field select{font-family:var(--mono);font-size:15px;color:var(--ink);background:transparent;border:none;border-bottom:1.25px solid rgba(17,14,10,.08);padding:6px 2px;outline:none;transition:border-color .15s;width:100%}.field input[type=number]:focus,.field select:focus{border-bottom-color:var(--gold)}
 .inline-note{font-size:11.5px;color:var(--text-soft);line-height:1.5;margin:-6px 0 14px;border-left:2px solid var(--parchment-2);padding-left:10px;text-align:center}
 .radio-group{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}.radio-group label{font-family:var(--mono);font-size:12.5px;border:1px solid var(--parchment-2);padding:7px 12px;border-radius:20px;cursor:pointer;color:var(--text-soft);transition:.15s;display:flex;align-items:center;gap:6px}.radio-group input{accent-color:var(--gold)}.radio-group label:has(input:checked){background:var(--ink);color:var(--parchment);border-color:var(--ink)}
@@ -37,6 +38,7 @@ legend{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transfor
 .action-bar{display:flex;gap:10px;align-items:center;justify-content:center;margin-bottom:18px;flex-wrap:wrap}.btn{display:inline-block;font-family:var(--mono);font-size:13px;border:none;border-radius:8px;padding:9px 16px;cursor:pointer;transition:transform .06s,box-shadow .12s,background .12s}.btn:hover{transform:translateY(-2px);box-shadow:0 8px 22px rgba(0,0,0,.22)}.btn-gold{background:var(--gold);color:var(--ink);box-shadow:0 6px 18px rgba(185,138,46,.28)}.btn-dark{background:var(--ink);color:var(--parchment)}.btn-ghost{background:transparent;border:1px solid rgba(15,36,56,.12);color:var(--ink-2)}.btn-sm{padding:6px 12px;font-size:12px;border-radius:6px}
 /* RESULTADO — padrão visual anterior */
 .result-panel{display:none;background:var(--parchment);border-radius:8px;box-shadow:0 24px 60px rgba(0,0,0,.5);margin-top:24px;padding:30px;background-image:repeating-linear-gradient(180deg,transparent,transparent 27px,rgba(0,0,0,.025) 28px);text-align:center}.result-panel.active{display:block;animation:fadeUp .3s ease both}@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.result-panel{display:none;background:var(--parchment);border-radius:12px;box-shadow:0 24px 60px rgba(0,0,0,.5);margin-top:24px;padding:30px;background-image:repeating-linear-gradient(180deg,transparent,transparent 27px,rgba(0,0,0,.025) 28px);text-align:center;border:1px solid rgba(217,174,93,.38)}.result-panel.active{display:block;animation:fadeUp .3s ease both}@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
 .result-panel-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}.headline-tag{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--red)}
 .headline-numbers{display:grid;grid-template-columns:1fr 1fr;gap:20px;padding-bottom:22px;margin-bottom:22px;border-bottom:1px dashed var(--gold)}.headline-label{font-size:13px;color:var(--text-soft);margin-bottom:4px}.headline-value{font-family:var(--mono);font-size:clamp(20px,3.2vw,32px);font-weight:700;color:var(--ink-2);line-height:1.04}.headline-sub{font-size:11.5px;color:var(--text-soft);margin-top:4px}
 /* Destaques limpos */
@@ -46,6 +48,7 @@ legend{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transfor
 .formula{font-size:12px;line-height:1.7;color:var(--ink-2);padding:14px;border:1px solid rgba(21,68,97,.12);border-radius:4px;background:#F8F5EA;margin-bottom:22px}.formula strong{color:var(--ink)}.formula .final{font-weight:700;color:var(--red)}
 .lance-info{font-size:12.5px;line-height:1.65;color:var(--ink-2);padding:14px;border:1px solid rgba(21,68,97,.12);border-radius:4px;background:#F8F5EA;margin-bottom:22px}.lance-info strong{color:var(--ink)}
 .chart-wrap{background:rgba(255,255,255,.35);border:1px solid var(--parchment-2);border-radius:3px;padding:16px 16px 10px;margin-bottom:22px}.chart-wrap h4{font-family:var(--mono);font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:var(--gold);margin:0 0 10px}canvas{width:100%;height:180px;display:block;border-radius:4px}
+.chart-wrap{background:linear-gradient(135deg,rgba(255,255,255,.58),rgba(234,224,196,.42));border:1px solid var(--parchment-2);border-radius:8px;padding:18px 18px 12px;margin-bottom:22px;box-shadow:0 8px 22px rgba(34,27,16,.06)}.chart-wrap h4{font-family:var(--mono);font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:var(--gold);margin:0 0 10px}canvas{width:100%;height:180px;display:block;border-radius:4px}
 .evolution-actions{display:flex;justify-content:center;margin:8px 0 22px}.evolution-panel{display:none;margin-bottom:22px}.evolution-panel.active{display:block;animation:fadeUp .25s ease both}.evolution-note{font-size:11.5px;color:var(--text-soft);line-height:1.55;margin:0 0 12px}.evolution-table-wrap{max-height:360px;overflow:auto;border:1px solid var(--parchment-2);border-radius:4px;background:rgba(255,255,255,.35)}.evolution-table{width:100%;border-collapse:collapse;font-size:12px}.evolution-table th,.evolution-table td{padding:9px 10px;border-bottom:1px solid rgba(15,36,56,.08);text-align:right;white-space:nowrap}.evolution-table th:first-child,.evolution-table td:first-child,.evolution-table th:nth-child(2),.evolution-table td:nth-child(2){text-align:left}.evolution-table th{position:sticky;top:0;background:#F4EEDD;color:var(--ink);font-family:var(--mono);font-size:10.5px;text-transform:uppercase;letter-spacing:.05em;z-index:1}.evolution-table tr.contemplacao-row td{font-weight:600;color:var(--red);background:rgba(185,138,46,.07)}
 .yield-panel{border:1px solid var(--parchment-2);border-radius:4px;background:rgba(255,255,255,.35);padding:16px;margin-bottom:22px}.yield-panel h4{font-family:var(--mono);font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:var(--gold);margin:0 0 8px}.yield-note{font-size:11.5px;color:var(--text-soft);line-height:1.55;margin:0 0 14px}.yield-controls{display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin-bottom:14px}.yield-toggle{display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--text-soft)}.yield-toggle input{accent-color:var(--gold)}.yield-rate{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--text-soft)}.yield-rate input{width:72px;font-family:var(--mono);font-size:14px;color:var(--ink);background:transparent;border:none;border-bottom:1.25px solid rgba(17,14,10,.08);padding:5px 2px;outline:none}.yield-rate input:focus{border-bottom-color:var(--gold)}.yield-result{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.yield-result .stat{padding:12px}.yield-result .v{font-family:var(--mono);font-size:16px;font-weight:600;color:var(--ink)}
 .summary-strip{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:22px}.stat{border:1px solid var(--parchment-2);border-radius:3px;padding:14px;background:rgba(255,255,255,.3)}.stat .k{font-size:11px;color:var(--text-soft);margin-bottom:6px}.stat .v{font-family:var(--mono);font-size:16px;color:var(--ink);font-weight:600}
@@ -187,7 +190,7 @@ header.hero{background:radial-gradient(circle at 50% 0%,rgba(224,184,92,.18),tra
       <div class="field-row"><div class="field"><label for="credito">Valor do crédito (R$)</label><input type="number" id="credito" value="45000" placeholder="Ex.: 45000" min="1" step="100"></div><div class="field"><label for="prazo">Prazo total (meses)</label><input type="number" id="prazo" value="100" placeholder="Ex.: 100" min="1" step="1"></div></div>
       <div class="field-row"><div class="field"><label for="ta">Taxa de administração total (%)</label><input type="number" id="ta" value="16" placeholder="Ex.: 16" min="0" step="0.1"></div><div class="field"><label for="fr">Fundo de reserva total (%)</label><input type="number" id="fr" value="3" placeholder="Ex.: 3" min="0" step="0.1"></div></div>
       <div class="field-row"><div class="field"><label for="seguroPct">Seguro mensal (% do crédito — 0 se não houver)</label><input type="number" id="seguroPct" value="0" placeholder="Ex.: 0" min="0" step="0.001"></div><div class="field"><label for="mesContemplacao">Contemplação na parcela nº</label><input type="number" id="mesContemplacao" value="10" placeholder="Ex.: 10" min="1" step="1"></div></div>
-      <div class="field-row"><div class="field"><label for="inccPct">IPCA / INCC / reajuste anual (%)</label><input type="number" id="inccPct" value="5" placeholder="Ex.: 5" min="0" step="0.1"></div><div class="field"><label>Aplicação</label><div class="inline-note" style="margin:0">Reajuste aplicado a cada 12 meses no crédito e na parcela da evolução.</div></div></div>
+      <div class="field-row"><div class="field"><label for="inccPct">IPCA / INCC / reajuste anual (%)</label><input type="number" id="inccPct" value="5" placeholder="Ex.: 5" min="0" step="0.1"></div><div class="field"><label>Aplicação</label><div class="inline-note" style="margin:0">Reajuste proporcional aplicado sobre o saldo devedor remanescente. A parcela é recalculada para diminuir até zerar.</div></div></div>
       <div class="field-row"><div class="field"><label for="tipoBem">Tipo de bem</label><select id="tipoBem"><option value="auto" selected>Automóvel — 1% do saldo devedor</option><option value="imovel">Imóvel — 0,5% do saldo devedor</option></select></div><div class="field"><label>Regra pós-contemplação</label><div class="inline-note" style="margin:0">Parcela pós = percentual do saldo devedor. A diferença restante do redutor é tratada separadamente.</div></div></div>
       <div class="inline-note">Seguro não entra no exemplo-base. Atualização do crédito/parcela não é projetada: a decomposição oficial do contrato prevalece.</div>
     </fieldset>
@@ -211,7 +214,7 @@ header.hero{background:radial-gradient(circle at 50% 0%,rgba(224,184,92,.18),tra
       <legend>Lance na contemplação</legend>
       <div class="field-row"><div class="field"><label for="dinheiro">Lance com recursos próprios (R$)</label><input type="number" id="dinheiro" value="0" placeholder="Ex.: 5000" min="0" step="100"></div><div class="field"><label for="embutido">Lance embutido (%)</label><input type="number" id="embutido" value="0" placeholder="Ex.: 20" min="0" max="100" step="0.1"></div></div>
       <div class="radio-group"><label><input type="radio" name="restante" value="parcelas" checked> Amortizar parcelas</label><label><input type="radio" name="restante" value="prazo"> Amortizar prazo</label></div>
-      <p class="inline-note">Todo lance utilizado (próprio + embutido) abate o saldo devedor. Por prazo: paga de trás para frente e reduz meses. Por parcela: o lance é diluído nas parcelas restantes, respeitando o mínimo de 0,5% do saldo no imóvel e 1% no automóvel.</p>
+      <p class="inline-note">Todo lance utilizado (próprio + embutido) abate o saldo devedor. Por prazo: paga de trás para frente e reduz meses. Por parcela: o lance é diluído nas parcelas restantes, respeitando o mínimo de 0,5% do saldo devedor inicial no imóvel e 1% no automóvel.</p>
     </fieldset>
     <div class="action-bar"><button type="button" id="btnShowResults" class="btn btn-gold">Realizar pesquisa ↓</button></div>
   </form>
@@ -239,7 +242,7 @@ header.hero{background:radial-gradient(circle at 50% 0%,rgba(224,184,92,.18),tra
 
   <div class="info-grid">
   <div class="cols parcela-block">
-    <div class="ledger"><h4>Parcela pós-contemplação</h4><div class="ledger-line"><span class="lbl">Saldo devedor</span><span class="fill"></span><span class="val" id="posFundo">—</span></div><div class="ledger-line"><span class="lbl">Percentual pós-contemplação</span><span class="fill"></span><span class="val" id="posTA">—</span></div><div class="ledger-line"><span class="lbl">Parcela-base pelo saldo</span><span class="fill"></span><span class="val" id="posFR">—</span></div><div class="ledger-line"><span class="lbl">Diferença diluída</span><span class="fill"></span><span class="val" id="posDiluicao">—</span></div><div class="ledger-line total"><span class="lbl">Parcela mensal</span><span class="fill"></span><span class="val" id="posTotal">—</span></div></div>
+    <div class="ledger"><h4>Parcela pós-contemplação</h4><div class="ledger-line"><span class="lbl">Saldo devedor inicial</span><span class="fill"></span><span class="val" id="posFundo">—</span></div><div class="ledger-line"><span class="lbl">Percentual pós-contemplação</span><span class="fill"></span><span class="val" id="posTA">—</span></div><div class="ledger-line"><span class="lbl">Parcela mínima pelo saldo inicial</span><span class="fill"></span><span class="val" id="posFR">—</span></div><div class="ledger-line"><span class="lbl">Diferença diluída</span><span class="fill"></span><span class="val" id="posDiluicao">—</span></div><div class="ledger-line total"><span class="lbl">Parcela mensal</span><span class="fill"></span><span class="val" id="posTotal">—</span></div></div>
   </div>
 
   <div class="section-block diferenca-block"><h4>Diferença faltante do redutor</h4><div class="ledger-line"><span class="lbl">Diferença mensal</span><span class="fill"></span><span class="val" id="difMensal">—</span></div><div class="ledger-line total"><span class="lbl">Diferença acumulada até contemplação</span><span class="fill"></span><span class="val" id="difAcumulada">—</span></div><div class="ledger-line"><span class="lbl">Diferença diluída no pós</span><span class="fill"></span><span class="val" id="difDiluida">—</span></div></div>
@@ -248,7 +251,7 @@ header.hero{background:radial-gradient(circle at 50% 0%,rgba(224,184,92,.18),tra
   </div>
 
   <div class="evolution-actions"><button type="button" id="btnToggleEvolution" class="btn btn-gold">Ver evolução com reajuste anual ↓</button></div>
-  <div class="evolution-panel" id="evolutionPanel"><div class="chart-wrap"><h4>Evolução das parcelas com reajuste anual</h4><p class="evolution-note">O percentual informado é aplicado a cada 12 meses no crédito e na parcela. Use o índice previsto no contrato.</p><canvas id="chart" width="900" height="150"></canvas></div><div class="evolution-table-wrap"><table class="evolution-table"><thead><tr><th>Mês</th><th>Fase</th><th>Reajuste</th><th>Crédito equivalente</th><th>Parcela equivalente</th></tr></thead><tbody id="evolutionRows"></tbody></table></div></div>
+  <div class="evolution-panel" id="evolutionPanel"><div class="chart-wrap"><h4>Evolução do saldo e das parcelas</h4><p class="evolution-note">O reajuste incide sobre o saldo remanescente. Cada parcela amortiza o saldo, o lance reduz a dívida na contemplação e o último pagamento encerra o saldo.</p><canvas id="chart" width="900" height="150"></canvas></div><div class="evolution-table-wrap"><table class="evolution-table"><thead><tr><th>Mês</th><th>Fase</th><th>Reajuste no saldo</th><th>Saldo remanescente</th><th>Parcela decrescente</th></tr></thead><tbody id="evolutionRows"></tbody></table></div></div>
 
   <div class="yield-panel"><h4>Rendimento da carta contemplada</h4><p class="yield-note">Simulação de juros compostos mensais aplicados sobre o valor do crédito contemplado.</p><div class="yield-controls"><label class="yield-toggle"><input type="checkbox" id="rendimentoAtivo" checked> Considerar rendimento</label><label class="yield-rate" for="rendimentoPct">Taxa mensal <input type="number" id="rendimentoPct" value="1" min="0" step="0.1">%</label><label class="yield-rate" for="rendimentoMeses">Prazo <input type="number" id="rendimentoMeses" value="12" min="1" step="1"> meses</label></div><div class="yield-result"><div class="stat"><div class="k">Crédito contemplado</div><div class="v" id="rendimentoBase">—</div></div><div class="stat"><div class="k">Rendimento no 1º mês</div><div class="v" id="rendimentoMensal">—</div></div><div class="stat"><div class="k">Valor após o prazo</div><div class="v" id="rendimentoTotal">—</div></div></div></div>
 
@@ -326,7 +329,7 @@ function calc(inp){
   /* Saldo devedor antes do lance: crédito + taxas contratadas,
      menos as parcelas efetivamente pagas antes da contemplação. */
   const taxasTotais=credito*(taPct+frPct)/100+seguro*N;
-  const parcelasPagasAntesContemplacao=Math.min(k,N);
+  const parcelasPagasAntesContemplacao=Math.max(0,Math.min(k-1,N));
   const parcelasNormaisDepoisDaPrimeira=Math.max(0,parcelasPagasAntesContemplacao-1);
   const valorPrimeiraParcelaPaga=parcelasPagasAntesContemplacao>0
     ? primeiraParcela
@@ -341,6 +344,7 @@ function calc(inp){
     valorPrimeiraParcelaPaga+
     parcelaReduzida*parcelasNormaisDepoisDaPrimeira+
     adesaoPagaDepoisDaPrimeira;
+  const saldoDevedorInicial=credito+taxasTotais;
   const saldoDevedorAntesLance=Math.max(
     0,
     credito+taxasTotais-valorParcelasPagasAntes
@@ -381,9 +385,9 @@ function calc(inp){
     parcelaAmortizacaoAntesLance+
     diferencaDiluidaBase;
 
-  /* Piso da parcela = percentual do saldo depois que o lance foi abatido. */
+  /* Piso da parcela = percentual do saldo devedor inicial, antes de pagamentos e lance. */
   const parcelaMinima=
-    saldoDevedor*percentualPos;
+    saldoDevedorInicial*percentualPos;
 
   let parcelaPos=parcelaBaseAntesAmortizacao;
   let reducaoParcela=0;
@@ -496,9 +500,7 @@ function calc(inp){
   const totalPagoParcelas=outflow
     .slice(1)
     .reduce((s,v)=>s+v,0);
-  const totalPagoParcelasReajustado=outflow
-    .slice(1)
-    .reduce((s,v, index)=>s+v*reajusteAnual5(index+1,inccPct),0);
+  const totalPagoParcelasReajustado=totalPagoParcelas;
   const totalDesembolso=totalPagoParcelas+lanceProprio;
   const totalDesembolsoReajustado=totalPagoParcelasReajustado+lanceProprio;
 
@@ -581,7 +583,7 @@ function calc(inp){
     proprioPct,embutidoPct,lanceProprio,lanceEmbutido,lanceSomado,
     proprioUtilizado,embutidoUtilizado,lanceUtilizado,lanceNaoUtilizado,
     creditoLiquido,
-    mesesRestantesContrato,taxasTotais,valorParcelasPagasAntes,valorParcelasAntesContemplacao,saldoDevedorAntesLance,saldoDevedor,
+    mesesRestantesContrato,taxasTotais,saldoDevedorInicial,valorParcelasPagasAntes,valorParcelasAntesContemplacao,saldoDevedorAntesLance,saldoDevedor,
     percentualPos,parcelaMinima,parcelaBaseAntesAmortizacao,diferencaDiluidaBase,
     diferencaDiluida:diferencaDiluidaBase,
     reducaoParcela,parcelaPos,
@@ -659,7 +661,7 @@ function render(r){
 
   setText('headlinePos',fmtBRL(r.parcelaPos));
   setText('headlinePosSub',
-    `${r.tipoBem==='imovel'?'0,5%':'1,0%'} do saldo devedor • ${r.mesesPosContemplacao} meses pós-contemplação`+
+    `${r.tipoBem==='imovel'?'0,5%':'1,0%'} do saldo devedor inicial • ${r.mesesPosContemplacao} meses pós-contemplação`+
     (r.mesesEconomizados>0?` • ${r.mesesEconomizados} meses economizados`:'')+
     (r.formaRestante==='parcelas'?' • lance diluído na parcela':' • lance usado para reduzir prazo'));
 
@@ -685,7 +687,7 @@ function render(r){
   setText('preTotal',fmtBRL(r.parcelaReduzida));
 
   /* Pós */
-  setText('posFundo',fmtBRL(r.saldoDevedor));
+  setText('posFundo',fmtBRL(r.saldoDevedorInicial));
   setText('posTA',fmtPct(r.percentualPos*100,1));
   setText('posFR',fmtBRL(r.parcelaMinima));
   setText('posDiluicao',r.diferencaDiluida>0?`+ ${fmtBRL(r.diferencaDiluida)}`:'não diluída');
@@ -732,7 +734,7 @@ function render(r){
     Lance utilizado = ${fmtBRL(r.lanceUtilizado)}<br>
     Saldo após o lance = <span class="final">${fmtBRL(r.saldoDevedor)}</span><br>
     Parcela-base pós antes do lance = ${fmtBRL(r.saldoDevedorAntesLance)} ÷ ${r.mesesRestantesContrato} + ${fmtBRL(r.diferencaDiluidaBase)} = <span class="final">${fmtBRL(r.parcelaBaseAntesAmortizacao)}</span><br>
-    Piso pós = ${fmtPct(r.percentualPos*100,1)} × ${fmtBRL(r.saldoDevedor)} = <span class="final">${fmtBRL(r.parcelaMinima)}</span><br>
+    Piso pós = ${fmtPct(r.percentualPos*100,1)} × saldo devedor inicial ${fmtBRL(r.saldoDevedorInicial)} = <span class="final">${fmtBRL(r.parcelaMinima)}</span><br>
     ${r.formaRestante==='parcelas'?`Lance ÷ meses diluídos = ${fmtBRL(r.lanceUtilizado)} ÷ ${r.mesesDiluidos} = ${fmtBRL(r.reducaoParcela)}/mês`:`Lance ÷ parcela = ${fmtBRL(r.lanceUtilizado)} ÷ ${fmtBRL(r.parcelaBaseAntesAmortizacao)} = ${Math.floor(r.lanceUtilizado/Math.max(r.parcelaBaseAntesAmortizacao,0.01))} mês(es) abatido(s)`}<br>
     Taxa real pós = taxa que iguala ${fmtBRL(r.saldoDevedor)} hoje ao valor presente de ${fmtBRL(r.totalPagoPos)} pagos depois da contemplação.
   `);
@@ -777,12 +779,34 @@ function renderRendimento(r){
   setText('rendimentoTotal',active?.checked ? `${fmtBRL(total)} (${months} meses)` : '—');
 }
 
-function reajusteAnual5(month,inccPct=5){
-  return Math.pow(1+Math.max(0,inccPct)/100,Math.floor((Math.max(1,month)-1)/12));
-}
-
-function parcelaBaseDoMes(r,month){
-  return month<=r.k ? r.parcelaReduzida : r.parcelaPos;
+function evolucaoSaldo(r){
+  const totalMeses=Math.max(1,r.prazoEfetivo);
+  const taxaMensal=Math.pow(1+Math.max(0,r.inccPct)/100,1/12)-1;
+  const saldoPosContemplacao=Math.max(0,r.saldoDevedor+r.restante);
+  const principalPre=(r.saldoDevedorInicial-(r.saldoDevedorAntesLance+r.restante))/Math.max(1,r.k-1);
+  const principalPos=saldoPosContemplacao/Math.max(1,totalMeses-r.k);
+  let saldo=r.saldoDevedorInicial;
+  let acumulado=1;
+  let parcelaAnterior=Infinity;
+  const meses=[];
+  for(let month=1;month<=totalMeses;month++){
+    const preContemplacao=month<r.k;
+    if(month>1) saldo+=saldo*taxaMensal;
+    if(month===r.k) saldo=Math.max(0,saldo-r.lanceUtilizado);
+    const amortizacao=preContemplacao
+      ? Math.min(saldo,principalPre)
+      : Math.min(saldo,principalPos);
+    let parcela=preContemplacao
+      ? Math.min(saldo,r.parcelaReduzida)
+      : Math.min(saldo,amortizacao+saldo*taxaMensal);
+    if(month>r.k) parcela=Math.min(parcela,parcelaAnterior);
+    if(month===totalMeses) parcela=saldo;
+    saldo=Math.max(0,saldo-amortizacao);
+    acumulado*=1+taxaMensal;
+    parcelaAnterior=parcela;
+    meses.push({month,fator:acumulado,saldo,parcela,lance:month===r.k?r.lanceUtilizado:0,fase:month<r.k?'Pré':(month===r.k?'Contemplação':'Pós')});
+  }
+  return meses;
 }
 
 function renderEvolution(r){
@@ -791,17 +815,13 @@ function renderEvolution(r){
   const indiceReajuste=r.tipoBem==='imovel'?'INCC':'IPCA';
   const evolutionTitle=document.querySelector('#evolutionPanel .chart-wrap h4');
   const evolutionButton=$id('btnToggleEvolution');
-  if(evolutionTitle) evolutionTitle.textContent=`Evolução das parcelas com ${indiceReajuste} / reajuste anual`;
+  if(evolutionTitle) evolutionTitle.textContent=`Evolução do saldo e das parcelas com ${indiceReajuste}`;
   if(evolutionButton && !evolutionPanel.classList.contains('active')) evolutionButton.textContent=`Ver evolução com ${indiceReajuste} / reajuste anual ↓`;
   const html=[];
-  for(let month=1;month<=r.prazoEfetivo;month++){
-    const fator=reajusteAnual5(month,r.inccPct);
-    const creditoEq=r.credito*fator;
-    const parcelaEq=parcelaBaseDoMes(r,month)*fator;
-    const fase=month<r.k?'Pré':(month===r.k?'Contemplação':'Pós');
-    const reajuste=(fator-1)*100;
-    html.push(`<tr${month===r.k?' class="contemplacao-row"':''}><td>${month}</td><td>${fase}</td><td>${fmtPct(reajuste,1)}</td><td>${fmtBRL(creditoEq)}</td><td>${fmtBRL(parcelaEq)}</td></tr>`);
-  }
+  evolucaoSaldo(r).forEach(item=>{
+    const reajuste=(item.fator-1)*100;
+    html.push(`<tr${item.month===r.k?' class="contemplacao-row"':''}><td>${item.month}</td><td>${item.fase}</td><td>${fmtPct(reajuste,1)}${item.lance>0?` • lance ${fmtBRL(item.lance)}`:''}</td><td>${fmtBRL(item.saldo)}</td><td>${fmtBRL(item.parcela)}</td></tr>`);
+  });
   rows.innerHTML=html.join('');
 }
 
@@ -810,10 +830,7 @@ function drawChart(r){
   if(!canvas)return;
   const ctx=canvas.getContext('2d');
   const W=canvas.width,H=canvas.height;ctx.clearRect(0,0,W,H);
-  const vals=[];
-  for(let month=1;month<=r.prazoEfetivo;month++){
-    vals.push(parcelaBaseDoMes(r,month)*reajusteAnual5(month,r.inccPct));
-  }
+  const vals=evolucaoSaldo(r).map(item=>item.parcela);
   const maxV=Math.max(...vals,1),pL=6,pR=6,pT=10,pB=18,pW=W-pL-pR,pH=H-pT-pB;
   ctx.strokeStyle='rgba(34,27,16,.15)';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(pL,H-pB);ctx.lineTo(W-pR,H-pB);ctx.stroke();
   const kx=pL+((r.k-1)/Math.max(r.prazoEfetivo-1,1))*pW;

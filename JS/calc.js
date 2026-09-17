@@ -1,5 +1,5 @@
 /**
- * js/calc.js — lógica de cálculo do Simulador de Consórcio.
+ * JS/calc.js — lógica de cálculo do Simulador de Consórcio.
  *
  * Função pura: recebe um objeto de entradas (strings ou números, como viriam
  * de um formulário) e devolve um objeto de resultados. Não toca no DOM, o
