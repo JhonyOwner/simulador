@@ -13,10 +13,15 @@ function env(name){
 async function db(path, options={}){
   const base=env('SUPABASE_URL').replace(/\/$/,'');
   const key=env('SUPABASE_SERVICE_ROLE_KEY');
-  const r=await fetch(`${base}/rest/v1/${path}`,{
-    ...options,
-    headers:{apikey:key,Authorization:`Bearer ${key}`,'Content-Type':'application/json',...(options.headers||{})}
-  });
+  let r;
+  try {
+    r=await fetch(`${base}/rest/v1/${path}`,{
+      ...options,
+      headers:{apikey:key,Authorization:`Bearer ${key}`,'Content-Type':'application/json',...(options.headers||{})}
+    });
+  } catch (error) {
+    throw new Error(`Não foi possível conectar ao Supabase: ${error.message}`);
+  }
   const text=await r.text();
   let data=null; try{data=text?JSON.parse(text):null}catch{}
   if(!r.ok) throw new Error(data?.message||data?.hint||text||'Erro no banco.');
