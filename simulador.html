@@ -573,8 +573,10 @@ function calc(inp){
       */
       mesesDiluidos = mesesRestantesContrato;
       reducaoParcela = lanceUtilizado / Math.max(1, mesesDiluidos);
-      const parcelaBase=parcelaBaseAntesAmortizacao-diferencaDiluidaBase;
-      parcelaPos = parcelaBase+Math.max(0,diferencaDiluidaBase-reducaoParcela);
+      parcelaPos = Math.max(
+        parcelaMinimaComDiferenca,
+        parcelaBaseAntesAmortizacao-reducaoParcela
+      );
       mesesPosContemplacao = mesesRestantesContrato;
       prazoEfetivo = N;
     }
@@ -593,8 +595,10 @@ function calc(inp){
     }else{
       mesesDiluidos=1;
       reducaoParcela=lanceUtilizado;
-      const parcelaBase=parcelaBaseAntesAmortizacao-diferencaDiluidaBase;
-      parcelaPos=parcelaBase+Math.max(0,diferencaDiluidaBase-reducaoParcela);
+      parcelaPos=Math.max(
+        parcelaMinimaComDiferenca,
+        parcelaBaseAntesAmortizacao-reducaoParcela
+      );
       mesesPosContemplacao=mesesDiluidos;
       mesesExtras=mesesDiluidos;
       prazoEfetivo=N+mesesExtras;
