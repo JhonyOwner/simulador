@@ -496,10 +496,11 @@ function calc(inp){
     ? primeiraParcela
     : 0;
   const adesaoPagaDepoisDaPrimeira=0;
-  const valorParcelasPagasAntes=
-    valorPrimeiraParcelaPaga+
-    parcelaReduzida*parcelasNormaisDepoisDaPrimeira+
-    adesaoPagaDepoisDaPrimeira;
+  const valorParcelasPagasAntes=parcelasPagasAntesContemplacao===0
+    ? (k===1?primeiraParcela:0)
+    : valorPrimeiraParcelaPaga+
+      parcelaReduzida*parcelasNormaisDepoisDaPrimeira+
+      adesaoPagaDepoisDaPrimeira;
   const saldoDevedorInicial=credito+taxasTotais;
   const saldoDevedorAntesLance=Math.max(
     0,
@@ -816,7 +817,7 @@ function render(r){
   setText('posTotal',fmtBRL(r.parcelaPos));
 
   /* Contemplação e lance */
-  setText('pagoAte',fmtBRL(r.pagoAntesContemplacao));
+  setText('pagoAte',fmtBRL(r.k===1?r.primeiraParcela:r.pagoAntesContemplacao));
   setText('lanceProprio',fmtBRL(r.lanceProprio));
   setText('lanceEmbutido',fmtBRL(r.lanceEmbutido));
   setText('lanceSomado',fmtBRL(r.lanceSomado));
@@ -862,7 +863,7 @@ function render(r){
   `);
 
   setHTML('lanceInfo',`
-    <strong>Pago antes da contemplação:</strong> ${fmtBRL(r.valorParcelasAntesContemplacao)} em ${r.parcelasPagasAntesContemplacao} parcelas${r.adesaoPagaAteContemplacao>0?` + adesão ${fmtBRL(r.adesaoPagaAteContemplacao)}`:''} = <strong>${fmtBRL(r.pagoAntesContemplacao)}</strong><br>
+    <strong>Pago até a contemplação:</strong> ${fmtBRL(r.k===1?r.primeiraParcela:r.valorParcelasAntesContemplacao)} em ${r.k===1?1:r.parcelasPagasAntesContemplacao} parcela(s)${r.k===1&&r.adesaoValor>0?` (parcela + adesão ${fmtBRL(r.adesaoValor)})`:r.adesaoPagaAteContemplacao>0?` + adesão ${fmtBRL(r.adesaoPagaAteContemplacao)}`:''} = <strong>${fmtBRL(r.k===1?r.primeiraParcela:r.pagoAntesContemplacao)}</strong><br>
     <strong>Lance próprio:</strong> ${fmtBRL(r.lanceProprio)} → utilizado: ${fmtBRL(r.proprioUtilizado)}<br>
     <strong>Lance embutido:</strong> ${fmtBRL(r.lanceEmbutido)} → utilizado: ${fmtBRL(r.embutidoUtilizado)}<br>
     <strong>Lance somado:</strong> ${fmtBRL(r.lanceSomado)} → utilizado: ${fmtBRL(r.lanceUtilizado)}<br>
