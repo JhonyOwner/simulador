@@ -283,6 +283,16 @@ body:has(.result-panel.active){overflow:hidden}
 .result-panel>.result-panel-top,.result-panel>.headline-numbers,.result-panel>.key-grid,.result-panel>.seal-row,.result-panel>.info-grid,.result-panel>.detail-block,.result-panel>.evolution-actions,.result-panel>.evolution-panel,.result-panel>.yield-panel,.result-panel>.summary-toggle,.result-panel>.summary-strip,.result-panel>.action-bar{max-width:1160px;margin-left:auto;margin-right:auto}
 .result-panel-top{position:sticky;top:0;z-index:2;padding:12px 0 16px;background:rgba(245,245,247,.96);backdrop-filter:blur(12px)}
 @media(max-width:820px){.result-panel{padding:14px}.result-panel-top{padding-top:8px}.result-panel>.headline-numbers,.result-panel>.key-grid,.result-panel>.seal-row,.result-panel>.info-grid,.result-panel>.detail-block,.result-panel>.evolution-actions,.result-panel>.evolution-panel,.result-panel>.yield-panel,.result-panel>.summary-toggle,.result-panel>.summary-strip,.result-panel>.action-bar{width:100%}}
+
+/* Modal amplo com informações alinhadas em duas colunas. */
+.result-panel{padding:24px 32px 40px}
+.result-panel>.result-panel-top,.result-panel>.headline-numbers,.result-panel>.key-grid,.result-panel>.seal-row,.result-panel>.info-grid,.result-panel>.detail-block,.result-panel>.evolution-actions,.result-panel>.evolution-panel,.result-panel>.yield-panel,.result-panel>.summary-toggle,.result-panel>.summary-strip,.result-panel>.action-bar{max-width:none;width:100%}
+.headline-numbers{grid-template-columns:1fr 1fr}.key-grid{grid-template-columns:repeat(4,minmax(0,1fr))}
+.info-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);grid-template-areas:'parcel credit' 'difference difference';gap:28px;margin-bottom:24px}.info-grid .cols{grid-area:parcel;margin:0}.info-grid .credito-block{grid-area:credit;margin:0}.info-grid .diferenca-block{grid-area:difference;margin:0}
+.detail-block{display:grid;grid-template-columns:1fr 1fr;gap:18px}.detail-block summary{grid-column:1 / -1}.detail-block .formula,.detail-block .lance-info{margin:0}
+.yield-result{grid-template-columns:repeat(3,minmax(0,1fr))}.summary-strip{grid-template-columns:repeat(3,minmax(0,1fr))}
+@media(max-width:820px){.result-panel{padding:18px 16px 30px}.info-grid{display:block}.info-grid .cols,.info-grid .credito-block,.info-grid .diferenca-block{margin-bottom:20px}.detail-block{display:block}.detail-block .formula,.detail-block .lance-info{margin:10px 0}.key-grid,.summary-strip,.yield-result{grid-template-columns:1fr 1fr}}
+@media(max-width:520px){.headline-numbers,.key-grid,.summary-strip,.yield-result{grid-template-columns:1fr}.result-panel{padding-left:12px;padding-right:12px}}
 </style>
 </head>
 <body>
