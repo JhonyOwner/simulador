@@ -321,6 +321,9 @@ body:has(.result-panel.active){overflow:hidden}
 .wrap{grid-template-columns:minmax(0,1fr)}
 .form-panel{grid-column:1 / -1;width:100%;max-width:none}
 .form-panel form{width:100%;max-width:1180px;margin-left:auto;margin-right:auto}
+.form-panel .field label,.form-panel .inline-note{text-align:center}
+.form-panel .field input[type=number],.form-panel .field input[type=text],.form-panel .field select{text-align:center}
+.form-panel .radio-group{justify-content:center}
 @media(max-width:820px){.wrap{display:block}.form-panel{width:100%}}
 </style>
 </head>
@@ -913,7 +916,9 @@ function evolucaoSaldo(r){
       ? r.parcelaReduzida
       : r.parcelaPos;
     const parcelaCorrigida=parcelaBase*acumulado;
-    let parcela=month===totalMeses?saldo+adesao:Math.min(parcelaCorrigida+adesao,saldo/mesesRestantes+adesao);
+    let parcela=month===r.k
+      ? r.parcelaPos+adesao
+      : (month===totalMeses?saldo+adesao:Math.min(parcelaCorrigida+adesao,saldo/mesesRestantes+adesao));
     const amortizacao=Math.min(saldo,Math.max(0,parcela-adesao));
     saldo=Math.max(0,saldo-amortizacao);
     meses.push({month,fator:acumulado,saldo,parcela,lance:month===r.k?r.lanceUtilizado:0,fase:month<r.k?'Pré':(month===r.k?'Contemplação':'Pós')});
