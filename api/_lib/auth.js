@@ -11,7 +11,7 @@ function env(name){
 }
 
 async function db(path, options={}){
-  const base=env('SUPABASE_URL').replace(/\/$/,'');
+  const base=env('SUPABASE_URL').replace(/\/+$/,'').replace(/\/rest\/v1$/,'');
   const key=env('SUPABASE_SERVICE_ROLE_KEY');
   let r;
   try {
