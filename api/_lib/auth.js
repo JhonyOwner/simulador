@@ -3,6 +3,7 @@ const crypto = require('crypto');
 const COOKIE = 'sim_session';
 const DEVICE_COOKIE = 'sim_device';
 const SESSION_DAYS = 30;
+const ADMIN_SESSION_DEVICE = 'admin-access';
 
 function env(name){
   const v=process.env[name];
@@ -61,6 +62,7 @@ const rows=await db(
   const users=await db(`users?id=eq.${encodeURIComponent(rows[0].user_id)}&select=id,name,email,cpf,phone,approved,active,device_id&limit=1`);
   const user=users?.[0];
   if(!user || !user.approved || user.active===false) return null;
+  if(rows[0].device_id===ADMIN_SESSION_DEVICE) return {user,session:rows[0],admin:true};
   const device=parseCookies(req)[DEVICE_COOKIE];
   if(!device || user.device_id!==hash(device) || rows[0].device_id!==hash(device)) return {locked:true,user};
   return {user,session:rows[0]};
@@ -79,10 +81,18 @@ async function login(req,res){
   try{
     const {email,password}=req.body||{};
     if(!email||!password) return json(res,400,{message:'E-mail e senha são obrigatórios.'});
-    const users=await db(`users?email=eq.${encodeURIComponent(String(email).trim().toLowerCase())}&select=*&limit=1`);
+    const cleanEmail=String(email).trim().toLowerCase();
+    const adminAccess=req.headers['x-admin-key']===process.env.ADMIN_KEY && cleanEmail===String(process.env.ADMIN_EMAIL||'').trim().toLowerCase();
+    const users=await db(`users?email=eq.${encodeURIComponent(cleanEmail)}&select=*&limit=1`);
     const user=users?.[0];
     if(!user || !passwordVerify(password,user.password_hash)) return json(res,401,{message:'E-mail ou senha inválidos.'});
     if(!user.approved || user.active===false) return json(res,403,{message:'Seu acesso ainda não foi aprovado ou está bloqueado.'});
+    if(adminAccess){
+      const token=randomToken();
+      const expires=new Date(Date.now()+SESSION_DAYS*86400000).toISOString();
+      await db('sessions',{method:'POST',headers:{Prefer:'return=minimal'},body:JSON.stringify({user_id:user.id,token_hash:hash(token),device_id:ADMIN_SESSION_DEVICE,expires_at:expires})});
+      return json(res,200,{message:'Acesso administrativo realizado.',user:{id:user.id,name:user.name,email:user.email}},{'Set-Cookie':cookie(COOKIE,token,SESSION_DAYS*86400)});
+    }
     const cookies=parseCookies(req);
     let device=cookies[DEVICE_COOKIE];
     let newDevice=false;
@@ -112,4 +122,4 @@ async function logout(req,res){
   return json(res,200,{message:'Sessão encerrada.'},{'Set-Cookie':[clearCookie(COOKIE),clearCookie(DEVICE_COOKIE)]});
 }
 
-module.exports={db,parseCookies,cookie,clearCookie,randomToken,hash,passwordHash,passwordVerify,json,getSession,requireSession,login,logout,COOKIE,DEVICE_COOKIE};
+module.exports={db,parseCookies,cookie,clearCookie,randomToken,hash,passwordHash,passwordVerify,json,getSession,requireSession,login,logout,COOKIE,DEVICE_COOKIE,ADMIN_SESSION_DEVICE};

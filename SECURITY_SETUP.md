@@ -10,6 +10,7 @@ Em Settings > Environment Variables, adicione:
 - `SUPABASE_URL` = URL do projeto Supabase
 - `SUPABASE_SERVICE_ROLE_KEY` = chave `service_role`
 - `ADMIN_KEY` = uma chave administrativa longa e aleatória
+- `ADMIN_EMAIL` = e-mail exato da conta administrativa
 
 A `service_role` fica SOMENTE nas variáveis da Vercel.
 
@@ -22,6 +23,7 @@ A `service_role` fica SOMENTE nas variáveis da Vercel.
 - Bloqueio/remoção do usuário invalida sessões.
 - Administrador pode liberar o dispositivo por `/api/admin/device-reset`.
 - IP do último login fica registrado para auditoria.
+- O administrador pode marcar “Acesso administrativo” no login para criar uma sessão sem vínculo de dispositivo.
 
 ## 4. Importante
 O bloqueio é feito no servidor, não no JavaScript do simulador. Portanto, alterar o HTML no navegador não libera o acesso.

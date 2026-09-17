@@ -50,6 +50,10 @@ Vercel, as funções em `api/` usam Supabase pelas variáveis `SUPABASE_URL` e
 `SUPABASE_SERVICE_ROLE_KEY`; nesse caso, execute antes o [`schema.sql`](schema.sql)
 no SQL Editor do Supabase.
 
+Para usar acesso administrativo sem limite de dispositivo, configure também
+`ADMIN_EMAIL` com o e-mail da conta administrativa. No login, marque “Acesso
+administrativo” e informe `ADMIN_KEY`. A senha da conta continua obrigatória.
+
 Se a tela informar erro HTTP da API, confira em Vercel > Settings > Environment
 Variables se `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY` e `ADMIN_KEY` estão
 configuradas para o ambiente correto. Depois de alterar variáveis, faça um novo
