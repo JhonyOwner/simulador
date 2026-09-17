@@ -781,28 +781,23 @@ function renderRendimento(r){
 
 function evolucaoSaldo(r){
   const totalMeses=Math.max(1,r.prazoEfetivo);
-  const taxaMensal=Math.pow(1+Math.max(0,r.inccPct)/100,1/12)-1;
-  const saldoPosContemplacao=Math.max(0,r.saldoDevedor+r.restante);
-  const principalPre=(r.saldoDevedorInicial-(r.saldoDevedorAntesLance+r.restante))/Math.max(1,r.k-1);
-  const principalPos=saldoPosContemplacao/Math.max(1,totalMeses-r.k);
+  const taxaAnual=Math.max(0,r.inccPct)/100;
   let saldo=r.saldoDevedorInicial;
   let acumulado=1;
   let parcelaAnterior=Infinity;
   const meses=[];
   for(let month=1;month<=totalMeses;month++){
-    const preContemplacao=month<r.k;
-    if(month>1) saldo+=saldo*taxaMensal;
+    if(month>1 && (month-1)%12===0){saldo*=1+taxaAnual;acumulado*=1+taxaAnual;}
     if(month===r.k) saldo=Math.max(0,saldo-r.lanceUtilizado);
-    const amortizacao=preContemplacao
-      ? Math.min(saldo,principalPre)
-      : Math.min(saldo,principalPos);
-    let parcela=preContemplacao
-      ? Math.min(saldo,r.parcelaReduzida)
-      : Math.min(saldo,amortizacao+saldo*taxaMensal);
+    const mesesRestantes=Math.max(1,totalMeses-month+1);
+    const adesao=month<=r.adesaoMeses?r.adesaoPorParcela:0;
+    const parcelaPlanejada=month===1
+      ? r.parcelaReduzida+adesao
+      : month<=r.k?r.parcelaReduzida+adesao:r.parcelaPos+adesao;
+    let parcela=month===totalMeses?saldo:Math.min(parcelaPlanejada,saldo/mesesRestantes);
     if(month>r.k) parcela=Math.min(parcela,parcelaAnterior);
-    if(month===totalMeses) parcela=saldo;
+    const amortizacao=Math.min(saldo,parcela);
     saldo=Math.max(0,saldo-amortizacao);
-    acumulado*=1+taxaMensal;
     parcelaAnterior=parcela;
     meses.push({month,fator:acumulado,saldo,parcela,lance:month===r.k?r.lanceUtilizado:0,fase:month<r.k?'Pré':(month===r.k?'Contemplação':'Pós')});
   }
