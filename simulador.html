@@ -242,7 +242,7 @@ header.hero{background:radial-gradient(circle at 50% 0%,rgba(224,184,92,.18),tra
 
   <div class="info-grid">
   <div class="cols parcela-block">
-    <div class="ledger"><h4>Parcela pós-contemplação</h4><div class="ledger-line"><span class="lbl">Saldo devedor inicial</span><span class="fill"></span><span class="val" id="posFundo">—</span></div><div class="ledger-line"><span class="lbl">Percentual pós-contemplação</span><span class="fill"></span><span class="val" id="posTA">—</span></div><div class="ledger-line"><span class="lbl">Parcela mínima pelo saldo inicial</span><span class="fill"></span><span class="val" id="posFR">—</span></div><div class="ledger-line"><span class="lbl">Diferença diluída</span><span class="fill"></span><span class="val" id="posDiluicao">—</span></div><div class="ledger-line total"><span class="lbl">Parcela mensal</span><span class="fill"></span><span class="val" id="posTotal">—</span></div></div>
+    <div class="ledger"><h4>Parcela pós-contemplação</h4><div class="ledger-line"><span class="lbl">Saldo devedor inicial</span><span class="fill"></span><span class="val" id="posFundo">—</span></div><div class="ledger-line"><span class="lbl">Percentual pós-contemplação</span><span class="fill"></span><span class="val" id="posTA">—</span></div><div class="ledger-line"><span class="lbl">Parcela mínima pelo saldo inicial</span><span class="fill"></span><span class="val" id="posFR">—</span></div><div class="ledger-line"><span class="lbl">Parcela no mês da contemplação</span><span class="fill"></span><span class="val" id="contemplacaoParcela">—</span></div><div class="ledger-line"><span class="lbl">Diferença diluída</span><span class="fill"></span><span class="val" id="posDiluicao">—</span></div><div class="ledger-line total"><span class="lbl">Parcela pós-contemplação</span><span class="fill"></span><span class="val" id="posTotal">—</span></div></div>
   </div>
 
   <div class="section-block diferenca-block"><h4>Diferença faltante do redutor</h4><div class="ledger-line"><span class="lbl">Diferença mensal</span><span class="fill"></span><span class="val" id="difMensal">—</span></div><div class="ledger-line total"><span class="lbl">Diferença acumulada até contemplação</span><span class="fill"></span><span class="val" id="difAcumulada">—</span></div><div class="ledger-line"><span class="lbl">Diferença diluída no pós</span><span class="fill"></span><span class="val" id="difDiluida">—</span></div></div>
@@ -375,19 +375,12 @@ function calc(inp){
        - parcelas: divide o lance pelo prazo restante e reduz a parcela;
        - prazo: usa o lance para pagar parcelas de trás para frente.
   */
-  /* A parcela que amortizaria o saldo antes do lance, distribuída no prazo restante.
-     O lance reduz essa parcela em lance ÷ meses.
-     Com o mesmo prazo, o resultado equivale a saldo pós-lance ÷ meses. */
-  const parcelaAmortizacaoAntesLance=mesesRestantesContrato>0
-    ? saldoDevedorAntesLance/mesesRestantesContrato
-    : 0;
-  const parcelaBaseAntesAmortizacao=
-    parcelaAmortizacaoAntesLance+
-    diferencaDiluidaBase;
-
   /* Piso da parcela = percentual do saldo devedor inicial, antes de pagamentos e lance. */
   const parcelaMinima=
     saldoDevedorInicial*percentualPos;
+
+  /* Parcela pós = mínimo contratual + diferença mensal do redutor. */
+  const parcelaBaseAntesAmortizacao=parcelaMinima+diferencaDiluidaBase;
 
   let parcelaPos=parcelaBaseAntesAmortizacao;
   let reducaoParcela=0;
@@ -423,8 +416,8 @@ function calc(inp){
         mesesDiluidos--;
       }
 
-      reducaoParcela = lanceUtilizado / Math.max(1, mesesDiluidos);
-      parcelaPos = Math.max(parcelaMinima, parcelaBaseAntesAmortizacao - reducaoParcela);
+      reducaoParcela = 0;
+      parcelaPos = parcelaBaseAntesAmortizacao;
       mesesPosContemplacao = mesesDiluidos;
       mesesExtras = Math.max(0, mesesDiluidos - mesesRestantesContrato);
       prazoEfetivo = k + mesesPosContemplacao;
@@ -455,7 +448,7 @@ function calc(inp){
       mesesDiluidos=1;
       while(true){
         reducaoParcela=lanceUtilizado/mesesDiluidos;
-        parcelaPos=parcelaBaseAntesAmortizacao-reducaoParcela;
+        parcelaPos=parcelaBaseAntesAmortizacao;
         if(parcelaPos>=parcelaMinima || mesesDiluidos>=1200) break;
         mesesDiluidos++;
       }
@@ -694,7 +687,7 @@ function render(r){
   setText('posTotal',fmtBRL(r.parcelaPos));
 
   /* Contemplação e lance */
-  setText('contemplacaoParcela',fmtBRL(r.parcelaReduzida+(r.k===1?(r.adesaoForma==='avista'?r.adesaoValor:r.adesaoPorParcela):0)));
+  setText('contemplacaoParcela',fmtBRL(r.parcelaPos+(r.k===1?r.adesaoValor:0)));
   setText('pagoAte',fmtBRL(r.pagoAntesContemplacao));
   setText('lanceProprio',fmtBRL(r.lanceProprio));
   setText('lanceEmbutido',fmtBRL(r.lanceEmbutido));
@@ -733,7 +726,7 @@ function render(r){
     Saldo antes do lance = ${fmtBRL(r.saldoDevedorAntesLance)}<br>
     Lance utilizado = ${fmtBRL(r.lanceUtilizado)}<br>
     Saldo após o lance = <span class="final">${fmtBRL(r.saldoDevedor)}</span><br>
-    Parcela-base pós antes do lance = ${fmtBRL(r.saldoDevedorAntesLance)} ÷ ${r.mesesRestantesContrato} + ${fmtBRL(r.diferencaDiluidaBase)} = <span class="final">${fmtBRL(r.parcelaBaseAntesAmortizacao)}</span><br>
+    Parcela pós = mínimo ${fmtBRL(r.parcelaMinima)} + diferença mensal ${fmtBRL(r.diferencaDiluidaBase)} = <span class="final">${fmtBRL(r.parcelaBaseAntesAmortizacao)}</span><br>
     Piso pós = ${fmtPct(r.percentualPos*100,1)} × saldo devedor inicial ${fmtBRL(r.saldoDevedorInicial)} = <span class="final">${fmtBRL(r.parcelaMinima)}</span><br>
     ${r.formaRestante==='parcelas'?`Lance ÷ meses diluídos = ${fmtBRL(r.lanceUtilizado)} ÷ ${r.mesesDiluidos} = ${fmtBRL(r.reducaoParcela)}/mês`:`Lance ÷ parcela = ${fmtBRL(r.lanceUtilizado)} ÷ ${fmtBRL(r.parcelaBaseAntesAmortizacao)} = ${Math.floor(r.lanceUtilizado/Math.max(r.parcelaBaseAntesAmortizacao,0.01))} mês(es) abatido(s)`}<br>
     Taxa real pós = taxa que iguala ${fmtBRL(r.saldoDevedor)} hoje ao valor presente de ${fmtBRL(r.totalPagoPos)} pagos depois da contemplação.

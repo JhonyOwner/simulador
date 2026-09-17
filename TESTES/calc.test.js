@@ -123,6 +123,7 @@ const comLance = telaCalc({ ...activeInput, dinheiro: 30000, embutido: 10 });
 checar(semLance.parcelasPagasAntesContemplacao === 23, 'a parcela da contemplação não pode ser contada como paga antes do evento');
 checar(semLance.parcelaMinima === comLance.parcelaMinima, 'o piso deve ser independente de parcelas pagas e lance');
 checar(Math.abs(semLance.parcelaMinima - semLance.saldoDevedorInicial * semLance.percentualPos) < 0.0001, 'o piso deve usar o saldo devedor inicial');
+checar(Math.abs(semLance.parcelaPos - (semLance.parcelaMinima + semLance.diferencaDiluida)) < 0.0001, 'a parcela pós deve ser mínimo mais diferença mensal');
 checar(semLance.saldoDevedorInicial > semLance.saldoDevedorAntesLance, 'o saldo após pagamentos deve ser menor que o saldo inicial');
 
 if (falhas > 0) {
