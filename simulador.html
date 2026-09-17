@@ -496,8 +496,8 @@ function calc(inp){
     ? primeiraParcela
     : 0;
   const adesaoPagaDepoisDaPrimeira=0;
-  const valorParcelasPagasAntes=parcelasPagasAntesContemplacao===0
-    ? (k===1?primeiraParcela:0)
+  const valorParcelasPagasAntes=k===1
+    ? primeiraParcela
     : valorPrimeiraParcelaPaga+
       parcelaReduzida*parcelasNormaisDepoisDaPrimeira+
       adesaoPagaDepoisDaPrimeira;
@@ -790,7 +790,7 @@ function render(r){
 
   /* Cards principais */
   setText('keyPagoParcelas',fmtBRL(r.pagoAntesContemplacao));
-  setText('keyPagoSub',`${r.parcelasPagasAntesContemplacao} parcelas + adesão`);
+  setText('keyPagoSub',`${Math.max(1,r.parcelasPagasAntesContemplacao)} parcela(s) pagas + adesão`);
   setText('keyProprio',fmtBRL(r.proprioUtilizado));
   setText('keyEmbutido',fmtBRL(r.embutidoUtilizado));
   setText('keyMeses',`${r.mesesPosContemplacao} meses`);

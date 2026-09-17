@@ -136,6 +136,10 @@ checar(prazoComLance.mesesPosContemplacao < prazoComLance.mesesRestantesContrato
 const primeiraContemplacao = telaCalc({ ...activeInput, mesContemplacao: 1, adesaoPct: 2, formaRestante: 'prazo' });
 checar(primeiraContemplacao.primeiraParcela > primeiraContemplacao.parcelaReduzida, 'a primeira parcela deve incluir a adesão');
 checar(primeiraContemplacao.valorParcelasAntesContemplacao === primeiraContemplacao.primeiraParcela, 'a primeira parcela deve ser paga na contemplação do mês 1');
+const segundaContemplacao = telaCalc({ ...activeInput, mesContemplacao: 2, adesaoPct: 2, formaRestante: 'prazo' });
+const decimaContemplacao = telaCalc({ ...activeInput, mesContemplacao: 10, adesaoPct: 2, formaRestante: 'prazo' });
+checar(segundaContemplacao.valorParcelasPagasAntes >= segundaContemplacao.primeiraParcela, 'o primeiro mês deve ser pago antes da contemplação no mês 2');
+checar(decimaContemplacao.valorParcelasPagasAntes >= decimaContemplacao.primeiraParcela, 'o primeiro mês deve ser pago antes de qualquer contemplação posterior');
 
 if (falhas > 0) {
   console.error(`\n${falhas} falha(s) encontrada(s).`);
