@@ -939,7 +939,6 @@ function evolucaoSaldo(r){
   for(let month=1;month<=totalMeses;month++){
     if(month>1 && (month-1)%12===0){saldo*=1+taxaAnual;acumulado*=1+taxaAnual;}
     if(month===r.k) saldo=Math.max(0,saldo-r.lanceUtilizado);
-    const mesesRestantes=Math.max(1,totalMeses-month+1);
     const adesao=month===1?r.adesaoValor:0;
     const parcelaBase=month===1||month<r.k
       ? r.parcelaReduzida
@@ -947,7 +946,7 @@ function evolucaoSaldo(r){
     const parcelaCorrigida=parcelaBase*acumulado;
     let parcela=month===r.k
       ? r.parcelaPos+adesao
-      : (month===totalMeses?saldo+adesao:Math.min(parcelaCorrigida+adesao,saldo/mesesRestantes+adesao));
+      : (month===totalMeses?saldo+adesao:parcelaCorrigida+adesao);
     const amortizacao=Math.min(saldo,Math.max(0,parcela-adesao));
     saldo=Math.max(0,saldo-amortizacao);
     meses.push({month,fator:acumulado,saldo,parcela,lance:month===r.k?r.lanceUtilizado:0,fase:month<r.k?'Pré':(month===r.k?'Contemplação':'Pós')});
