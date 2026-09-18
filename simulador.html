@@ -325,6 +325,21 @@ body:has(.result-panel.active){overflow:hidden}
 .result-panel .detail-block{grid-template-columns:repeat(2,minmax(0,1fr));gap:20px}
 @media(max-width:820px){.wrap{padding:14px}.form-panel{padding:28px 24px}.field-row{grid-template-columns:1fr;gap:16px}.field{max-width:520px}.result-panel>.headline-numbers,.result-panel>.key-grid,.result-panel .info-grid,.result-panel .detail-block{grid-template-columns:1fr}.result-panel .info-grid{display:block}.result-panel .detail-block{display:block}.result-panel>.key-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:520px){.result-panel>.key-grid{grid-template-columns:1fr}.form-panel{padding-left:18px;padding-right:18px}}
+.result-panel>.result-panel-top{margin-bottom:30px;padding-bottom:22px}
+.result-panel>.headline-numbers{margin-bottom:34px;padding-bottom:30px}
+.result-panel>.key-grid{margin-bottom:34px;gap:20px}
+.result-panel>.seal-row{margin-bottom:34px;padding-bottom:30px}
+.result-panel>.info-grid{gap:40px;margin-bottom:34px}
+.result-panel .info-grid .cols,.result-panel .info-grid .credito-block,.result-panel .info-grid .diferenca-block{margin-bottom:30px}
+.result-panel .ledger-line{margin-bottom:14px}
+.result-panel>.detail-block{margin:28px auto 34px;gap:30px}
+.result-panel>.evolution-actions{margin:24px auto 32px}
+.result-panel>.evolution-panel{margin-bottom:34px}
+.result-panel>.yield-panel{margin-bottom:34px;padding:24px}
+.result-panel>.summary-toggle{margin:18px auto 22px}
+.result-panel>.summary-strip{gap:24px;margin-bottom:36px}
+.result-panel>.action-bar{padding-top:8px;margin-bottom:20px}
+@media(max-width:820px){.result-panel>.key-grid,.result-panel>.summary-strip{gap:16px}.result-panel>.info-grid{gap:24px}.result-panel>.yield-panel{padding:20px}}
 
 /* O painel de resultado é modal: o formulário usa toda a área enquanto ele está fechado. */
 .wrap{grid-template-columns:minmax(0,1fr)}
