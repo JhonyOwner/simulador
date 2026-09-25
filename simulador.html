@@ -492,7 +492,8 @@ function calc(inp){
   /* Crédito líquido: o embutido reduz o crédito que será disponibilizado. */
   const creditoLiquido=Math.max(0,credito-lanceEmbutido);
 
-  const mesesRestantesContrato=Math.max(0,N-k);
+  const primeiroMesPosContemplacao=k===1?2:k;
+  const mesesRestantesContrato=Math.max(0,N-primeiroMesPosContemplacao+1);
 
   /* Saldo devedor antes do lance: crédito + taxas contratadas,
      menos as parcelas efetivamente pagas antes da contemplação. */
@@ -572,10 +573,10 @@ function calc(inp){
       const abatimentoMaximo = Math.max(0, mesesRestantesContrato - 1);
       mesesEconomizados = Math.min(abatimentoMaximo, Math.floor(lanceUtilizado / valorParcelaParaPrazo));
       mesesPosContemplacao = Math.max(1, mesesRestantesContrato - mesesEconomizados);
-      prazoEfetivo = k + mesesPosContemplacao;
+      prazoEfetivo = primeiroMesPosContemplacao-1+mesesPosContemplacao;
       parcelaPos = Math.max(
         parcelaMinimaComDiferenca,
-        saldoDevedorAntesLance / mesesPosContemplacao + diferencaDiluidaBase
+        obrigacaoPos / mesesPosContemplacao
       );
     }else{
       /*
@@ -586,7 +587,7 @@ function calc(inp){
       reducaoParcela = lanceUtilizado / Math.max(1, mesesDiluidos);
       parcelaPos = Math.max(
         parcelaMinimaComDiferenca,
-        parcelaBaseAntesAmortizacao-reducaoParcela
+        obrigacaoPos/mesesDiluidos
       );
       mesesPosContemplacao = mesesRestantesContrato;
       prazoEfetivo = N;
@@ -624,16 +625,24 @@ function calc(inp){
     if(mesesPorPiso<mesesPosContemplacao){
       mesesEconomizados=mesesRestantesContrato-mesesPorPiso;
       mesesPosContemplacao=mesesPorPiso;
-      prazoEfetivo=k+mesesPosContemplacao;
+      prazoEfetivo=primeiroMesPosContemplacao-1+mesesPosContemplacao;
     }
   }
 
   /* Fluxo das parcelas. A parcela da contemplação é a k-ésima. */
+  function pagamentoPrincipalPos(mes){
+    return Math.min(
+      parcelaPos,
+      Math.max(0,obrigacaoPos-parcelaPos*(mes-1))
+    );
+  }
+
   const outflow=new Array(prazoEfetivo+1).fill(0);
   for(let t=1;t<=prazoEfetivo;t++){
     const adesao=t===1?adesaoValor:0;
     if(t<k) outflow[t]=parcelaReduzida+adesao;
-    else outflow[t]=parcelaPos+adesao;
+    else if(k===1 && t===1) outflow[t]=primeiraParcela;
+    else outflow[t]=pagamentoPrincipalPos(t-primeiroMesPosContemplacao+1)+adesao;
   }
 
   /* A contemplação na parcela k deixa k - 1 parcelas pagas.
@@ -682,9 +691,9 @@ function calc(inp){
 
   let totalPagoPos=0;
   for(let m=1;m<=mesesPos;m++){
-    const t=k+m;
+    const t=primeiroMesPosContemplacao+m-1;
     const adesaoFutura=t<=adesaoMeses?adesaoPorParcela:0;
-    const pagamento=parcelaPos+adesaoFutura;
+    const pagamento=pagamentoPrincipalPos(m)+adesaoFutura;
     posCashflows[m]=-pagamento;
     totalPagoPos+=pagamento;
   }

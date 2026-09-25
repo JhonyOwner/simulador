@@ -158,6 +158,26 @@ const decimaContemplacao = telaCalc({ ...activeInput, mesContemplacao: 10, adesa
 checar(segundaContemplacao.valorParcelasPagasAntes >= segundaContemplacao.primeiraParcela, 'o primeiro mês deve ser pago antes da contemplação no mês 2');
 checar(decimaContemplacao.valorParcelasPagasAntes >= decimaContemplacao.primeiraParcela, 'o primeiro mês deve ser pago antes de qualquer contemplação posterior');
 
+const amortizacaoBasica = telaCalc({
+  credito: 71400, prazo: 20, taPct: 0, frPct: 0, seguroPct: 0,
+  inccPct: 0, mesContemplacao: 6, tipoBem: 'auto', redutorPct: 0,
+  adesaoPct: 0, adesaoForma: 'avista', dinheiro: 42300, embutido: 0,
+  formaRestante: 'parcelas'
+});
+checar(Math.abs(amortizacaoBasica.saldoDevedorAntesLance - 53550) < 0.01, 'o cenário básico deve partir do saldo devedor de R$ 53.550');
+checar(Math.abs(amortizacaoBasica.saldoDevedor - 11250) < 0.01, 'o lance de R$ 42.300 deve deixar R$ 11.250 de saldo');
+checar(amortizacaoBasica.mesesPosContemplacao === 15, 'o mês da contemplação deve contar entre as parcelas pós-contemplação');
+checar(Math.abs(amortizacaoBasica.parcelaPos - 750) < 0.01, 'o saldo após o lance deve ser dividido pelos 15 meses restantes');
+checar(Math.abs(amortizacaoBasica.totalPagoPos - amortizacaoBasica.obrigacaoPos) < 0.01, 'os pagamentos pós-contemplação devem fechar o saldo após o lance');
+checar(Math.abs(amortizacaoBasica.outflow.slice(amortizacaoBasica.k).reduce((s, valor) => s + valor, 0) - 11250) < 0.01, 'o fluxo real de parcelas deve fechar o saldo de R$ 11.250');
+const amortizacaoComIndice = telaCalc({
+  credito: 71400, prazo: 20, taPct: 0, frPct: 0, seguroPct: 0,
+  inccPct: 15, mesContemplacao: 6, tipoBem: 'auto', redutorPct: 0,
+  adesaoPct: 0, adesaoForma: 'avista', dinheiro: 42300, embutido: 0,
+  formaRestante: 'parcelas'
+});
+checar(amortizacaoComIndice.parcelaPos === amortizacaoBasica.parcelaPos, 'INCC/IPCA não deve alterar a conta básica da parcela pós-contemplação');
+
 if (falhas > 0) {
   console.error(`\n${falhas} falha(s) encontrada(s).`);
   process.exit(1);
