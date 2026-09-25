@@ -20,11 +20,12 @@ main{width:min(1040px,100%);margin:0 auto;padding:44px 24px 72px}
 fieldset{border:0;border-top:1px solid var(--line);padding:20px 0 0;margin:0 0 21px}fieldset:first-of-type{border-top:0;padding-top:0}legend{padding:0 8px 0 0;color:var(--teal);font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase}
 .fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px 22px}.field{display:flex;min-width:0;flex-direction:column;gap:7px}.field[hidden]{display:none!important}.field label{color:#505b5e;font-size:12px;font-weight:550}.field input,.field select{width:100%;min-width:0;height:42px;border:1px solid #d7dfe0;border-radius:7px;background:#fbfcfc;padding:8px 11px;color:var(--ink);outline:none}.field input:focus,.field select:focus{border-color:var(--teal);box-shadow:0 0 0 3px #087f7818}.input-shell{display:flex;align-items:center;min-width:0;height:42px;border:1px solid #d7dfe0;border-radius:7px;background:#fbfcfc;color:var(--muted)}.input-shell:focus-within{border-color:var(--teal);box-shadow:0 0 0 3px #087f7818}.input-shell>span{flex:none;padding:0 11px;font-size:12px;font-variant-numeric:tabular-nums}.input-shell input{flex:1;width:100%;min-width:0;height:40px;border:0;border-radius:6px;background:transparent;padding:8px 11px;color:var(--ink);font-variant-numeric:tabular-nums;text-align:right;outline:none}.input-shell input:focus{border:0;box-shadow:none}.input-shell input[aria-invalid="true"]{color:var(--red)}
 .choice-row{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}.choice{display:inline-flex;align-items:center;gap:7px;padding:8px 11px;border:1px solid var(--line);border-radius:7px;color:#4b5558;font-size:12px;cursor:pointer}.choice:has(input:checked){border-color:var(--teal);background:var(--teal-soft);color:#075b57}.choice input{accent-color:var(--teal)}
+.page-heading,.form-heading,.form-note{text-align:center}.lede{margin-left:auto;margin-right:auto}.field{align-items:center}.field>label{width:min(100%,420px);text-align:center}.field input,.field select,.input-shell{width:min(100%,420px);max-width:420px}.field select{text-align:center;text-align-last:center}.input-shell input{text-align:center}fieldset>legend{display:table;margin-left:auto;margin-right:auto;text-align:center}.choice-row,.actions{justify-content:center}.field-guide summary{margin:0 auto;text-align:center}
 .helper{margin:10px 0 0;color:var(--muted);font-size:11px;line-height:1.45}.actions{display:flex;justify-content:flex-end;gap:10px;margin-top:24px}.primary{border-color:var(--teal);background:var(--teal);color:#fff;font-weight:650;padding:11px 20px}.primary:hover{border-color:#066c66;background:#066c66;color:#fff}
 .field-guide{margin-top:20px;border-top:1px solid var(--line);padding-top:15px}.field-guide summary{width:fit-content;color:var(--teal);font-size:12px;font-weight:650;cursor:pointer}.field-guide-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px;padding:16px 0 2px}.field-guide h3{margin:0 0 8px;font-size:12px}.field-guide p{margin:0 0 8px;color:var(--muted);font-size:11px;line-height:1.5}.field-guide strong{color:#465154}
 .modal{position:fixed;inset:0;z-index:5;display:none;overflow:auto;background:#14201fc9;padding:22px}.modal.open{display:block}.modal-card{width:min(1180px,100%);min-height:calc(100vh - 44px);margin:0 auto;border-radius:12px;background:var(--bg);box-shadow:0 24px 90px #0005;overflow:hidden}.modal-head{position:sticky;top:0;z-index:2;display:flex;align-items:center;justify-content:space-between;gap:16px;padding:15px 22px;background:#fffF;border-bottom:1px solid var(--line);backdrop-filter:blur(12px)}.modal-head h2{margin:0;font-size:16px}.modal-body{padding:22px}
-.result-top{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:20px}.hero-stat{padding:18px 20px;border:1px solid var(--line);border-radius:9px;background:var(--paper)}.hero-stat .label,.stat .label{color:var(--muted);font-size:11px}.hero-stat .value{margin-top:7px;font-size:27px;font-variant-numeric:tabular-nums;font-weight:650}.hero-stat .sub{margin-top:5px;color:var(--muted);font-size:11px;line-height:1.4}
-.metrics{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px;margin-bottom:22px}.stat{padding:13px;border:1px solid var(--line);border-radius:8px;background:var(--paper);min-width:0}.stat .value{margin-top:7px;font-size:16px;font-weight:650;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+.result-top{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:20px}.hero-stat{padding:18px 20px;border:1px solid var(--line);border-radius:9px;background:var(--paper)}.hero-stat.featured{border-color:#a4d2c9;background:#eaf6f3}.hero-stat .label,.stat .label{color:var(--muted);font-size:11px}.hero-stat .value{margin-top:7px;font-size:27px;font-variant-numeric:tabular-nums;font-weight:650}.hero-stat.featured .value{color:#075e58;font-size:34px}.hero-stat .sub{margin-top:5px;color:var(--muted);font-size:11px;line-height:1.4}
+.metrics{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-bottom:22px}.stat{padding:13px;border:1px solid var(--line);border-radius:8px;background:var(--paper);min-width:0}.stat .value{margin-top:7px;font-size:16px;font-weight:650;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
 .section{margin:22px 0 28px}.section-head{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-bottom:10px}.section h3{margin:0;font-size:14px}.section-head p{margin:0;color:var(--muted);font-size:11px}.table-wrap{overflow:auto;border:1px solid var(--line);border-radius:8px;background:var(--paper)}table{width:100%;border-collapse:collapse;font-size:12px;font-variant-numeric:tabular-nums}th,td{padding:10px 12px;border-bottom:1px solid #edf0f0;text-align:right;white-space:nowrap}th:first-child,td:first-child{text-align:left}thead th{position:sticky;top:0;background:#f1f6f5;color:#4e6260;font-size:10px;letter-spacing:.05em;text-transform:uppercase;z-index:1}tbody tr:last-child td{border-bottom:0}.selected-col{background:#f0f8f6}
 .footnote{margin:9px 0 0;color:var(--muted);font-size:11px;line-height:1.5}.notice{margin:12px 0;padding:12px 14px;border-left:3px solid var(--gold);background:#fbf5e9;color:#554832;font-size:12px;line-height:1.5}
 .projection-controls{display:flex;align-items:end;gap:14px;flex-wrap:wrap;margin:0 0 14px}.projection-controls .field{width:180px}.projection-controls .helper{flex:1;min-width:200px;margin:0 0 3px}.chart{display:block;width:100%;height:220px;border:1px solid var(--line);border-radius:8px;background:#fff;margin-bottom:12px}.projection-table{max-height:390px}.phase-event td{background:#fff7e8;font-weight:650}.yield-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}.yield-controls{display:grid;grid-template-columns:1fr 1fr;gap:14px;max-width:500px;margin:0 0 16px}
@@ -83,7 +84,7 @@ fieldset{border:0;border-top:1px solid var(--line);padding:20px 0 0;margin:0 0 2
             <h3>Adesão, redutor e lance</h3>
             <p id="adhesionHelp">À vista, a adesão equivale ao percentual do crédito mais uma parcela. Diluída, a taxa é dividida pelos meses escolhidos e adicionada temporariamente à parcela.</p>
             <p><strong>Redutor:</strong> reduz Fundo Comum e Fundo de Reserva; não reduz a TA líquida.</p>
-            <p><strong>Tipo de bem:</strong> define o piso pós-contemplação de 0,5% para imóvel ou 1% para automóvel, sobre o saldo inicial com taxas.</p>
+            <p><strong>Tipo de bem:</strong> define o índice anual da projeção: INCC para imóvel e IPCA para automóvel.</p>
             <p><strong>Lance:</strong> recursos próprios e lance embutido são somados para abater o saldo.</p>
             <p><strong>Amortização:</strong> o modo prazo recalcula meses; o modo parcela mantém o piso e estende o prazo quando necessário.</p>
           </section>
@@ -106,24 +107,21 @@ fieldset{border:0;border-top:1px solid var(--line);padding:20px 0 0;margin:0 0 2
     <div class="modal-head"><h2 id="resultsTitle">Resultado da simulação</h2><button type="button" id="closeResults">Fechar</button></div>
     <div class="modal-body">
       <div class="result-top">
-        <div class="hero-stat"><div class="label">Parcela antes da contemplação</div><div class="value" id="beforeInstallment">—</div><div class="sub" id="beforeInstallmentSub"></div></div>
+        <div class="hero-stat featured"><div class="label">Parcela antes da contemplação</div><div class="value" id="beforeInstallment">—</div><div class="sub" id="beforeInstallmentSub"></div></div>
         <div class="hero-stat"><div class="label">Parcela após a contemplação</div><div class="value" id="afterInstallment">—</div><div class="sub" id="afterInstallmentSub"></div></div>
       </div>
       <div class="metrics">
-        <div class="stat"><div class="label">TA líquida</div><div class="value" id="netAdminResult">—</div></div>
-        <div class="stat"><div class="label">Saldo inicial cheio</div><div class="value" id="fullDebtResult">—</div></div>
-        <div class="stat"><div class="label">Piso pós-contemplação</div><div class="value" id="minimumResult">—</div></div>
-        <div class="stat"><div class="label">Prazo pós-contemplação</div><div class="value" id="monthsResult">—</div></div>
+        <div class="stat"><div class="label">Crédito contemplado</div><div class="value" id="creditAfterBidResult">—</div></div>
+        <div class="stat"><div class="label">Pagamentos antes da contemplação</div><div class="value" id="paidBeforeResult">—</div></div>
         <div class="stat"><div class="label">Prazo total estimado</div><div class="value" id="totalTermResult">—</div></div>
       </div>
       <section class="section">
-        <div class="section-head"><h3>Plano antes da contemplação</h3><p>Cheio, redutor de 25% e redutor de 50%</p></div>
-        <div class="table-wrap"><table><thead><tr><th>Componente</th><th>Cheio</th><th>Redutor 25%</th><th>Redutor 50%</th></tr></thead><tbody id="planRows"></tbody></table></div>
+        <div class="section-head"><h3>Plano selecionado</h3><p id="selectedPlanLabel"></p></div>
+        <div class="table-wrap"><table><thead><tr><th>Componente</th><th>Valor</th></tr></thead><tbody id="planRows"></tbody></table></div>
       </section>
       <section class="section">
-        <div class="section-head"><h3>Pós-contemplação</h3><p id="postModeLabel"></p></div>
-        <div class="table-wrap"><table><thead><tr><th>Componente</th><th>Cheio</th><th>Redutor 25%</th><th>Redutor 50%</th></tr></thead><tbody id="postRows"></tbody></table></div>
-        <p class="notice" id="postNote"></p>
+        <div class="section-head"><h3>Após a contemplação</h3><p id="postModeLabel"></p></div>
+        <div class="table-wrap"><table><thead><tr><th>Resumo</th><th>Valor</th></tr></thead><tbody id="postRows"></tbody></table></div>
       </section>
       <section class="section">
         <div class="section-head"><h3>Evolução anual do crédito e saldo</h3><p id="indexName">INCC</p></div>
@@ -246,48 +244,36 @@ function tableRows(rows,scenarios){
 
 function render(result){
   const selected=result.selected;
-  const plans=result.plans;
-  $('netAdminResult').textContent=percent(result.netAdminPct);
-  $('fullDebtResult').textContent=money(result.plans[0].debt);
-  $('minimumResult').textContent=money(result.minimumInstallment);
-  $('monthsResult').textContent=`${result.monthsAfter} meses`;
+  $('creditAfterBidResult').textContent=money(result.creditAfterBid);
+  $('paidBeforeResult').textContent=`${result.paidBefore} pagamentos`;
   $('totalTermResult').textContent=`${result.totalMonths} meses`;
+  $('selectedPlanLabel').textContent=result.redutor===0?'Plano cheio':`Redutor de ${percent(result.redutor)}`;
   $('beforeInstallment').textContent=money(selected.firstInstallment);
   $('beforeInstallmentSub').textContent=result.adhesionMode==='diluida'
     ? `Adesão: ${money(result.adhesionPerMonth)}/mês nos primeiros ${result.adhesionMonths} meses; depois a parcela pré volta a ${money(selected.installment)}`
     : `Adesão à vista: ${money(selected.adhesion)}; parcela pré regular depois: ${money(selected.installment)}`;
   $('afterInstallment').textContent=money(result.postInstallment);
-  $('afterInstallmentSub').textContent=`${result.mode==='prazo'?'Abatimento no prazo':'Abatimento na parcela'} · piso de ${money(result.minimumInstallment)}`;
+  $('afterInstallmentSub').textContent=result.mode==='prazo'
+    ? `Abatimento no prazo · ${result.monthsAfter} parcelas restantes`
+    : `Abatimento na parcela · ${result.monthsAfter} parcelas restantes`;
 
   const planData=[
     ['Fundo comum',plan=>money(plan.commonFund)],
     ['Fundo de reserva',plan=>money(plan.reserveFund)],
-    ['Taxa de administração líquida',plan=>money(plan.adminFee)],
-    ['Saldo devedor inicial',plan=>money(plan.debt)],
     [result.adhesionMode==='diluida'?'Adesão total diluída':'Adesão (taxa + 1 parcela)',plan=>money(plan.adhesion)],
     ['Parcela antes da contemplação',plan=>money(plan.installment)]
   ];
-  $('planRows').innerHTML=planData.map(([label,get])=>`<tr><td>${label}</td>${plans.map(plan=>`<td>${get(plan)}</td>`).join('')}</tr>`).join('');
+  $('planRows').innerHTML=planData.map(([label,get])=>`<tr><td>${label}</td><td>${get(selected)}</td></tr>`).join('');
 
   const postData=[
-    ['Saldo devedor do plano',plan=>money(plan.debt)],
     ['Saldo após lance',plan=>money(plan.balanceAfterBid)],
     ['Pagamentos antes da contemplação',plan=>money(plan.paidAmount)],
-    ['Saldo P.P',plan=>money(plan.postBalance)],
-    ['Parcela mínima',plan=>money(plan.minimumInstallment)],
-    ['Parcela pelo prazo',plan=>money(plan.installmentByTerm)],
-    ['Diferença total do redutor',plan=>money(plan.differenceTotal)],
-    ['Diferença mensal diluída',plan=>money(plan.differencePerMonth)],
-    ['Parcela real no modo prazo',plan=>money(plan.realInstallment)],
-    ['Meses reais no modo prazo',plan=>`${plan.monthsByTerm} meses`],
-    ['Saldo no modo parcela',plan=>money(plan.installmentBalance)],
-    ['Meses reais no modo parcela',plan=>`${plan.monthsByInstallment} meses`]
+    ['Saldo restante para quitação',plan=>money(result.mode==='prazo'?plan.termBalance:plan.installmentBalance)],
+    ['Parcela após a contemplação',()=>money(result.postInstallment)],
+    ['Prazo após a contemplação',()=>`${result.monthsAfter} meses`]
   ];
-  $('postRows').innerHTML=postData.map(([label,get])=>`<tr><td>${label}</td>${result.postPlans.map(plan=>`<td>${get(plan)}</td>`).join('')}</tr>`).join('');
-  $('postModeLabel').textContent=`Cenário selecionado: ${result.redutor}% de redutor · lance total ${money(result.bidTotal)}`;
-  const scenario25=result.postPlans.find(plan=>plan.redutor===25);
-  $('postNote').textContent=`Piso = ${percent(result.minimumPct)} do saldo cheio com taxas (${money(result.plans[0].debt)}). O saldo após o lance não inclui os pagamentos pré; o Saldo P.P já os desconta. A diferença do redutor é adicionada ao saldo que falta quitar.`+
-    (scenario25&&scenario25.monthsByTerm!==90?` Na planilha, os 90 meses do redutor de 25% deixam a diferença de ${money(scenario25.differenceTotal)} sem quitação; incluindo-a, o prazo calculado é ${scenario25.monthsByTerm} meses.`:'');
+  $('postRows').innerHTML=postData.map(([label,get])=>`<tr><td>${label}</td><td>${get(selected)}</td></tr>`).join('');
+  $('postModeLabel').textContent=`${result.redutor===0?'Plano cheio':`Redutor de ${percent(result.redutor)}`} · Lance ${money(result.bidTotal)}`;
 
   const indexName=result.assetType==='imovel'?'INCC':'IPCA';
   $('indexName').textContent=`${indexName} anual`;

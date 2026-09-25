@@ -16,6 +16,22 @@
     return Math.min(max, Math.max(min, value));
   }
 
+  function estimateMonths(balance, installment, paidBefore, adhesionMode, adhesionMonths, adhesionPerMonth) {
+    let remaining = Math.max(0, balance);
+    let months = 0;
+    while (remaining > 0.01 && months < 3600) {
+      const contractMonth = paidBefore + months + 1;
+      const adhesion = adhesionMode === 'diluida' && contractMonth <= adhesionMonths
+        ? adhesionPerMonth
+        : 0;
+      const payment = Math.max(0, installment + adhesion);
+      if (payment === 0) return 3600;
+      remaining = Math.max(0, remaining - payment);
+      months += 1;
+    }
+    return months;
+  }
+
   function calculate(input) {
     input = input || {};
 
@@ -108,14 +124,26 @@
         ? plan.postBalance / remainingTerm
         : plan.postBalance;
       const realInstallment = Math.max(minimumInstallment, installmentByTerm) + differencePerMonth;
-      const termBalance = plan.postBalance + differenceTotal;
-      const installmentBalance = termBalance + differencePaidBefore;
-      const monthsByTerm = termBalance > 0
-        ? Math.max(1, Math.round(Math.max(0, termBalance - plan.adhesionRemaining) / Math.max(realInstallment, 0.01)))
-        : 0;
-      const monthsByInstallment = installmentBalance > 0
-        ? Math.max(1, Math.round(Math.max(0, installmentBalance - plan.adhesionRemaining) / Math.max(minimumInstallment, 0.01)))
-        : 0;
+      const fullBalanceBeforeBid = Math.max(0, fullPlan.debt - plan.paidAmount);
+      const lanceAgainstFullBalance = Math.min(bidTotal, fullBalanceBeforeBid);
+      const termBalance = Math.max(0, fullBalanceBeforeBid - lanceAgainstFullBalance);
+      const installmentBalance = termBalance;
+      const monthsByTerm = estimateMonths(
+        termBalance,
+        realInstallment,
+        paidBefore,
+        adhesionMode,
+        adhesionMonths,
+        adhesionPerMonth
+      );
+      const monthsByInstallment = estimateMonths(
+        installmentBalance,
+        minimumInstallment,
+        paidBefore,
+        adhesionMode,
+        adhesionMonths,
+        adhesionPerMonth
+      );
 
       return {
         ...plan,
@@ -179,7 +207,7 @@
     const plannedMonths = Math.max(1, result.totalMonths);
     const maxMonths = Math.min(3600, plannedMonths + 120);
     let factor = 1;
-    let balance = scenario.debt;
+    let balance = result.plans[0].debt;
     let adjustedCredit = result.credit;
 
     for (let month = 1; month <= maxMonths && (month <= plannedMonths || balance > 0.01); month += 1) {
@@ -207,10 +235,7 @@
           phase = 'Contemplação';
           bid = Math.min(result.bidTotal, balance);
           balance = Math.max(0, balance - bid);
-          const difference = mode === 'prazo'
-            ? scenario.differenceTotal
-            : scenario.differenceTotal + scenario.differencePaidBefore;
-          balance += difference * factor;
+          adjustedCredit = Math.max(0, adjustedCredit - bid);
         } else {
           phase = 'Pós-contemplação';
         }

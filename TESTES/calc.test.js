@@ -25,9 +25,9 @@ assert.deepEqual(result.postPlans.map(plan => plan.paidAmount), [70000, 59375, 4
 assert.deepEqual(result.postPlans.map(plan => plan.postBalance), [880000, 635625, 391250]);
 assert.deepEqual(result.postPlans.map(plan => plan.minimumInstallment), [6000, 6000, 6000]);
 assert.deepEqual(result.postPlans.map(plan => plan.realInstallment), [6000, 7062.5, 8125]);
-assert.deepEqual(result.postPlans.map(plan => plan.monthsByTerm), [147, 125, 108]);
+assert.deepEqual(result.postPlans.map(plan => plan.monthsByTerm), [147, 127, 111]);
 assert.deepEqual(result.postPlans.map(plan => plan.installmentBalance), [880000, 890625, 901250]);
-assert.deepEqual(result.postPlans.map(plan => plan.monthsByInstallment), [147, 148, 150]);
+assert.deepEqual(result.postPlans.map(plan => plan.monthsByInstallment), [147, 149, 151]);
 
 const autoFloor = calculate({ ...example, assetType: 'auto' });
 assert.equal(autoFloor.minimumInstallment, 12000);
@@ -53,10 +53,36 @@ close(dilutedProjection[12].payment, dilutedSelected.realInstallment);
 const projection = buildProjection(result, 5);
 assert(projection.length >= result.totalMonths);
 assert.equal(projection[10].phase, 'Contemplação');
+assert.equal(projection[0].balance, result.plans[0].debt - result.selected.adhesion);
+assert.equal(projection[10].adjustedCredit, result.creditAfterBid);
 assert.equal(projection.at(-1).balance, 0);
 assert(projection[12].adjustedCredit > projection[11].adjustedCredit);
+const noIndexProjection = buildProjection(result, 0);
+assert.equal(noIndexProjection.length, result.totalMonths);
+assert.equal(noIndexProjection.length - result.paidBefore, result.monthsAfter);
+
+const reducedProjection = buildProjection(calculate({ ...example, redutor: 25 }), 0);
+assert.equal(reducedProjection[0].balance, 1200000 - 23937.5);
+assert.equal(reducedProjection[10].adjustedCredit, 750000);
+
+for (const redutor of [0, 25, 50]) {
+  const scenario = calculate({ ...example, redutor });
+  for (const annualRate of [0, 5, 15]) {
+    const indexedProjection = buildProjection(scenario, annualRate);
+    assert.equal(indexedProjection.length, scenario.totalMonths);
+    assert.equal(indexedProjection.length - scenario.paidBefore, scenario.monthsAfter);
+    assert.equal(indexedProjection.at(-1).balance, 0);
+
+    const dilutedScenario = calculate({ ...example, redutor, adhesionMode: 'diluida', adhesionMonths: 12 });
+    const dilutedIndexedProjection = buildProjection(dilutedScenario, annualRate);
+    assert.equal(dilutedIndexedProjection.length, dilutedScenario.totalMonths);
+    assert.equal(dilutedIndexedProjection.length - dilutedScenario.paidBefore, dilutedScenario.monthsAfter);
+    assert.equal(dilutedIndexedProjection.at(-1).balance, 0);
+  }
+}
 
 const finalPaymentProjection = buildProjection({
+  plans: [{ debt: 2500 }],
   selected: { debt: 2500, differenceTotal: 0, differencePaidBefore: 0, realInstallment: 1200 },
   mode: 'prazo',
   totalMonths: 2,
@@ -71,6 +97,7 @@ assert.deepEqual(finalPaymentProjection.map(row => row.payment), [1200, 1200, 10
 assert.equal(finalPaymentProjection.at(-1).balance, 0);
 
 const extendedPaymentProjection = buildProjection({
+  plans: [{ debt: 4000 }],
   selected: { debt: 4000, differenceTotal: 0, differencePaidBefore: 0, realInstallment: 1200 },
   mode: 'prazo',
   totalMonths: 2,
