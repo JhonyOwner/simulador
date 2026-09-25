@@ -91,8 +91,13 @@ function checar(cond, msg) {
     checar(r.outflow.length === r.Nefetivo + 1, 'outflow deveria ter Nefetivo+1 posições (índice 0 em branco)');
     checar(r.parcelaPos >= r.parcelaMinima - 0.01, 'parcelaPos não pode ficar abaixo da parcela mínima');
     if (r.totalLance > 0) {
-      checar(r.mesesPosContemplacao < r.mesesRestantesContrato, 'meses pós-contemplação devem reduzir o prazo restante quando há lance');
-      checar(r.Nefetivo <= r.N, 'o prazo total não pode aumentar quando há lance');
+      if (formaRestante === 'parcelas') {
+        checar(r.mesesPosContemplacao === r.mesesRestantesContrato, 'abatimento na parcela deve manter os meses restantes');
+        checar(r.Nefetivo === r.N, 'abatimento na parcela deve manter o prazo total');
+      } else {
+        checar(r.mesesPosContemplacao < r.mesesRestantesContrato, 'abatimento no prazo deve reduzir os meses restantes');
+        checar(r.Nefetivo <= r.N, 'o prazo total não pode aumentar quando há lance');
+      }
     } else {
       checar(r.mesesPosContemplacao === r.mesesRestantesContrato, 'sem lance, o prazo restante deve permanecer igual ao contrato');
       checar(r.Nefetivo === r.N, 'sem lance, o prazo total não pode diminuir');
@@ -125,10 +130,10 @@ checar(semLance.parcelaMinima === comLance.parcelaMinima, 'o piso deve ser indep
 checar(Math.abs(semLance.parcelaMinima - semLance.saldoDevedorInicial * semLance.percentualPos) < 0.0001, 'o piso deve usar o saldo devedor inicial');
 checar(semLance.parcelaPos >= semLance.parcelaMinima + semLance.diferencaDiluida - 0.0001, 'a parcela pós deve respeitar o piso mínimo mais diferença mensal');
 checar(semLance.saldoDevedorInicial > semLance.saldoDevedorAntesLance, 'o saldo após pagamentos deve ser menor que o saldo inicial');
-const parcelaComLance = telaCalc({ ...activeInput, dinheiro: 1000, formaRestante: 'parcelas' });
+const parcelaComLance = telaCalc({ ...activeInput, tipoBem: 'imovel', dinheiro: 10000, formaRestante: 'parcelas' });
 const prazoComLance = telaCalc({ ...activeInput, dinheiro: 10000, formaRestante: 'prazo' });
 checar(parcelaComLance.mesesPosContemplacao === parcelaComLance.mesesRestantesContrato, 'abatimento na parcela deve manter o prazo');
-checar(parcelaComLance.parcelaPos <= semLance.parcelaPos, 'abatimento na parcela não deve aumentar o valor mensal');
+checar(parcelaComLance.parcelaPos < semLance.parcelaPos, 'abatimento na parcela deve reduzir o valor mensal');
 const parcelaNoPiso = telaCalc({ ...activeInput, dinheiro: 10000, formaRestante: 'parcelas' });
 checar(parcelaNoPiso.parcelaPos >= parcelaNoPiso.parcelaMinima, 'abatimento na parcela deve respeitar o piso');
 checar(parcelaNoPiso.parcelaPos >= parcelaNoPiso.parcelaMinimaComDiferenca, 'abatimento na parcela deve respeitar o piso mais a diferença mensal');

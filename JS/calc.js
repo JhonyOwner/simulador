@@ -124,11 +124,11 @@
       if (formaRestante === 'parcelas') {
         if (mesesRestantesPos > 0) {
           if (temLance) {
-            const mesesReduzidos = Math.min(mesesRestantesPos - 1, Math.max(1, Math.round(totalLance / Math.max(parcelaCheia, 1))));
-            mesesPosContemplacao = Math.max(1, mesesRestantesPos - mesesReduzidos);
-            const reducao = totalLance / Math.max(1, mesesPosContemplacao);
-            parcelaPos = Math.max(parcelaMinima, parcelaCheia - reducao);
-            Nefetivo = k + mesesPosContemplacao;
+            const reducao = totalLance / Math.max(1, mesesRestantesPos);
+            extraDiluicao = restante / mesesRestantesPos;
+            parcelaPos = Math.max(parcelaMinima, parcelaCheia - extraDiluicao - reducao);
+            mesesPosContemplacao = mesesRestantesPos;
+            Nefetivo = N;
           } else {
             mesesPosContemplacao = mesesRestantesPos;
             extraDiluicao = restante / mesesRestantesPos;
@@ -158,7 +158,7 @@
       Nefetivo = N;
     }
 
-    if (temLance && mesesRestantesContrato > 0 && mesesPosContemplacao >= mesesRestantesContrato) {
+    if (formaRestante === 'prazo' && temLance && mesesRestantesContrato > 0 && mesesPosContemplacao >= mesesRestantesContrato) {
       mesesPosContemplacao = Math.max(1, mesesRestantesContrato - 1);
       Nefetivo = k + mesesPosContemplacao;
     }
