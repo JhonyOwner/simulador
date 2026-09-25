@@ -1,0 +1,190 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Memória de Cálculo | Simulador de Consórcio</title>
+<style>
+  :root{--ink:#182b3a;--muted:#536676;--line:#cbd5dc;--paper:#fff;--accent:#a46a13;--wash:#eef3f5;--warn:#fff3dc;--warnline:#d39a37}
+  *{box-sizing:border-box}
+  body{margin:0;background:#e8edf0;color:var(--ink);font:10.5pt/1.48 Arial,Helvetica,sans-serif}
+  main{max-width:900px;margin:24px auto;background:var(--paper);padding:42px 50px;box-shadow:0 4px 22px #12253620}
+  h1,h2,h3{font-family:Georgia,'Times New Roman',serif;line-height:1.18;margin:0 0 12px}
+  h1{font-size:28pt;max-width:650px}
+  h2{font-size:19pt;border-bottom:2px solid var(--ink);padding-bottom:7px;margin-top:0}
+  h3{font-size:13pt;margin-top:20px;color:var(--ink)}
+  p{margin:7px 0 11px}
+  .eyebrow{text-transform:uppercase;letter-spacing:1.2px;color:var(--accent);font-weight:bold;font-size:9pt}
+  .subtitle{font-size:13pt;color:var(--muted);max-width:700px}
+  .meta{margin:22px 0;padding:12px 15px;background:var(--wash);border-left:4px solid var(--accent);color:var(--muted)}
+  .section{margin-top:30px}
+  .page{break-before:page;page-break-before:always}
+  .formula{font-family:'Courier New',monospace;background:var(--wash);padding:8px 11px;margin:7px 0;border-left:3px solid #8195a3;overflow-wrap:anywhere;font-size:9.4pt}
+  .note{padding:11px 14px;background:var(--warn);border-left:4px solid var(--warnline);margin:12px 0}
+  .small{color:var(--muted);font-size:9.3pt}
+  table{border-collapse:collapse;width:100%;margin:10px 0 15px;font-size:9.4pt}
+  th,td{text-align:left;vertical-align:top;border-bottom:1px solid var(--line);padding:7px 8px}
+  th{background:var(--wash);font-weight:bold}
+  td:first-child{font-weight:bold;width:27%}
+  ul{padding-left:21px;margin:7px 0 13px}
+  li{margin:5px 0}
+  .result{font-weight:bold;color:#174a3a}
+  .footer{margin-top:32px;padding-top:10px;border-top:1px solid var(--line);font-size:8.5pt;color:var(--muted)}
+  @page{size:A4;margin:16mm 15mm}
+  @media print{
+    body{background:#fff;font-size:9.5pt}
+    main{max-width:none;margin:0;padding:0;box-shadow:none}
+    .section{break-inside:avoid-page;page-break-inside:avoid}
+    table,.formula,.note{break-inside:avoid-page;page-break-inside:avoid}
+    h2,h3{break-after:avoid-page;page-break-after:avoid}
+  }
+</style>
+</head>
+<body>
+<main>
+<header>
+  <div class="eyebrow">Memória técnica • versão do código consultada em 25/09/2026</div>
+  <h1>Como o simulador faz as contas</h1>
+  <p class="subtitle">Inventário das fórmulas executadas em <strong>simulador.html</strong>, incluindo lance, saldo pós-contemplação, reajuste anual, taxa equivalente e rendimento ilustrativo.</p>
+  <div class="meta"><strong>Escopo:</strong> este documento descreve o comportamento implementado no código; não afirma que as regras representam o contrato de uma administradora. A seção final destaca diferenças entre os blocos de cálculo que devem ser decididas antes de corrigir o modelo.</div>
+</header>
+
+<section class="section">
+  <h2>1. Entradas e limites</h2>
+  <table><thead><tr><th>Entrada</th><th>Tratamento aplicado</th></tr></thead><tbody>
+    <tr><td>Crédito C</td><td>Valor numérico não negativo.</td></tr>
+    <tr><td>Prazo N</td><td>Arredondado para baixo e limitado a pelo menos 1 mês.</td></tr>
+    <tr><td>TA e FR</td><td>Percentuais totais não negativos. TA = taxa de administração; FR = fundo de reserva.</td></tr>
+    <tr><td>Redutor R</td><td>Limitado entre 0% e 95%; no modo personalizado, usa o percentual digitado.</td></tr>
+    <tr><td>Contemplação k</td><td>Mês inteiro entre 1 e N.</td></tr>
+    <tr><td>Bem</td><td>Automóvel: piso pós de 1% do saldo inicial. Imóvel: piso de 0,5%.</td></tr>
+    <tr><td>Seguro S</td><td>A função aceita percentual e calcula o custo, mas o formulário atual envia S = 0.</td></tr>
+    <tr><td>Reajuste anual i</td><td>Não negativo; padrão de 5%. Automóvel rotula o índice como IPCA e imóvel como INCC.</td></tr>
+  </tbody></table>
+</section>
+
+<section class="section">
+  <h2>2. Taxas e parcela antes da contemplação</h2>
+  <p>A taxa antecipada A é limitada à TA total e é retirada da parte da TA diluída. O código soma o valor total da adesão à primeira parcela.</p>
+  <div class="formula">Adesão = C × A / 100</div>
+  <div class="formula">TA restante = max(0, TA − A)</div>
+  <div class="formula">Fundo comum mensal FC = C / N</div>
+  <div class="formula">Fundo de reserva mensal FRm = C × FR / 100 / N</div>
+  <div class="formula">TA mensal TAm = C × TA restante / 100 / N</div>
+  <div class="formula">Fator do redutor f = 1 − R / 100</div>
+  <div class="formula">FC reduzido = FC × f; FR reduzido = FRm × f</div>
+  <div class="formula">Parcela reduzida = FC reduzido + FR reduzido + TAm + seguro mensal</div>
+  <div class="formula">Primeira parcela = parcela reduzida + adesão</div>
+  <p>O redutor incide no FC e no FR, mas não na TA. A taxa de adesão é subtraída da TA total antes de calcular TAm, evitando somá-la novamente como taxa contratada.</p>
+</section>
+
+<section class="section page">
+  <h2>3. Diferença causada pelo redutor</h2>
+  <p>O simulador calcula o que deixou de ser recolhido mensalmente em FC e FR e acumula o valor até o mês de contemplação.</p>
+  <div class="formula">Diferença mensal Dm = (FC − FC reduzido) + (FRm − FR reduzido)</div>
+  <div class="formula">Diferença acumulada D = Dm × k</div>
+  <p>Essa diferença é mantida separada do saldo após o lance e somada para formar a obrigação pós:</p>
+  <div class="formula">Saldo antes do lance B = max(0, C + taxas totais − parcelas pagas antes de k)</div>
+  <div class="formula">Lance usado L = min(lance próprio + lance embutido, B)</div>
+  <div class="formula">Saldo após o lance S = max(0, B − L)</div>
+  <div class="formula">Obrigação pós O = max(0, S + D)</div>
+  <div class="formula">Taxas totais = C × (TA + FR) / 100 + seguro mensal × N</div>
+  <p>Parcelas pagas antes da contemplação: para k &gt; 1, o código soma a primeira parcela (incluindo adesão) e as demais parcelas reduzidas até k−1. Para k = 1, considera a primeira parcela paga no mês 1.</p>
+</section>
+
+<section class="section">
+  <h2>4. Lance próprio, embutido e crédito líquido</h2>
+  <div class="formula">Lance próprio = valor em reais informado, limitado entre 0 e C</div>
+  <div class="formula">Lance embutido = C × percentual embutido / 100</div>
+  <div class="formula">Lance total = lance próprio + lance embutido</div>
+  <div class="formula">Crédito líquido recebido = max(0, C − lance embutido)</div>
+  <p>O lance usado no saldo é limitado ao saldo antes do lance. Qualquer excedente vira “lance não utilizado”. O relatório visual também mostra a origem usada primeiro como embutido e depois como recurso próprio.</p>
+  <div class="note"><strong>Diferença de conceitos:</strong> o crédito líquido desconta somente o lance embutido; já o indicador “Contemplado − lance” subtrai lance próprio e embutido do crédito. São métricas diferentes exibidas na mesma tela.</div>
+</section>
+
+<section class="section page">
+  <h2>5. Parcela e prazo após a contemplação</h2>
+  <p>Meses pós considerados pelo cálculo-base: se k = 1, a primeira parcela já foi contabilizada e o pós começa no mês 2; nos demais casos, o pós começa no próprio mês k.</p>
+  <div class="formula">primeiro mês pós = 2, se k = 1; caso contrário, k</div>
+  <div class="formula">M = max(0, N − primeiro mês pós + 1)</div>
+  <p>O piso pós usa o saldo devedor inicial antes de pagamentos e lances:</p>
+  <div class="formula">Piso = saldo devedor inicial × 1% (automóvel) ou × 0,5% (imóvel)</div>
+  <div class="formula">Diferença mensal diluída = D / M (quando M &gt; 0)</div>
+  <div class="formula">Piso efetivo = piso + diferença mensal diluída</div>
+  <p><strong>Amortizar parcelas:</strong> o lance reduz o saldo; o resultado é dividido pelos meses disponíveis, respeitando o piso efetivo.</p>
+  <div class="formula">Parcela pós = max(piso efetivo, O / M)</div>
+  <p>Se o piso impedir a redução e houver lance, o código estima meses pelo piso: ceil(O / piso efetivo). Se o prazo resultante for menor, ele reduz os meses. O pagamento de cada mês é limitado ao saldo ainda não pago, para que a última parcela não ultrapasse O.</p>
+  <p><strong>Amortizar prazo:</strong> o número de meses abatidos é estimado pelo lance dividido pela parcela-base antes da amortização; o cálculo depois recalcula a parcela sobre a obrigação remanescente e os meses resultantes.</p>
+  <div class="formula">Meses economizados = min(M − 1, floor(L / parcela-base))</div>
+  <div class="formula">Meses pós = max(1, M − meses economizados)</div>
+  <div class="formula">Parcela pós = max(piso efetivo, O / meses pós)</div>
+  <p class="small">A parcela-base antes da amortização é max(piso efetivo, saldo antes do lance / M + diferença mensal diluída). A lógica do modo prazo, portanto, também recalcula a parcela; ela não mantém necessariamente o valor mensal anterior.</p>
+  <p class="small"><strong>Exceção quando M = 0:</strong> o código cria prazo extra. No modo parcelas usa uma parcela pós calculada a partir da parcela-base menos o lance; no modo prazo estima os meses extras com o saldo depois do lance dividido pela parcela-base. Esse caminho não usa a mesma fórmula O / M dos casos com meses restantes.</p>
+  <p class="small"><strong>Texto de fórmula da tela:</strong> exibe “lance ÷ meses = redução mensal”, mas o valor da parcela agora vem diretamente de O / M, limitado pelo piso. A redução informativa não é a fórmula que determina a parcela final.</p>
+</section>
+
+<section class="section">
+  <h2>6. Fluxos, totais e taxa equivalente</h2>
+  <p>O fluxo principal registra parcelas reduzidas antes da contemplação e pagamentos pós a partir do mês definido acima. A adesão entra no primeiro mês. O principal pós mensal é limitado ao valor que resta da obrigação:</p>
+  <div class="formula">Pagamento pós no mês m = min(parcela pós, max(0, O − parcela pós × (m − 1)))</div>
+  <div class="formula">Total de parcelas = soma dos pagamentos do mês 1 ao prazo efetivo</div>
+  <div class="formula">Total pago pós = soma dos pagamentos pós + eventual adesão futura</div>
+  <div class="formula">Desembolso até contemplação = parcelas pagas antes + lance próprio utilizado</div>
+  <p>A taxa mensal pós é encontrada por busca binária para zerar o valor presente líquido. O valor inicial do fluxo é o saldo após o lance; as saídas são pagamentos pós e adesões futuras.</p>
+  <div class="formula">VPL(r) = saldo após lance − Σ[pagamento no mês m / (1 + r)^m]</div>
+  <div class="formula">Taxa anual equivalente = ((1 + taxa mensal)^12 − 1) × 100%</div>
+  <p class="small">A taxa fica sem resultado quando não há raiz positiva nos fluxos conforme as condições implementadas. Ela não incorpora o reajuste anual IPCA/INCC da projeção.</p>
+</section>
+
+<section class="section page">
+  <h2>7. Projeção anual IPCA / INCC</h2>
+  <p>Esta é uma segunda rotina, separada da parcela-base e da taxa equivalente. Ela cria a tabela e o gráfico de evolução. O saldo começa no saldo devedor inicial; a cada aniversário anual, o saldo e o fator de correção são multiplicados por 1 + i.</p>
+  <div class="formula">i = percentual anual / 100</div>
+  <div class="formula">A cada 12 meses: saldo = saldo × (1 + i); fator acumulado = fator × (1 + i)</div>
+  <div class="formula">Parcela corrigida = parcela-base × fator acumulado</div>
+  <p>No mês da contemplação, a projeção subtrai o lance e usa diretamente a parcela pós. Nos outros meses, salvo o último, escolhe o maior valor entre parcela corrigida e saldo dividido pelos meses projetados. No último mês, cobra o saldo inteiro, somado à adesão se aplicável.</p>
+  <div class="formula">Amortização = min(saldo, max(0, parcela − adesão))</div>
+  <div class="formula">Saldo seguinte = max(0, saldo − amortização)</div>
+  <p>A projeção recalcula o valor dos pagamentos, mas não atualiza os totais-base nem a taxa equivalente. Portanto, valores da tabela/gráfico podem diferir de “Total pago em parcelas” e “Total pago pós”.</p>
+</section>
+
+<section class="section">
+  <h2>8. Rendimento ilustrativo da carta</h2>
+  <p>Esse painel é independente da amortização do consórcio. Quando ativado, calcula rendimento simples do primeiro mês e valor futuro composto usando a taxa mensal informada.</p>
+  <div class="formula">Base = crédito líquido recebido</div>
+  <div class="formula">Rendimento no 1º mês = base × taxa mensal / 100</div>
+  <div class="formula">Valor após n meses = base × (1 + taxa mensal / 100)^n</div>
+  <p>O resultado é apenas uma projeção matemática; não é descontado das parcelas ou do saldo devedor.</p>
+</section>
+
+<section class="section page">
+  <h2>9. Exemplo de conferência do abatimento</h2>
+  <p>Exemplo sem taxas, sem redutor, sem seguro e sem reajuste anual, usando crédito de R$ 71.400, prazo de 20 meses e contemplação na 6ª parcela:</p>
+  <div class="formula">Parcela antes da contemplação = R$ 71.400 / 20 = R$ 3.570</div>
+  <div class="formula">5 parcelas anteriores = 5 × R$ 3.570 = R$ 17.850</div>
+  <div class="formula">Saldo antes do lance = R$ 71.400 − R$ 17.850 = R$ 53.550</div>
+  <div class="formula">Saldo após lance = R$ 53.550 − R$ 42.300 = R$ 11.250</div>
+  <div class="formula">Meses de pagamento do mês 6 ao 20 = 15</div>
+  <div class="formula">Parcela pós = R$ 11.250 / 15 = R$ 750</div>
+  <p class="result">Conferência: 15 × R$ 750 = R$ 11.250. A soma fecha exatamente o saldo após o lance.</p>
+</section>
+
+<section class="section">
+  <h2>10. Pontos que merecem correção/decisão</h2>
+  <ol>
+    <li><strong>Saldo baseado em pagamentos brutos:</strong> o saldo antes do lance parte de crédito + TA/FR/seguro totais e subtrai o valor das parcelas pagas. Isso não separa quanto de cada pagamento amortiza principal, taxa e reserva.</li>
+    <li><strong>Diferença do redutor adicionada ao saldo:</strong> a diferença acumulada D é adicionada ao saldo já após o lance para formar O. É preciso confirmar se esse déficit já está incluído no saldo contratual; se estiver, a soma pode duplicá-lo.</li>
+    <li><strong>Piso pós:</strong> é calculado sobre o saldo devedor inicial, não sobre o saldo após o lance. A parcela mínima pode, portanto, superar O dividido pelos meses e alterar o prazo.</li>
+    <li><strong>Reajuste fora do cálculo-base:</strong> IPCA/INCC altera somente a tabela e o gráfico. Não altera saldo-base, total pago-base ou taxa equivalente.</li>
+    <li><strong>Projeção anual independente:</strong> a tabela pode divergir do fluxo-base; no mês da contemplação subtrai o lance e usa parcela pós, inclusive no mês 1, enquanto o fluxo-base considera a primeira parcela e exclui mês 1 da série pós. No último mês, a projeção força quitação do saldo.</li>
+    <li><strong>Taxa equivalente e obrigação:</strong> o valor inicial da taxa usa saldo após lance, enquanto pagamentos incluem a diferença acumulada do redutor e eventual adesão futura. Confirmar se esse é o fluxo econômico que se deseja medir.</li>
+    <li><strong>Adesão e seguro na tela:</strong> o formulário envia seguro igual a zero e prazo de adesão igual a um. Mesmo se a adesão for marcada como “diluída”, o fluxo principal soma o valor integral à primeira parcela; apenas o fluxo usado pela taxa pós considera parcelas futuras de adesão. A configuração visível não envia um número de meses diluído.</li>
+    <li><strong>Contemplação no mês 1:</strong> o saldo antes do lance subtrai a primeira parcela, e o fluxo total registra a primeira parcela; já o pós começa no mês 2 e o fluxo de taxa não inclui a parcela do mês 1. A projeção anual, por outro lado, aplica lance e parcela pós no mês 1.</li>
+  </ol>
+  <div class="note"><strong>Para corrigir com segurança:</strong> definir primeiro qual saldo contratual oficial deve ser amortizado pelo lance; em seguida decidir se o déficit do redutor integra esse saldo, qual parcela entra no mês da contemplação, como o piso afeta o prazo e se o IPCA/INCC deve apenas projetar valores ou compor o cálculo-base.</div>
+</section>
+
+<div class="footer">Documento gerado a partir da leitura do cálculo ativo de simulador.html. Valores monetários internos mantêm precisão decimal; a interface formata a exibição em centavos. Material de auditoria técnica, não substitui a memória oficial de cálculo da administradora.</div>
+</main>
+</body>
+</html>
