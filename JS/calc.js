@@ -146,11 +146,14 @@
           mesesEconomizados = mesesReduzidos;
           mesesPosContemplacao = Math.max(1, mesesRestantesPos - mesesReduzidos);
           Nefetivo = k + mesesPosContemplacao;
+          parcelaPos = Math.max(
+            parcelaMinima,
+            saldoDevedorAntesLance / mesesPosContemplacao + restante / mesesPosContemplacao
+          );
         } else {
           mesesPosContemplacao = mesesRestantesPos;
           Nefetivo = N;
         }
-        parcelaPos = parcelaCheia;
       }
     } else {
       parcelaPos = parcelaCheia;

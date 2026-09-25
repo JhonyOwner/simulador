@@ -33,7 +33,6 @@ legend{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transfor
 .field input[type=number],.field select{font-family:var(--mono);font-size:15px;color:var(--ink);background:transparent;border:none;border-bottom:1.25px solid rgba(17,14,10,.08);padding:6px 2px;outline:none;transition:border-color .15s;width:100%}.field input[type=number]:focus,.field select:focus{border-bottom-color:var(--gold)}
 .inline-note{font-size:11.5px;color:var(--text-soft);line-height:1.5;margin:-6px 0 14px;border-left:2px solid var(--parchment-2);padding-left:10px;text-align:center}
 .radio-group{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}.radio-group label{font-family:var(--mono);font-size:12.5px;border:1px solid var(--parchment-2);padding:7px 12px;border-radius:20px;cursor:pointer;color:var(--text-soft);transition:.15s;display:flex;align-items:center;gap:6px}.radio-group input{accent-color:var(--gold)}.radio-group label:has(input:checked){background:var(--ink);color:var(--parchment);border-color:var(--ink)}
-.checkbox-line{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text-soft);margin-bottom:14px}.checkbox-line input{accent-color:var(--gold)}
 #redutorCustomField,#adesaoMesesField{display:none}
 .action-bar{display:flex;gap:10px;align-items:center;justify-content:center;margin-bottom:18px;flex-wrap:wrap}.btn{display:inline-block;font-family:var(--mono);font-size:13px;border:none;border-radius:8px;padding:9px 16px;cursor:pointer;transition:transform .06s,box-shadow .12s,background .12s}.btn:hover{transform:translateY(-2px);box-shadow:0 8px 22px rgba(0,0,0,.22)}.btn-gold{background:var(--gold);color:var(--ink);box-shadow:0 6px 18px rgba(185,138,46,.28)}.btn-dark{background:var(--ink);color:var(--parchment)}.btn-ghost{background:transparent;border:1px solid rgba(15,36,56,.12);color:var(--ink-2)}.btn-sm{padding:6px 12px;font-size:12px;border-radius:6px}
 /* RESULTADO — padrão visual anterior */
@@ -52,22 +51,7 @@ legend{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transfor
 .evolution-actions{display:flex;justify-content:center;margin:8px 0 22px}.evolution-panel{display:none;margin-bottom:22px}.evolution-panel.active{display:block;animation:fadeUp .25s ease both}.evolution-note{font-size:11.5px;color:var(--text-soft);line-height:1.55;margin:0 0 12px}.evolution-table-wrap{max-height:360px;overflow:auto;border:1px solid var(--parchment-2);border-radius:4px;background:rgba(255,255,255,.35)}.evolution-table{width:100%;border-collapse:collapse;font-size:12px}.evolution-table th,.evolution-table td{padding:9px 10px;border-bottom:1px solid rgba(15,36,56,.08);text-align:right;white-space:nowrap}.evolution-table th:first-child,.evolution-table td:first-child,.evolution-table th:nth-child(2),.evolution-table td:nth-child(2){text-align:left}.evolution-table th{position:sticky;top:0;background:#F4EEDD;color:var(--ink);font-family:var(--mono);font-size:10.5px;text-transform:uppercase;letter-spacing:.05em;z-index:1}.evolution-table tr.contemplacao-row td{font-weight:600;color:var(--red);background:rgba(185,138,46,.07)}
 .yield-panel{border:1px solid var(--parchment-2);border-radius:4px;background:rgba(255,255,255,.35);padding:16px;margin-bottom:22px}.yield-panel h4{font-family:var(--mono);font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:var(--gold);margin:0 0 8px}.yield-note{font-size:11.5px;color:var(--text-soft);line-height:1.55;margin:0 0 14px}.yield-controls{display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin-bottom:14px}.yield-toggle{display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--text-soft)}.yield-toggle input{accent-color:var(--gold)}.yield-rate{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--text-soft)}.yield-rate input{width:72px;font-family:var(--mono);font-size:14px;color:var(--ink);background:transparent;border:none;border-bottom:1.25px solid rgba(17,14,10,.08);padding:5px 2px;outline:none}.yield-rate input:focus{border-bottom-color:var(--gold)}.yield-result{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.yield-result .stat{padding:12px}.yield-result .v{font-family:var(--mono);font-size:16px;font-weight:600;color:var(--ink)}
 .summary-strip{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:22px}.stat{border:1px solid var(--parchment-2);border-radius:3px;padding:14px;background:rgba(255,255,255,.3)}.stat .k{font-size:11px;color:var(--text-soft);margin-bottom:6px}.stat .v{font-family:var(--mono);font-size:16px;color:var(--ink);font-weight:600}
-#separatedPanel{display:none;border:1px solid rgba(15,36,56,.06);padding:12px;border-radius:6px;background:#fff;margin-bottom:18px}#separatedPanel .sep-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;gap:8px}#separatedPanel .sep-actions{display:flex;gap:8px}#separatedResults{font-family:var(--mono);font-size:12px;color:var(--ink-2);white-space:pre-wrap;max-height:240px;overflow:auto;padding:6px;background:#FBF9F2;border-radius:4px;border:1px dashed var(--parchment-2)}
 .disclaimer{max-width:900px;margin:28px auto 0;padding:18px 24px;color:#93a3b0;font-size:12px;line-height:1.6}.disclaimer strong{color:var(--gold-light)}
-/* Modo compacto: mantém somente o resumo financeiro principal */
-.result-panel.compact-mode .key-grid,
-.result-panel.compact-mode .seal-row,
-.result-panel.compact-mode .cols,
-.result-panel.compact-mode .section-block,
-.result-panel.compact-mode .formula,
-.result-panel.compact-mode .lance-info,
-.result-panel.compact-mode .evolution-actions,
-.result-panel.compact-mode .evolution-panel,
-.result-panel.compact-mode .summary-strip,
-.result-panel.compact-mode #separatedPanel{display:none !important}
-.result-panel.compact-mode .headline-numbers{margin-bottom:12px;padding-bottom:12px}
-.result-panel.compact-mode .result-panel-top{margin-bottom:12px}
-
 @media(max-width:800px){.key-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:700px){.field-row{grid-template-columns:1fr;gap:12px}.cols{grid-template-columns:1fr;gap:18px}.headline-numbers{grid-template-columns:1fr}.summary-strip{grid-template-columns:1fr 1fr}.action-bar{flex-direction:column;align-items:stretch}.btn{width:100%}.seal{display:none}.key-grid{grid-template-columns:1fr 1fr}}
 @media(max-width:480px){.form-panel,.result-panel{padding:16px}.summary-strip{grid-template-columns:1fr}.key-grid{grid-template-columns:1fr}.wrap{padding:0 12px 40px}}
@@ -106,7 +90,6 @@ fieldset{border-top-color:rgba(16,40,50,.16);padding-top:25px}legend{color:#197b
 .field-row{gap:18px}.field{position:relative;align-items:stretch!important;padding:16px 16px 14px;border:1px solid rgba(25,123,121,.18);border-radius:4px;background:rgba(255,255,255,.4);text-align:left;transition:transform .2s,box-shadow .2s,border-color .2s}.field:focus-within{transform:translateY(-2px);border-color:var(--cyan);box-shadow:0 0 0 3px rgba(87,217,208,.14),0 12px 25px rgba(11,61,66,.12)}.field label{color:#42625f;text-align:left;font:11px var(--mono);letter-spacing:.05em;text-transform:uppercase}.field input[type=number],.field input[type=text],.field select{height:48px;min-width:0;width:100%;margin-top:4px;border:1px solid rgba(25,123,121,.3);border-radius:3px;background:#f8fffc;color:#071016;text-align:left;padding:10px 13px;font-size:17px;box-shadow:inset 0 0 0 1px rgba(255,255,255,.7);transition:border-color .2s,box-shadow .2s,background .2s}.field input:focus,.field select:focus{border-color:#159e9a;background:#fff;box-shadow:0 0 0 3px rgba(87,217,208,.18),0 0 20px rgba(87,217,208,.12);outline:none}.field input::placeholder{color:#91aaa7}
 .inline-note{color:#52706c;border-top-color:rgba(25,123,121,.18);text-align:left}
 .radio-group{justify-content:flex-start}.radio-group label{border-color:rgba(25,123,121,.28);border-radius:3px;background:rgba(255,255,255,.3);color:#42625f;padding:9px 13px}.radio-group label:has(input:checked){background:#102832;border-color:var(--cyan);color:var(--cyan-soft);box-shadow:0 0 16px rgba(87,217,208,.12)}
-.checkbox-line{color:#42625f}
 .action-bar{justify-content:flex-start}.btn{border-radius:3px;text-transform:uppercase;letter-spacing:.06em}.btn-gold{background:linear-gradient(135deg,#e2b35b,#f1d28d);box-shadow:0 8px 20px rgba(226,179,91,.25)}.btn-gold:hover{box-shadow:0 10px 28px rgba(87,217,208,.2)}.btn-dark{background:#102832;color:var(--cyan-soft)}
 .result-panel{margin-top:28px;padding:34px;border-radius:5px;background:linear-gradient(145deg,#eaf5f0,#d5e9e2);border-color:rgba(226,179,91,.52)}.result-panel-top{border-bottom:1px solid rgba(25,123,121,.18);padding-bottom:17px}.headline-tag{color:#bd6e36}.headline-value{color:#102832;text-shadow:0 2px 0 rgba(255,255,255,.5)}.headline-numbers{border-bottom-color:var(--gold)}
 .key-card,.stat,.yield-panel,.chart-wrap,.evolution-table-wrap{border-color:rgba(25,123,121,.2);background:rgba(255,255,255,.35);border-radius:4px}.key-card .v,.stat .v,.yield-result .v{color:#102832}.seal{background:radial-gradient(circle at 35% 30%,rgba(87,217,208,.3),transparent 45%),linear-gradient(135deg,#071016,#12333a);border-color:var(--cyan);box-shadow:0 0 26px rgba(87,217,208,.18)}.seal .num{color:var(--cyan-soft)}
@@ -186,7 +169,7 @@ header.hero{background:radial-gradient(circle at 50% 0%,rgba(224,184,92,.18),tra
 .form-panel,.result-panel{text-align:center}
 .form-panel h2,.panel h2,.headline-label,.headline-value,.headline-sub,.seal-desc,.ledger,.section-block,.formula,.lance-info,.chart-wrap,.yield-panel,.summary-strip,.stat,.key-card,.evolution-panel{text-align:center}
 .headline-numbers{justify-items:center;text-align:center}
-.field-row,.field,.radio-group,.checkbox-line,.yield-controls,.yield-result,.summary-strip,.key-grid,.headline-numbers,.cols,.seal-row{justify-items:center}
+.field-row,.field,.radio-group,.yield-controls,.yield-result,.summary-strip,.key-grid,.headline-numbers,.cols,.seal-row{justify-items:center}
 .field-row>.field,.field{align-items:center}
 .field input[type=number],.field select{ text-align:center }
 .inline-note{border-left:0;border-top:1px solid var(--parchment-2);padding:8px 0 0;width:100%}
@@ -535,6 +518,7 @@ function calc(inp){
   const lanceUtilizado=Math.min(lanceSomado,saldoDevedorAntesLance);
   const lanceNaoUtilizado=Math.max(0,lanceSomado-lanceUtilizado);
   const saldoDevedor=Math.max(0,saldoDevedorAntesLance-lanceUtilizado);
+  const obrigacaoPos=Math.max(0,saldoDevedor+diferencaAcumulada);
 
   /* Apenas para informar de onde veio o lance utilizado. */
   const embutidoUtilizado=Math.min(lanceEmbutido,lanceUtilizado);
@@ -589,7 +573,10 @@ function calc(inp){
       mesesEconomizados = Math.min(abatimentoMaximo, Math.floor(lanceUtilizado / valorParcelaParaPrazo));
       mesesPosContemplacao = Math.max(1, mesesRestantesContrato - mesesEconomizados);
       prazoEfetivo = k + mesesPosContemplacao;
-      parcelaPos = parcelaBaseAntesAmortizacao;
+      parcelaPos = Math.max(
+        parcelaMinimaComDiferenca,
+        saldoDevedorAntesLance / mesesPosContemplacao + diferencaDiluidaBase
+      );
     }else{
       /*
          Amortização por parcela: o prazo permanece e o lance é dividido
@@ -626,6 +613,18 @@ function calc(inp){
       mesesPosContemplacao=mesesDiluidos;
       mesesExtras=mesesDiluidos;
       prazoEfetivo=N+mesesExtras;
+    }
+  }
+
+  const pisoBloqueouReducao=inp.formaRestante==='parcelas' && lanceUtilizado>0 &&
+    parcelaPos<=parcelaMinimaComDiferenca+0.000001;
+
+  if(pisoBloqueouReducao && mesesRestantesContrato>0){
+    const mesesPorPiso=Math.max(1,Math.ceil(obrigacaoPos/parcelaMinimaComDiferenca));
+    if(mesesPorPiso<mesesPosContemplacao){
+      mesesEconomizados=mesesRestantesContrato-mesesPorPiso;
+      mesesPosContemplacao=mesesPorPiso;
+      prazoEfetivo=k+mesesPosContemplacao;
     }
   }
 
@@ -733,8 +732,8 @@ function calc(inp){
     lanceProprio,lanceEmbutido,lanceSomado,
     proprioUtilizado,embutidoUtilizado,lanceUtilizado,lanceNaoUtilizado,
     creditoLiquido,
-    mesesRestantesContrato,taxasTotais,saldoDevedorInicial,valorParcelasPagasAntes,valorParcelasAntesContemplacao,saldoDevedorAntesLance,saldoDevedor,
-    percentualPos,parcelaMinima,parcelaMinimaComDiferenca,parcelaBaseAntesAmortizacao,diferencaDiluidaBase,
+    mesesRestantesContrato,taxasTotais,saldoDevedorInicial,valorParcelasPagasAntes,valorParcelasAntesContemplacao,saldoDevedorAntesLance,saldoDevedor,obrigacaoPos,
+    percentualPos,parcelaMinima,parcelaMinimaComDiferenca,parcelaBaseAntesAmortizacao,diferencaDiluidaBase,pisoBloqueouReducao,
     diferencaDiluida:diferencaDiluidaBase,
     reducaoParcela,parcelaPos,
     tipoBem,formaRestante:inp.formaRestante,
@@ -800,8 +799,6 @@ function updateVisibility(){
 function render(r){
   const primeiraTotal=r.primeiraParcela;
 
-  const indiceReajuste=r.tipoBem==='imovel'?'INCC':'IPCA';
-  setText('reajusteLabel','IPCA / INCC');
   setText('headlineTag',`Exemplo de contemplação na parcela ${r.k}`);
   setText('headline1a',fmtBRL(primeiraTotal));
   setText('headline1aSub',r.adesaoValor>0
@@ -814,7 +811,9 @@ function render(r){
   setText('headlinePosSub',
     `${r.tipoBem==='imovel'?'0,5%':'1,0%'} do saldo devedor inicial • ${r.mesesPosContemplacao} meses pós-contemplação`+
     (r.mesesEconomizados>0?` • ${r.mesesEconomizados} meses economizados`:'')+
-    (r.formaRestante==='parcelas'?' • lance diluído na parcela':' • lance usado para reduzir prazo'));
+    (r.formaRestante==='parcelas'
+      ? (r.pisoBloqueouReducao?' • piso mínimo atingido':' • lance diluído na parcela')
+      : ' • lance usado para reduzir prazo'));
 
   /* Cards principais */
   setText('keyPagoParcelas',fmtBRL(r.pagoAntesContemplacao));
@@ -830,25 +829,12 @@ function render(r){
     `Pós-contemplação: saldo devedor de ${fmtBRL(r.saldoDevedor)} contra ${fmtBRL(r.totalPagoPos)} de pagamentos futuros em ${r.mesesPosContemplacao} meses. `+
     `Taxa real equivalente: ${fmtPct(r.taxaRealPosAnual,1)} ao ano.`);
 
-  /* Pré */
-  setText('preFundo',fmtBRL(r.fundoComumReduzido));
-  setText('preTA',fmtBRL(r.taMensal));
-  setText('preFR',fmtBRL(r.frReduzido));
-  setText('preSeguro',fmtBRL(r.seguro));
-  setText('preTotal',fmtBRL(r.parcelaReduzida));
-
   /* Pós */
   setText('posFundo',fmtBRL(r.saldoDevedorInicial));
   setText('posTA',fmtPct(r.percentualPos*100,1));
   setText('posFR',fmtBRL(r.parcelaMinima));
   setText('posDiluicao',r.diferencaDiluida>0?`+ ${fmtBRL(r.diferencaDiluida)}`:'não diluída');
   setText('posTotal',fmtBRL(r.parcelaPos));
-
-  /* Contemplação e lance */
-  setText('pagoAte',fmtBRL(r.k===1?r.primeiraParcela:r.pagoAntesContemplacao));
-  setText('lanceProprio',fmtBRL(r.lanceProprio));
-  setText('lanceEmbutido',fmtBRL(r.lanceEmbutido));
-  setText('lanceSomado',fmtBRL(r.lanceSomado));
 
   /* Saldo e amortização */
   setText('saldoAntesLance',fmtBRL(r.saldoDevedorAntesLance));
@@ -869,7 +855,6 @@ function render(r){
   setText('creditoEmbutido',fmtBRL(r.lanceEmbutido));
   setText('creditoLiquido',fmtBRL(r.creditoLiquido));
 
-  const taTotal=r.credito*r.taPct/100,frTotal=r.credito*r.frPct/100;
   setHTML('formula',`
     <strong>Conta-base da parcela reduzida</strong><br>
     Fundo Comum = ${fmtBRL(r.credito)} ÷ ${r.N} = ${fmtBRL(r.fundoComumMensal)}<br>
@@ -1022,8 +1007,6 @@ if(btnLoadExample){btnLoadExample.addEventListener('click',()=>{
   updateVisibility();showResults();
 });}
 
-function timestamp(){return new Date().toISOString().replace(/[:.]/g,'-')}
-function download(name,text,type='text/plain'){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([text],{type:type+';charset=utf-8'}));a.download=name;document.body.appendChild(a);a.click();a.remove()}
 const btnExportPDF=$id('btnExportPDF');
 const btnToggleSummary=$id('btnToggleSummary');
 const rendimentoAtivo=$id('rendimentoAtivo');

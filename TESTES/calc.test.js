@@ -125,6 +125,7 @@ const activeInput = {
 };
 const semLance = telaCalc(activeInput);
 const comLance = telaCalc({ ...activeInput, dinheiro: 30000, embutido: 10 });
+const semLanceImovel = telaCalc({ ...activeInput, tipoBem: 'imovel' });
 checar(semLance.parcelasPagasAntesContemplacao === 23, 'a parcela da contemplação não pode ser contada como paga antes do evento');
 checar(semLance.parcelaMinima === comLance.parcelaMinima, 'o piso deve ser independente de parcelas pagas e lance');
 checar(Math.abs(semLance.parcelaMinima - semLance.saldoDevedorInicial * semLance.percentualPos) < 0.0001, 'o piso deve usar o saldo devedor inicial');
@@ -132,13 +133,23 @@ checar(semLance.parcelaPos >= semLance.parcelaMinima + semLance.diferencaDiluida
 checar(semLance.saldoDevedorInicial > semLance.saldoDevedorAntesLance, 'o saldo após pagamentos deve ser menor que o saldo inicial');
 const parcelaComLance = telaCalc({ ...activeInput, tipoBem: 'imovel', dinheiro: 10000, formaRestante: 'parcelas' });
 const prazoComLance = telaCalc({ ...activeInput, dinheiro: 10000, formaRestante: 'prazo' });
-checar(parcelaComLance.mesesPosContemplacao === parcelaComLance.mesesRestantesContrato, 'abatimento na parcela deve manter o prazo');
+checar(parcelaComLance.mesesPosContemplacao <= parcelaComLance.mesesRestantesContrato, 'abatimento na parcela não pode aumentar o prazo');
 checar(parcelaComLance.parcelaPos < semLance.parcelaPos, 'abatimento na parcela deve reduzir o valor mensal');
+checar(prazoComLance.parcelaPos > semLanceImovel.parcelaPos, 'abatimento no prazo deve recalcular e aumentar o valor mensal');
 const parcelaNoPiso = telaCalc({ ...activeInput, dinheiro: 10000, formaRestante: 'parcelas' });
 checar(parcelaNoPiso.parcelaPos >= parcelaNoPiso.parcelaMinima, 'abatimento na parcela deve respeitar o piso');
 checar(parcelaNoPiso.parcelaPos >= parcelaNoPiso.parcelaMinimaComDiferenca, 'abatimento na parcela deve respeitar o piso mais a diferença mensal');
 checar(parcelaComLance.parcelaPos >= parcelaComLance.parcelaMinimaComDiferenca, 'abatimento na parcela deve preservar o piso efetivo');
 checar(prazoComLance.mesesPosContemplacao < prazoComLance.mesesRestantesContrato, 'abatimento no prazo deve reduzir meses');
+const pisoComExcesso = telaCalc({
+  credito: 200000, prazo: 240, taPct: 22, frPct: 2, seguroPct: 0,
+  inccPct: 5, mesContemplacao: 10, tipoBem: 'imovel', redutorPct: 50,
+  adesaoPct: 2, adesaoForma: 'avista', dinheiro: 0, embutido: 25,
+  formaRestante: 'parcelas'
+});
+checar(pisoComExcesso.pisoBloqueouReducao, 'o cenário do piso deveria ser identificado');
+checar(pisoComExcesso.mesesPosContemplacao < pisoComExcesso.mesesRestantesContrato, 'excesso acima do piso deve reduzir parcelas');
+checar(Math.abs(pisoComExcesso.parcelaPos - pisoComExcesso.parcelaMinimaComDiferenca) < 0.0001, 'a parcela deve permanecer no piso efetivo');
 const primeiraContemplacao = telaCalc({ ...activeInput, mesContemplacao: 1, adesaoPct: 2, formaRestante: 'prazo' });
 checar(primeiraContemplacao.primeiraParcela > primeiraContemplacao.parcelaReduzida, 'a primeira parcela deve incluir a adesão');
 checar(primeiraContemplacao.valorParcelasAntesContemplacao === primeiraContemplacao.primeiraParcela, 'a primeira parcela deve ser paga na contemplação do mês 1');

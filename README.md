@@ -15,14 +15,11 @@ anual equivalente do plano (calculada por TIR).
 .
 ├── index.html            # Página inicial
 ├── simulador.html         # Formulário (landing page) + popup de resultados
-├── CSS/
-│   └── simulador.css      # Estilos do simulador
 ├── JS/
-│   ├── calc.js             # Lógica de cálculo, função pura (UMD: navegador + Node)
-│   └── app.js               # Camada de UI: formulário, popup, gráfico, exportação
+│   └── calc.js             # Núcleo de cálculo usado pelos testes
 ├── api/                    # Serverless Functions usadas no deploy da Vercel
 ├── server.js              # Servidor HTTP + autenticação e proteção do simulador
-├── auth.js                # PostgreSQL local, hash de senha, sessões e aprovação
+├── auth.js                # Autenticação do servidor local com PostgreSQL
 ├── package.json           # Dependências do backend
 ├── TESTES/
 │   └── calc.test.js        # Teste de regressão de js/calc.js
@@ -31,7 +28,7 @@ anual equivalente do plano (calculada por TIR).
 
 ## Como executar
 
-O simulador é uma aplicação client-side (HTML + CSS + JavaScript puro), sem
+O simulador é uma aplicação client-side (HTML + CSS + JavaScript embutidos), sem
 dependências de build. Para rodar localmente:
 
 ```bash
@@ -68,10 +65,9 @@ O login usa sessões em cookie `HttpOnly`, com expiração de 12 horas, e as
 senhas são armazenadas somente como hash bcrypt. A confirmação de cadastro é
 exibida na própria tela; o envio de e-mail transacional exige configurar um
 provedor SMTP antes de ser ativado.
-Também é possível abrir `index.html` diretamente no
-navegador, sem servidor, **desde que os arquivos estejam salvos juntos na
-mesma pasta** (`CSS/`, `JS/` etc. ao lado do `.html`). O acesso ao
-`simulador.html` exige login quando servido por `server.js` ou pela Vercel.
+O acesso ao `simulador.html` exige login quando servido por `server.js` ou pela
+Vercel. O arquivo `index.html` pode ser aberto diretamente apenas para
+inspecionar a interface; as chamadas de autenticação precisam de um servidor.
 
 Ao preencher o formulário e clicar em "Mostrar resultados", o extrato abre
 em um popup (modal) por cima da página — pode ser fechado pelo × no canto,
@@ -79,9 +75,11 @@ clicando fora do card, ou com Esc.
 
 ## Testes
 
-A lógica de cálculo vive em `js/calc.js` como uma função pura (`calc(input)`,
-sem acesso a DOM), exportada via UMD — o mesmo arquivo é usado pelo navegador
-e importado diretamente pelo teste com `require()`. O teste roda alguns
+A lógica de cálculo de regressão vive em `JS/calc.js` como uma função pura (`calc(input)`,
+sem acesso a DOM), exportada via UMD e importada diretamente pelo teste com
+`require()`. O cálculo executado pela tela está embutido em `simulador.html` e
+é verificado separadamente pelo teste.
+O teste roda alguns
 cenários (com e sem lance, amortizando por parcelas ou por prazo), imprime os
 resultados e valida invariantes básicas (saldo devedor não-negativo, total
 pago ≥ crédito líquido, parcela nunca abaixo do piso mínimo etc.), retornando
