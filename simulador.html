@@ -1,1060 +1,366 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="Simulador educativo de consórcio baseado na composição de Fundo Comum, Taxa de Administração, Fundo de Reserva, redutor, adesão e lance.">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Simulador de consórcio com planos redutores, lance e evolução pós-contemplação.">
 <title>Simulador - João Vitor G.</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=IBM+Plex+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
-:root{
-  --ink:#090909;--ink-2:#1A1A1A;--parchment:#F3EFE5;--parchment-2:#D9C89A;
-  --gold:#B88A2B;--gold-light:#E0B85C;--green:#28624D;--red:#923A32;
-  --text:#17130C;--text-soft:#665A43;
-  --serif:'Fraunces',serif;--sans:'IBM Plex Sans',sans-serif;--mono:'IBM Plex Mono',monospace;
-}
+:root{color-scheme:light;--ink:#202326;--muted:#697278;--line:#dfe4e6;--paper:#fff;--bg:#f3f6f5;--teal:#087f78;--teal-soft:#e6f4f1;--gold:#b47b2b;--red:#a83f38;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
 *{box-sizing:border-box}
-html,body{min-height:100%}
-body{margin:0;font-family:var(--sans);color:var(--text);background:linear-gradient(180deg,#050505 0%,#17130D 100%);-webkit-font-smoothing:antialiased;font-size:16px;line-height:1.45}
-.wrap{max-width:900px;margin:0 auto;padding:0 24px 64px}
-header.hero{background:radial-gradient(circle at 50% 0%,rgba(224,184,92,.14),transparent 42%),linear-gradient(180deg,#050505 0%,#17130D 100%);color:var(--parchment);padding:44px 24px 56px;border-bottom:1px solid rgba(224,184,92,.28)}
-header.hero .inner{max-width:900px;margin:0 auto;text-align:center}.hero-actions{display:flex;justify-content:flex-end;margin-bottom:-30px}.btn-logout{border:1px solid rgba(224,184,92,.35);background:rgba(0,0,0,.25);color:var(--gold-light);padding:7px 13px;font-size:11px}.btn-logout:hover{background:rgba(224,184,92,.1)}
-.brand-lockup{display:flex;flex-direction:column;align-items:center;gap:14px;margin-bottom:22px}.brand-logo{width:88px;height:88px;display:block}.brand-name{font-family:var(--mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold-light)}
-.eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--gold-light);display:flex;align-items:center;gap:10px;justify-content:center;margin-bottom:18px}.eyebrow:before{content:'';width:26px;height:1px;background:var(--gold-light);display:inline-block}
-h1{font-family:var(--serif);font-weight:600;font-size:clamp(26px,3.6vw,40px);line-height:1.06;margin:0 0 12px}header.hero p.lede{max-width:650px;font-size:16px;line-height:1.6;color:#C9D2DB;margin:0 auto}
-.panel{background:linear-gradient(180deg,var(--parchment) 0%,#FBF8EE 100%);border-radius:8px;box-shadow:0 18px 40px rgba(0,0,0,.45);margin-top:-40px}.form-panel{padding:30px 30px 16px;text-align:center}
-.panel h2{font-family:var(--serif);font-size:21px;font-weight:600;margin:0 0 4px;color:var(--ink)}.section-note{font-size:12.5px;color:var(--text-soft);margin:0 0 20px;line-height:1.5}
-fieldset{border:none;border-top:1px solid var(--parchment-2);padding:20px 0 4px;margin:0 0 4px}fieldset:first-of-type{border-top:none;padding-top:0}
-legend{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);padding:0;margin-bottom:14px}
-.field-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}.field{display:flex;flex-direction:column;gap:6px;text-align:center}.field label{font-size:12.5px;color:var(--text-soft)}
-.field-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}.field{display:flex;flex-direction:column;gap:6px;text-align:center;padding:14px 12px;border:1px solid rgba(184,138,43,.16);border-radius:8px;background:rgba(255,255,255,.22)}.field label{font-size:12.5px;color:var(--text-soft)}
-.field input[type=number],.field select{font-family:var(--mono);font-size:15px;color:var(--ink);background:transparent;border:none;border-bottom:1.25px solid rgba(17,14,10,.08);padding:6px 2px;outline:none;transition:border-color .15s;width:100%}.field input[type=number]:focus,.field select:focus{border-bottom-color:var(--gold)}
-.inline-note{font-size:11.5px;color:var(--text-soft);line-height:1.5;margin:-6px 0 14px;border-left:2px solid var(--parchment-2);padding-left:10px;text-align:center}
-.radio-group{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}.radio-group label{font-family:var(--mono);font-size:12.5px;border:1px solid var(--parchment-2);padding:7px 12px;border-radius:20px;cursor:pointer;color:var(--text-soft);transition:.15s;display:flex;align-items:center;gap:6px}.radio-group input{accent-color:var(--gold)}.radio-group label:has(input:checked){background:var(--ink);color:var(--parchment);border-color:var(--ink)}
-#redutorCustomField,#adesaoMesesField{display:none}
-.action-bar{display:flex;gap:10px;align-items:center;justify-content:center;margin-bottom:18px;flex-wrap:wrap}.btn{display:inline-block;font-family:var(--mono);font-size:13px;border:none;border-radius:8px;padding:9px 16px;cursor:pointer;transition:transform .06s,box-shadow .12s,background .12s}.btn:hover{transform:translateY(-2px);box-shadow:0 8px 22px rgba(0,0,0,.22)}.btn-gold{background:var(--gold);color:var(--ink);box-shadow:0 6px 18px rgba(185,138,46,.28)}.btn-dark{background:var(--ink);color:var(--parchment)}.btn-ghost{background:transparent;border:1px solid rgba(15,36,56,.12);color:var(--ink-2)}.btn-sm{padding:6px 12px;font-size:12px;border-radius:6px}
-/* RESULTADO — padrão visual anterior */
-.result-panel{display:none;background:var(--parchment);border-radius:8px;box-shadow:0 24px 60px rgba(0,0,0,.5);margin-top:24px;padding:30px;background-image:repeating-linear-gradient(180deg,transparent,transparent 27px,rgba(0,0,0,.025) 28px);text-align:center}.result-panel.active{display:block;animation:fadeUp .3s ease both}@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
-.result-panel{display:none;background:var(--parchment);border-radius:12px;box-shadow:0 24px 60px rgba(0,0,0,.5);margin-top:24px;padding:30px;background-image:repeating-linear-gradient(180deg,transparent,transparent 27px,rgba(0,0,0,.025) 28px);text-align:center;border:1px solid rgba(217,174,93,.38)}.result-panel.active{display:block;animation:fadeUp .3s ease both}@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
-.result-panel-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}.headline-tag{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--red)}
-.headline-numbers{display:grid;grid-template-columns:1fr 1fr;gap:20px;padding-bottom:22px;margin-bottom:22px;border-bottom:1px dashed var(--gold)}.headline-label{font-size:13px;color:var(--text-soft);margin-bottom:4px}.headline-value{font-family:var(--mono);font-size:clamp(20px,3.2vw,32px);font-weight:700;color:var(--ink-2);line-height:1.04}.headline-sub{font-size:11.5px;color:var(--text-soft);margin-top:4px}
-/* Destaques limpos */
-.key-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin:0 0 14px}.key-card{padding:9px 8px;border:1px solid var(--parchment-2);border-radius:4px;background:rgba(255,255,255,.30)}.key-card .k{font-size:10px;color:var(--text-soft);margin-bottom:3px}.key-card .v{font-family:var(--mono);font-size:14px;font-weight:700;color:var(--ink)}.key-card .s{font-size:9.5px;color:var(--text-soft);margin-top:2px;line-height:1.25}
-.seal-row{display:flex;gap:22px;align-items:center;padding-bottom:20px;border-bottom:1px dashed var(--gold);margin-bottom:22px;flex-wrap:wrap}.seal{width:108px;height:108px;border-radius:50%;flex:none;display:flex;flex-direction:column;align-items:center;justify-content:center;background:radial-gradient(circle at 35% 30%,rgba(255,255,255,.5),transparent 55%),linear-gradient(135deg,var(--ink) 0%,var(--ink-2) 100%);color:var(--parchment);border:2px dashed rgba(185,138,46,.28);text-align:center}.seal .num{font-family:var(--mono);font-size:19px;font-weight:600;color:var(--gold-light);line-height:1}.seal .lbl{font-family:var(--serif);font-size:10px;line-height:1.25;max-width:84px;margin-top:6px}.seal-desc h3{font-family:var(--serif);font-size:17px;margin:0 0 5px;color:var(--ink)}.seal-desc p{font-size:12px;color:var(--text-soft);line-height:1.55;margin:0;max-width:520px}
-.cols{display:grid;grid-template-columns:1fr 1fr;gap:26px;margin-bottom:24px}.ledger h4,.section-block h4{font-family:var(--mono);font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:var(--gold);margin:0 0 12px}.section-block{margin-bottom:22px}.ledger-line{display:flex;align-items:baseline;gap:8px;margin-bottom:9px}.ledger-line .lbl{font-size:12.5px;color:var(--text-soft);white-space:nowrap}.ledger-line .fill{flex:1;border-bottom:1px dotted #b9ac83;margin-bottom:3px}.ledger-line .val{font-family:var(--mono);font-size:13px;color:var(--ink);white-space:nowrap}.ledger-line.total .lbl,.ledger-line.total .val{color:var(--ink);font-weight:600;font-size:14px}.ledger-line.total .fill{border-bottom-color:var(--ink)}.ledger-line.hi .val{color:var(--red)}.ledger-line.ok .val{color:var(--green)}
-.formula{font-size:12px;line-height:1.7;color:var(--ink-2);padding:14px;border:1px solid rgba(21,68,97,.12);border-radius:4px;background:#F8F5EA;margin-bottom:22px}.formula strong{color:var(--ink)}.formula .final{font-weight:700;color:var(--red)}
-.lance-info{font-size:12.5px;line-height:1.65;color:var(--ink-2);padding:14px;border:1px solid rgba(21,68,97,.12);border-radius:4px;background:#F8F5EA;margin-bottom:22px}.lance-info strong{color:var(--ink)}
-.chart-wrap{background:rgba(255,255,255,.35);border:1px solid var(--parchment-2);border-radius:3px;padding:16px 16px 10px;margin-bottom:22px}.chart-wrap h4{font-family:var(--mono);font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:var(--gold);margin:0 0 10px}canvas{width:100%;height:180px;display:block;border-radius:4px}
-.chart-wrap{background:linear-gradient(135deg,rgba(255,255,255,.58),rgba(234,224,196,.42));border:1px solid var(--parchment-2);border-radius:8px;padding:18px 18px 12px;margin-bottom:22px;box-shadow:0 8px 22px rgba(34,27,16,.06)}.chart-wrap h4{font-family:var(--mono);font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:var(--gold);margin:0 0 10px}canvas{width:100%;height:180px;display:block;border-radius:4px}
-.evolution-actions{display:flex;justify-content:center;margin:8px 0 22px}.evolution-panel{display:none;margin-bottom:22px}.evolution-panel.active{display:block;animation:fadeUp .25s ease both}.evolution-note{font-size:11.5px;color:var(--text-soft);line-height:1.55;margin:0 0 12px}.evolution-table-wrap{max-height:360px;overflow:auto;border:1px solid var(--parchment-2);border-radius:4px;background:rgba(255,255,255,.35)}.evolution-table{width:100%;border-collapse:collapse;font-size:12px}.evolution-table th,.evolution-table td{padding:9px 10px;border-bottom:1px solid rgba(15,36,56,.08);text-align:right;white-space:nowrap}.evolution-table th:first-child,.evolution-table td:first-child,.evolution-table th:nth-child(2),.evolution-table td:nth-child(2){text-align:left}.evolution-table th{position:sticky;top:0;background:#F4EEDD;color:var(--ink);font-family:var(--mono);font-size:10.5px;text-transform:uppercase;letter-spacing:.05em;z-index:1}.evolution-table tr.contemplacao-row td{font-weight:600;color:var(--red);background:rgba(185,138,46,.07)}
-.yield-panel{border:1px solid var(--parchment-2);border-radius:4px;background:rgba(255,255,255,.35);padding:16px;margin-bottom:22px}.yield-panel h4{font-family:var(--mono);font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:var(--gold);margin:0 0 8px}.yield-note{font-size:11.5px;color:var(--text-soft);line-height:1.55;margin:0 0 14px}.yield-controls{display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin-bottom:14px}.yield-toggle{display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--text-soft)}.yield-toggle input{accent-color:var(--gold)}.yield-rate{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--text-soft)}.yield-rate input{width:72px;font-family:var(--mono);font-size:14px;color:var(--ink);background:transparent;border:none;border-bottom:1.25px solid rgba(17,14,10,.08);padding:5px 2px;outline:none}.yield-rate input:focus{border-bottom-color:var(--gold)}.yield-result{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.yield-result .stat{padding:12px}.yield-result .v{font-family:var(--mono);font-size:16px;font-weight:600;color:var(--ink)}
-.summary-strip{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:22px}.stat{border:1px solid var(--parchment-2);border-radius:3px;padding:14px;background:rgba(255,255,255,.3)}.stat .k{font-size:11px;color:var(--text-soft);margin-bottom:6px}.stat .v{font-family:var(--mono);font-size:16px;color:var(--ink);font-weight:600}
-.disclaimer{max-width:900px;margin:28px auto 0;padding:18px 24px;color:#93a3b0;font-size:12px;line-height:1.6}.disclaimer strong{color:var(--gold-light)}
-@media(max-width:800px){.key-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
-@media(max-width:700px){.field-row{grid-template-columns:1fr;gap:12px}.cols{grid-template-columns:1fr;gap:18px}.headline-numbers{grid-template-columns:1fr}.summary-strip{grid-template-columns:1fr 1fr}.action-bar{flex-direction:column;align-items:stretch}.btn{width:100%}.seal{display:none}.key-grid{grid-template-columns:1fr 1fr}}
-@media(max-width:480px){.form-panel,.result-panel{padding:16px}.summary-strip{grid-template-columns:1fr}.key-grid{grid-template-columns:1fr}.wrap{padding:0 12px 40px}}
-@media print{
-  body{background:#fff;color:#000}
-  header.hero,.form-panel,.evolution-actions,.action-bar,.disclaimer{display:none!important}
-  .wrap{max-width:none;padding:0}
-  .panel{margin:0;box-shadow:none;border-radius:0}
-  #resultsPanel{display:block!important}
-  #evolutionPanel{display:block!important}
-}
-
-/* Direção visual futurista: superfície obsidiana, dados luminosos e campos em destaque. */
-:root{
-  --ink:#071016;--ink-2:#102832;--parchment:#eef7f3;--parchment-2:#b8d4cf;
-  --gold:#e2b35b;--gold-light:#ffe2a0;--cyan:#57d9d0;--cyan-soft:#a3fff4;
-  --green:#63e3ae;--red:#ff7f78;--text:#dcebe7;--text-soft:#8fa9a7;
-  --serif:'Fraunces',serif;--sans:'IBM Plex Sans',sans-serif;--mono:'IBM Plex Mono',monospace;
-}
-html{background:#050b0e}
-body{position:relative;overflow-x:hidden;background:#050b0e;color:var(--text)}
-body::before{content:'';position:fixed;inset:0;pointer-events:none;opacity:.32;background:linear-gradient(rgba(87,217,208,.045) 1px,transparent 1px),linear-gradient(90deg,rgba(87,217,208,.045) 1px,transparent 1px);background-size:42px 42px;mask-image:linear-gradient(to bottom,black,transparent 75%);z-index:-1}
-header.hero{position:relative;isolation:isolate;background:radial-gradient(circle at 82% 18%,rgba(87,217,208,.17),transparent 24%),radial-gradient(circle at 18% 0%,rgba(226,179,91,.13),transparent 30%),linear-gradient(135deg,#071016 0%,#0b2028 58%,#071016 100%);padding:58px 24px 92px;border-bottom:1px solid rgba(87,217,208,.25);text-align:left}
-header.hero::after{content:'SIMULACAO // LIVE MODEL';position:absolute;right:24px;bottom:24px;color:rgba(163,255,244,.48);font:10px var(--mono);letter-spacing:.16em}
-header.hero .inner{max-width:1180px;text-align:left}
-.hero-actions{margin-bottom:22px}
-.btn-logout{border-color:rgba(163,255,244,.38);background:rgba(5,11,14,.4);color:var(--cyan-soft);border-radius:3px;text-transform:uppercase;letter-spacing:.08em}
-.brand-lockup{align-items:flex-start;flex-direction:row;gap:14px;margin-bottom:28px}.brand-logo{width:54px;height:54px;filter:drop-shadow(0 0 14px rgba(87,217,208,.3))}.brand-name{align-self:center;color:var(--cyan-soft);font-size:11px}
-.eyebrow{justify-content:flex-start;color:var(--cyan);letter-spacing:.24em}.eyebrow::before{background:var(--cyan);width:42px}
-h1{max-width:720px;color:#f2fbf7;font-size:clamp(34px,6vw,68px);letter-spacing:0}
-header.hero p.lede{max-width:590px;margin:0;color:#a8c0bd;font-size:15px}
-.wrap{position:relative;max-width:1180px;padding:0 24px 72px}
-.panel{background:linear-gradient(145deg,rgba(238,247,243,.97),rgba(215,235,229,.96));border:1px solid rgba(87,217,208,.38);border-radius:5px;box-shadow:0 30px 80px rgba(0,0,0,.42)}
-.form-panel{position:relative;margin-top:-48px;padding:34px 34px 18px;text-align:left}.form-panel::before{content:'INPUT CONSOLE';position:absolute;top:18px;right:26px;color:#75918f;font:10px var(--mono);letter-spacing:.14em}.form-panel h2{text-align:left;color:var(--ink);font-size:28px}.section-note{text-align:left;color:#5e7774}
-fieldset{border-top-color:rgba(16,40,50,.16);padding-top:25px}legend{color:#197b79;font-size:11px;letter-spacing:.2em}
-.field-row{gap:18px}.field{position:relative;align-items:stretch!important;padding:16px 16px 14px;border:1px solid rgba(25,123,121,.18);border-radius:4px;background:rgba(255,255,255,.4);text-align:left;transition:transform .2s,box-shadow .2s,border-color .2s}.field:focus-within{transform:translateY(-2px);border-color:var(--cyan);box-shadow:0 0 0 3px rgba(87,217,208,.14),0 12px 25px rgba(11,61,66,.12)}.field label{color:#42625f;text-align:left;font:11px var(--mono);letter-spacing:.05em;text-transform:uppercase}.field input[type=number],.field input[type=text],.field select{height:48px;min-width:0;width:100%;margin-top:4px;border:1px solid rgba(25,123,121,.3);border-radius:3px;background:#f8fffc;color:#071016;text-align:left;padding:10px 13px;font-size:17px;box-shadow:inset 0 0 0 1px rgba(255,255,255,.7);transition:border-color .2s,box-shadow .2s,background .2s}.field input:focus,.field select:focus{border-color:#159e9a;background:#fff;box-shadow:0 0 0 3px rgba(87,217,208,.18),0 0 20px rgba(87,217,208,.12);outline:none}.field input::placeholder{color:#91aaa7}
-.inline-note{color:#52706c;border-top-color:rgba(25,123,121,.18);text-align:left}
-.radio-group{justify-content:flex-start}.radio-group label{border-color:rgba(25,123,121,.28);border-radius:3px;background:rgba(255,255,255,.3);color:#42625f;padding:9px 13px}.radio-group label:has(input:checked){background:#102832;border-color:var(--cyan);color:var(--cyan-soft);box-shadow:0 0 16px rgba(87,217,208,.12)}
-.action-bar{justify-content:flex-start}.btn{border-radius:3px;text-transform:uppercase;letter-spacing:.06em}.btn-gold{background:linear-gradient(135deg,#e2b35b,#f1d28d);box-shadow:0 8px 20px rgba(226,179,91,.25)}.btn-gold:hover{box-shadow:0 10px 28px rgba(87,217,208,.2)}.btn-dark{background:#102832;color:var(--cyan-soft)}
-.result-panel{margin-top:28px;padding:34px;border-radius:5px;background:linear-gradient(145deg,#eaf5f0,#d5e9e2);border-color:rgba(226,179,91,.52)}.result-panel-top{border-bottom:1px solid rgba(25,123,121,.18);padding-bottom:17px}.headline-tag{color:#bd6e36}.headline-value{color:#102832;text-shadow:0 2px 0 rgba(255,255,255,.5)}.headline-numbers{border-bottom-color:var(--gold)}
-.key-card,.stat,.yield-panel,.chart-wrap,.evolution-table-wrap{border-color:rgba(25,123,121,.2);background:rgba(255,255,255,.35);border-radius:4px}.key-card .v,.stat .v,.yield-result .v{color:#102832}.seal{background:radial-gradient(circle at 35% 30%,rgba(87,217,208,.3),transparent 45%),linear-gradient(135deg,#071016,#12333a);border-color:var(--cyan);box-shadow:0 0 26px rgba(87,217,208,.18)}.seal .num{color:var(--cyan-soft)}
-.ledger h4,.section-block h4,.chart-wrap h4,.yield-panel h4{color:#197b79}.ledger-line .lbl,.headline-label,.headline-sub,.section-note{color:#607b77}.ledger-line .val{color:#102832}.formula,.lance-info{background:rgba(255,255,255,.45);border-color:rgba(25,123,121,.2)}
-.evolution-actions{justify-content:flex-start}.evolution-panel{border-left:3px solid var(--cyan);padding-left:16px}.evolution-table th{background:#dbeee8;color:#102832}.evolution-table td{border-bottom-color:rgba(25,123,121,.12);color:#365451}.evolution-table tr.contemplacao-row td{color:#a64e38;background:rgba(226,179,91,.18)}
-.disclaimer{color:#75918f}
-@media(max-width:700px){header.hero{padding:42px 18px 76px}.wrap{padding:0 14px 48px}.form-panel,.result-panel{padding:24px 18px}.form-panel::before,header.hero::after{display:none}.field{padding:13px 12px}.field input[type=number],.field input[type=text],.field select{font-size:16px}.result-panel-top{align-items:flex-start}.evolution-panel{padding-left:8px}}
-
-/* Modo minimalista: foco nos dados, sem molduras excessivas. */
-body::before{display:none}
-header.hero{background:linear-gradient(180deg,#071016,#0b2028);padding-bottom:82px}
-header.hero::after{display:none}
-.wrap{max-width:1040px}
-.panel{border:0;border-radius:0;box-shadow:0 18px 45px rgba(0,0,0,.2)}
-.form-panel{margin-top:-36px;padding:42px 52px 24px}
-.form-panel::before{display:none}
-.form-panel h2,.section-note,.field label,.inline-note,.action-bar{text-align:center}
-fieldset{padding:30px 0 12px;border-top:1px solid rgba(25,123,121,.1)}
-.field-row{gap:28px;margin-bottom:22px}
-.field{padding:10px 4px 4px;border:0;border-bottom:1px solid rgba(25,123,121,.2);border-radius:0;background:transparent;box-shadow:none}
-.field:focus-within{transform:none;border-color:var(--cyan);box-shadow:0 8px 18px rgba(87,217,208,.08)}
-.field input[type=number],.field input[type=text],.field select{height:58px;border:0;border-bottom:2px solid rgba(25,123,121,.24);border-radius:0;background:transparent;text-align:center;font-size:22px;box-shadow:none}
-.field input[type=number]:focus,.field input[type=text]:focus,.field select:focus{border-color:var(--cyan);background:transparent;box-shadow:0 6px 20px rgba(87,217,208,.1)}
-.radio-group{justify-content:center}.radio-group label{border:0;border-bottom:2px solid transparent;border-radius:0;background:transparent;padding:10px 15px}.radio-group label:has(input:checked){background:transparent;border-color:var(--cyan);color:#0b5558;box-shadow:none}
-.btn{padding:14px 24px;font-size:12px}.action-bar{justify-content:center}
-.result-panel{margin-top:18px;padding:42px 52px;background:#edf6f1}
-.headline-numbers{gap:44px;padding:24px 0 30px}.headline-value{font-size:clamp(28px,4vw,46px)}
-.key-card,.stat,.yield-panel,.chart-wrap,.evolution-table-wrap{border:0;border-bottom:1px solid rgba(25,123,121,.16);border-radius:0;background:transparent;box-shadow:none}
-.info-grid{gap:34px}.ledger-line{margin-bottom:13px}.ledger-line .lbl{font-size:12px}.ledger-line .val{font-size:15px}
-.evolution-panel{border-left:0;padding-left:0}.chart-wrap{padding-left:0;padding-right:0}
-@media(max-width:700px){.form-panel,.result-panel{padding-left:22px;padding-right:22px}.field-row{gap:18px}.field input[type=number],.field input[type=text],.field select{font-size:19px}.headline-numbers{gap:20px}}
-
-/* Layout compacto editorial. Apenas apresentação; cálculos permanecem intactos. */
-body{font-size:14px;background:#080d10}
-header.hero{padding:34px 28px 64px;text-align:center;background:linear-gradient(135deg,#091419,#102a31)}
-header.hero .inner{max-width:1120px;text-align:center}.hero-actions{margin-bottom:12px}.brand-lockup{justify-content:center;align-items:center;margin-bottom:16px}.brand-logo{width:42px;height:42px}.brand-name{font-size:10px}header.hero .eyebrow{justify-content:center;font-size:10px;margin-bottom:12px}h1{font-size:clamp(28px,4vw,48px);margin-bottom:8px}header.hero p.lede{font-size:13px;line-height:1.45}
-.wrap{max-width:1120px;padding:0 20px 44px}.panel{box-shadow:0 16px 36px rgba(0,0,0,.16)}.form-panel{margin-top:-30px;padding:26px 34px 14px}.form-panel h2{font-size:22px}.section-note{font-size:11px;margin-bottom:12px}
-fieldset{padding:18px 0 8px;margin-bottom:0}legend{font-size:10px;margin-bottom:10px}.field-row{gap:18px;margin-bottom:12px}.field{padding:6px 2px 2px}.field label{font-size:10px}.field input[type=number],.field input[type=text],.field select{height:42px;font-size:16px;padding:7px 9px}.inline-note{font-size:10px;line-height:1.35;padding-top:6px;margin-bottom:8px}.radio-group{gap:4px;margin-bottom:8px}.radio-group label{font-size:10px;padding:7px 9px}.btn{padding:10px 18px;font-size:10px}
-.result-panel{margin-top:14px;padding:26px 34px}.result-panel-top{margin-bottom:12px;padding-bottom:10px}.headline-numbers{gap:22px;padding:12px 0 18px;margin-bottom:14px}.headline-label{font-size:11px}.headline-value{font-size:clamp(22px,3vw,34px)}.headline-sub{font-size:10px}.key-grid{gap:5px;margin-bottom:10px}.key-card{padding:8px 6px}.key-card .k,.stat .k{font-size:9px}.key-card .v,.stat .v{font-size:13px}.key-card .s{font-size:8px}.seal-row{gap:12px;padding-bottom:12px;margin-bottom:14px}.seal{width:82px;height:82px}.seal .num{font-size:15px}.seal .lbl{font-size:8px}.seal-desc h3{font-size:14px}.seal-desc p{font-size:10px}.info-grid{gap:18px;margin-bottom:10px}.ledger h4,.section-block h4,.chart-wrap h4,.yield-panel h4{font-size:9px}.ledger-line{margin-bottom:7px}.ledger-line .lbl{font-size:10px}.ledger-line .val{font-size:11px}.formula,.lance-info{font-size:10px;line-height:1.45;padding:10px;margin-bottom:12px}.chart-wrap{padding:10px 0 6px;margin-bottom:12px}.evolution-note,.yield-note{font-size:10px}.evolution-table{font-size:10px}.evolution-table th{font-size:9px}.evolution-table th,.evolution-table td{padding:7px 6px}.yield-panel{padding:10px;margin-bottom:12px}.yield-result .v{font-size:13px}.summary-strip{gap:7px;margin-bottom:12px}.summary-strip .stat{padding:9px 6px}.disclaimer{font-size:10px;padding:12px 8px;margin-top:14px}
-@media(min-width:901px){.form-panel form{display:grid;grid-template-columns:1fr 1fr;column-gap:38px}.form-panel form>fieldset:nth-of-type(3),.form-panel form>fieldset:nth-of-type(4),.form-panel form>.action-bar{grid-column:1 / -1}.form-panel form>fieldset{min-width:0}.result-panel{display:none}.result-panel.active{display:block}.info-grid{grid-template-columns:repeat(3,1fr)}}
-@media(max-width:700px){header.hero{padding:28px 18px 52px}.wrap{padding:0 12px 34px}.form-panel,.result-panel{padding:22px 18px}.field-row{gap:10px}.field input[type=number],.field input[type=text],.field select{font-size:15px}.headline-numbers{gap:14px}.result-panel{overflow:hidden}}
-
-/* Escala principal: linguagem de marca esportiva e futurista, sempre centralizada. */
-header.hero{padding:76px 28px 112px;text-align:center}
-header.hero .inner{display:flex;flex-direction:column;align-items:center;text-align:center}
-.hero-actions{width:100%;max-width:1180px;justify-content:flex-end}
-.brand-lockup{margin-bottom:28px}.brand-logo{width:64px;height:64px}.brand-name{font-size:12px}
-header.hero .eyebrow{font-size:11px;margin-bottom:18px}h1{font-size:clamp(42px,7vw,82px);line-height:.98;max-width:880px}header.hero p.lede{font-size:16px;max-width:680px;line-height:1.6}
-.wrap{max-width:1180px;padding:0 28px 72px}
-.form-panel{margin-top:-54px;padding:48px 62px 30px;text-align:center}.form-panel h2{font-size:30px;text-align:center}.section-note{font-size:13px;text-align:center;margin-bottom:24px}
-fieldset{padding:30px 0 18px}legend{font-size:12px;margin-bottom:18px}.field-row{gap:30px;margin-bottom:24px}.field{padding:12px 4px 5px;align-items:center!important}.field label{font-size:11px;text-align:center}.field input[type=number],.field input[type=text],.field select{height:62px;font-size:22px;text-align:center;padding:10px 14px}
-.inline-note{font-size:12px;text-align:center;line-height:1.5}.radio-group{gap:8px}.radio-group label{font-size:12px;padding:10px 16px}.btn{padding:15px 28px;font-size:12px}
-.result-panel{margin-top:24px;padding:48px 62px}.result-panel-top{justify-content:center;position:relative}.result-panel-top .btn{position:absolute;right:0;top:-8px}.headline-numbers{gap:56px;padding:28px 0 36px;margin-bottom:22px}.headline-label{font-size:14px}.headline-value{font-size:clamp(32px,4.8vw,56px)}.headline-sub{font-size:12px}.key-grid{gap:12px;margin-bottom:22px}.key-card{padding:15px 10px}.key-card .k,.stat .k{font-size:10px}.key-card .v,.stat .v{font-size:16px}.key-card .s{font-size:9px}.seal-row{gap:24px;padding-bottom:26px;margin-bottom:26px}.seal{width:118px;height:118px}.seal .num{font-size:20px}.seal .lbl{font-size:10px}.seal-desc h3{font-size:19px}.seal-desc p{font-size:12px}.info-grid{gap:36px}.ledger h4,.section-block h4,.chart-wrap h4,.yield-panel h4{font-size:11px}.ledger-line{margin-bottom:11px}.ledger-line .lbl{font-size:12px}.ledger-line .val{font-size:14px}.formula,.lance-info{font-size:12px;line-height:1.65;padding:16px}.chart-wrap{padding:18px 0}.evolution-note,.yield-note{font-size:12px}.evolution-table{font-size:12px}.evolution-table th{font-size:10px}.evolution-table th,.evolution-table td{padding:10px 8px}.yield-panel{padding:16px}.yield-result .v{font-size:16px}.summary-strip{gap:12px}.summary-strip .stat{padding:15px 10px}.disclaimer{font-size:11px}
-@media(min-width:901px){.form-panel form{grid-template-columns:repeat(2,minmax(0,1fr));max-width:900px;margin:0 auto}.form-panel form>fieldset:nth-of-type(3),.form-panel form>fieldset:nth-of-type(4),.form-panel form>.action-bar{grid-column:1 / -1}.result-panel{max-width:1180px;margin-left:auto;margin-right:auto}}
-@media(max-width:700px){header.hero{padding:52px 18px 82px}.hero-actions{justify-content:center}.wrap{padding:0 14px 48px}.form-panel,.result-panel{padding:32px 20px}.form-panel h2{font-size:25px}.field-row{gap:16px;margin-bottom:18px}.field input[type=number],.field input[type=text],.field select{height:56px;font-size:19px}.headline-numbers{gap:24px}.headline-value{font-size:34px}.result-panel-top .btn{position:static;margin-left:12px}.info-grid{gap:24px}}
-
-/* Interface clean-tech: clara, precisa e inspirada no acabamento do iPhone. */
-:root{
-  --ink:#111214;--ink-2:#24262a;--parchment:#f5f5f7;--parchment-2:#d8d9de;
-  --gold:#3478f6;--gold-light:#3478f6;--cyan:#3478f6;--cyan-soft:#3478f6;
-  --green:#248a5a;--red:#b94a54;--text:#17181b;--text-soft:#72757c;
-  --serif:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;--sans:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;--mono:ui-monospace,SFMono-Regular,Menlo,monospace;
-}
-html{background:#f5f5f7}body{background:#f5f5f7;color:var(--text);font-size:15px}
-body::before{display:none}header.hero{padding:64px 24px 104px;background:#f5f5f7;color:var(--text);border-bottom:1px solid #e1e2e6}header.hero .inner{max-width:920px;text-align:center}.hero-actions{margin-bottom:22px}.btn-logout{border:1px solid #d2d4da;background:#fff;color:#30343a;border-radius:999px;padding:8px 16px}.brand-lockup{margin-bottom:22px}.brand-logo{width:58px;height:58px;filter:none}.brand-name{color:#72757c;font-size:11px}.eyebrow{color:#72757c;justify-content:center;font-size:10px;letter-spacing:.18em}.eyebrow::before{background:#b9bbc2;width:28px}h1{color:#111214;font-size:clamp(34px,5vw,62px);font-weight:700;letter-spacing:-.02em}header.hero p.lede{color:#72757c;font-size:15px;line-height:1.55}
-.wrap{max-width:1060px;padding:0 20px 64px}.panel{border:1px solid #dedfe4;border-radius:18px;background:#fff;box-shadow:0 12px 34px rgba(20,22,28,.08)}.form-panel{margin-top:-46px;padding:38px 48px 24px;text-align:center}.form-panel::before{display:none}.form-panel h2{color:#111214;font-size:26px;text-align:center}.section-note{color:#85878e;font-size:12px}
-fieldset{border-top:1px solid #ececef;padding:26px 0 12px}legend{color:#666a72;font-size:10px;letter-spacing:.14em}.field-row{gap:24px;margin-bottom:18px}.field{padding:0 0 10px;border:0;border-bottom:1px solid #d9dbe0;border-radius:0;background:transparent}.field:focus-within{border-color:#3478f6;box-shadow:0 4px 14px rgba(52,120,246,.1)}.field label{color:#85878e;font-size:11px;text-align:center}.field input[type=number],.field input[type=text],.field select{height:52px;border:1px solid #d6d8de;border-radius:10px;background:#fafafa;color:#151619;text-align:center;font-size:18px;box-shadow:none}.field input:focus,.field select:focus{border-color:#3478f6;background:#fff;box-shadow:0 0 0 4px rgba(52,120,246,.12)}.inline-note{border:0;color:#85878e;font-size:11px;text-align:center}
-.radio-group{justify-content:center;gap:6px}.radio-group label{border:1px solid #d6d8de;border-radius:999px;background:#fff;color:#666a72;padding:9px 14px;font-size:11px}.radio-group label:has(input:checked){border-color:#3478f6;background:#edf3ff;color:#1557c8;box-shadow:none}.btn{border-radius:999px;padding:12px 22px;font-size:11px}.btn-gold{background:#3478f6;color:#fff;box-shadow:0 6px 16px rgba(52,120,246,.2)}.btn-dark{background:#202226;color:#fff}.btn-ghost{border-color:#d6d8de;color:#4d5158}
-.result-panel{margin-top:20px;padding:38px 48px;background:#fff;border-color:#dedfe4;border-radius:18px}.result-panel-top{border-bottom:1px solid #ececef}.headline-tag{color:#3478f6}.headline-numbers{border-bottom:1px solid #e5e6ea;gap:32px}.headline-label,.headline-sub{color:#85878e}.headline-value{color:#111214}.key-card,.stat,.yield-panel,.chart-wrap,.evolution-table-wrap{border:1px solid #e1e2e6;border-radius:12px;background:#fff;box-shadow:none}.key-card .k,.stat .k{color:#85878e}.key-card .v,.stat .v,.yield-result .v{color:#17181b}.seal{background:#111214;border:0;box-shadow:none}.seal .num{color:#fff}.seal .lbl{color:#d7d8dc}.ledger h4,.section-block h4,.chart-wrap h4,.yield-panel h4{color:#666a72}.ledger-line .lbl{color:#85878e}.ledger-line .val{color:#17181b}.formula,.lance-info{border:1px solid #e1e2e6;border-radius:12px;background:#fafafa;color:#45484f}.evolution-panel{border:0}.evolution-table th{background:#f5f5f7;color:#45484f}.evolution-table td{color:#5f626a;border-bottom-color:#ececef}.evolution-table tr.contemplacao-row td{color:#1557c8;background:#edf3ff}.disclaimer{color:#999ba1}
-@media(min-width:901px){.form-panel form{max-width:860px}.info-grid{gap:28px}}
-@media(max-width:700px){header.hero{padding:42px 18px 76px}.wrap{padding:0 12px 42px}.form-panel,.result-panel{padding:28px 20px;border-radius:14px}.form-panel h2{font-size:22px}.field-row{gap:14px}.field input[type=number],.field input[type=text],.field select{height:50px;font-size:17px}.headline-value{font-size:30px}.result-panel-top .btn{margin-left:8px}}
-
-/* Direção visual premium: preto suavizado, grafite, marfim e dourado. */
-body{background:linear-gradient(180deg,#101010 0%,#27231D 100%);color:#28231B}
-header.hero{background:radial-gradient(circle at 50% 0%,rgba(224,184,92,.18),transparent 42%),linear-gradient(180deg,#101010 0%,#25211B 100%)}
-.panel,.result-panel{background:linear-gradient(180deg,#FBF8F0 0%,#F1E9D8 100%);color:#28231B}
-.form-panel,.result-panel{text-align:center}
-.form-panel h2,.panel h2,.headline-label,.headline-value,.headline-sub,.seal-desc,.ledger,.section-block,.formula,.lance-info,.chart-wrap,.yield-panel,.summary-strip,.stat,.key-card,.evolution-panel{text-align:center}
-.headline-numbers{justify-items:center;text-align:center}
-.field-row,.field,.radio-group,.yield-controls,.yield-result,.summary-strip,.key-grid,.headline-numbers,.cols,.seal-row{justify-items:center}
-.field-row>.field,.field{align-items:center}
-.field input[type=number],.field select{ text-align:center }
-.inline-note{border-left:0;border-top:1px solid var(--parchment-2);padding:8px 0 0;width:100%}
-.radio-group{justify-content:center}
-.action-bar{justify-content:center}
-.headline-numbers>div,.seal-desc{width:100%}
-.seal-row{justify-content:center;text-align:center}
-.seal-desc{width:min(100%,760px);margin:0 auto}
-.seal-desc p{margin-left:auto;margin-right:auto}
-.cols{grid-template-columns:1fr 1fr;gap:26px}
-.info-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));grid-template-areas:'difference parcel credit';gap:12px;margin:0 0 14px;align-items:start}
-.info-grid .cols{display:block;grid-area:parcel;margin:0;width:100%}
-.info-grid .diferenca-block{grid-area:difference;margin:0;width:100%}
-.info-grid .credito-block{grid-area:credit;margin:0;width:100%}
-.ledger,.section-block{width:min(100%,760px);margin-left:auto;margin-right:auto}
-.ledger-line{display:grid;grid-template-columns:max-content max-content;justify-content:center;gap:14px;align-items:baseline}
-.ledger-line .fill{display:none}
-.ledger-line .lbl,.ledger-line .val{white-space:nowrap}
-.info-grid .ledger-line{grid-template-columns:minmax(0,1fr) max-content;justify-content:stretch;gap:10px;width:100%;}
-.info-grid .ledger-line .lbl{white-space:normal;text-align:right;overflow-wrap:anywhere;}
-.info-grid .ledger-line .val{text-align:left;white-space:nowrap;}
-.info-grid .ledger-line.total .lbl{font-size:13px;}
-.evolution-table th,.evolution-table td{text-align:center!important}
-.evolution-table th:first-child,.evolution-table td:first-child,.evolution-table th:nth-child(2),.evolution-table td:nth-child(2){text-align:center}
-.yield-controls{justify-content:center}
-.yield-result{grid-template-columns:repeat(3,1fr)}
-.summary-strip{grid-template-columns:repeat(3,1fr)}
-.summary-toggle{display:flex;justify-content:center;margin:-10px 0 14px}
-.summary-toggle .btn{font-size:11px;padding:6px 12px}
-.summary-strip.is-hidden{display:none}
-.disclaimer{text-align:center}
-
-/* Campos formatados: o script troca number por text para permitir a máscara. */
-.field input[type=text]{
-  width:min(100%,280px);
-  height:44px;
-  padding:9px 14px;
-  border:1px solid rgba(184,138,43,.35);
-  border-radius:6px;
-  background:rgba(255,255,255,.7);
-  color:#17130C;
-  font-family:var(--mono);
-  font-size:16px;
-  font-weight:600;
-  letter-spacing:.02em;
-  text-align:center;
-  outline:none;
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.8),0 3px 10px rgba(15,12,7,.06);
-  transition:border-color .15s,box-shadow .15s,background .15s;
-}
-.field input[type=text]:hover{border-color:rgba(184,138,43,.65);background:#fffdf8}
-.field input[type=text]:focus{border-color:var(--gold);background:#fffdf8;box-shadow:0 0 0 3px rgba(184,138,43,.16),0 5px 14px rgba(15,12,7,.08)}
-.field input[type=text]::placeholder{color:#9A8D76;font-weight:400}
-.field select{height:44px;min-width:min(100%,280px);padding:9px 14px;border:1px solid rgba(184,138,43,.35);border-radius:6px;background:rgba(255,255,255,.7);text-align:center;box-shadow:inset 0 1px 0 rgba(255,255,255,.8),0 3px 10px rgba(15,12,7,.06)}
-.field select:hover,.field select:focus{border-color:var(--gold);background:#fffdf8}
-
-@media(max-width:700px){.yield-result,.summary-strip{grid-template-columns:1fr}.field-row{grid-template-columns:1fr}.cols{grid-template-columns:1fr}}
-@media(max-width:900px){.info-grid{grid-template-columns:1fr 1fr;grid-template-areas:'parcel parcel' 'difference credit'}}
-@media(max-width:600px){.info-grid{grid-template-columns:1fr;grid-template-areas:'parcel' 'difference' 'credit'}}
-
-@media print{
-  @page{size:A4 portrait;margin:12mm}
-  html,body{background:#fff!important;color:#17130C!important}
-  header.hero,.form-panel,.evolution-actions,.evolution-panel,.disclaimer,.result-panel-top .btn,
-  .seal-row,.cols,.section-block,.formula,.lance-info,#evolutionPanel,.summary-toggle,.result-panel>.action-bar{display:none!important}
-  .wrap{display:block;max-width:none;padding:0}
-  .result-panel{display:block!important;width:100%;margin:0;padding:8mm 10mm;box-shadow:none;border:1px solid #D9C89A;border-radius:5px;background:#FBF8F0!important;text-align:center}
-  .headline-numbers{grid-template-columns:1fr 1fr;gap:12mm;margin-bottom:7mm;padding-bottom:6mm;border-bottom:1px solid #D9C89A}
-  .headline-label{font-size:10pt;color:#665A43}.headline-value{font-size:21pt;color:#17130C}.headline-sub{font-size:8.5pt}
-  .key-grid{grid-template-columns:repeat(4,1fr);gap:3mm;margin-bottom:7mm}
-  .key-card{padding:4mm 2mm;background:#fff;border:1px solid #E0D3B5}.key-card .k{font-size:8pt}.key-card .v{font-size:11pt}.key-card .s{font-size:7.5pt}
-  .yield-panel{display:block!important;margin:0 0 7mm;padding:4mm;background:#fff;border:1px solid #E0D3B5}
-  .yield-panel h4{font-size:9pt}.yield-note{font-size:8pt;margin-bottom:3mm}.yield-controls{display:none}.yield-result{grid-template-columns:repeat(3,1fr);gap:3mm}.yield-result .stat{padding:3mm;background:transparent;border:0}.yield-result .k{font-size:8pt}.yield-result .v{font-size:11pt}
-  .summary-strip{grid-template-columns:repeat(3,1fr);gap:3mm;margin:0}.summary-strip .stat{padding:4mm 2mm;background:#fff}.summary-strip .k{font-size:8pt}.summary-strip .v{font-size:11pt}.summary-strip .s{font-size:7pt}
-  .result-panel:after{content:'Simulação ilustrativa. Consulte as condições do contrato.';display:block;margin-top:7mm;padding-top:4mm;border-top:1px solid #E0D3B5;color:#7A6D57;font-size:7.5pt}
-}
-
-/* Redesign do briefing: sidebar, formulário e resultado em três regiões. */
-:root{--bg:#F5F5F7;--surface:#FFFFFF;--surface-2:#F5F5F7;--border:rgba(0,0,0,.08);--text:#1D1D1F;--text-2:#6E6E73;--text-3:#AEAEB2;--accent:#007AFF;--accent-bg:rgba(0,122,255,.08);--red:#FF3B30;--green:#34C759;--radius-card:14px;--radius-btn:11px}
-*{box-sizing:border-box}html,body{min-height:100%;background:var(--bg)}body{display:grid;grid-template-columns:260px minmax(0,1fr);grid-template-rows:100vh;overflow:hidden;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Segoe UI',sans-serif;font-size:14px;line-height:1.45}
-header.hero{grid-column:1;grid-row:1;height:100vh;padding:30px 22px;background:var(--surface);border-right:1px solid var(--border);border-bottom:0;text-align:left}header.hero .inner{height:100%;display:flex;flex-direction:column;align-items:stretch;text-align:left}.hero-actions{order:5;margin-top:auto;margin-bottom:0;justify-content:stretch}.hero-actions .btn{width:100%}.brand-lockup{justify-content:flex-start;align-items:center;flex-direction:row;gap:12px;margin:0 0 36px}.brand-logo{width:42px;height:42px}.brand-name{color:var(--text);font:600 13px -apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;letter-spacing:0;text-transform:none}.eyebrow{justify-content:flex-start;color:var(--text-3);font-size:10px;letter-spacing:.12em;margin-bottom:14px}.eyebrow::before{display:none}h1{max-width:none;color:var(--text);font-size:30px;line-height:1.08;letter-spacing:-.02em;margin-bottom:12px}header.hero p.lede{color:var(--text-2);font-size:13px;line-height:1.5;margin:0}.hero::after{content:'SIMULADOR';display:block;margin-top:38px;color:var(--text-3);font:10px ui-monospace,monospace;letter-spacing:.16em}
-.wrap{grid-column:2;grid-row:1;display:grid;grid-template-columns:minmax(440px,1fr) 340px;grid-template-rows:minmax(0,1fr) auto;gap:22px;max-width:none;width:100%;height:100vh;padding:22px;overflow:hidden}.panel{border:1px solid var(--border);border-radius:var(--radius-card);background:var(--surface);box-shadow:none}.form-panel{grid-column:1;grid-row:1;margin:0;padding:28px 32px;overflow:auto;text-align:left}.form-panel::before{display:none}.form-panel h2,.section-note{text-align:left}.form-panel h2{font-size:24px;color:var(--text)}.section-note{font-size:12px;color:var(--text-2);margin-bottom:20px}fieldset{border-top:1px solid var(--border);padding:22px 0 8px}fieldset:first-of-type{border-top:0;padding-top:0}legend{color:var(--text);font:600 12px -apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;letter-spacing:0;text-transform:none;margin-bottom:14px}.field-row{gap:16px;margin-bottom:16px}.field{padding:0;border:0;background:transparent;border-radius:0;box-shadow:none;align-items:stretch!important}.field label{color:var(--text-2);font-size:11px;text-align:left;text-transform:none;letter-spacing:0;margin-bottom:5px}.field:focus-within{transform:none;border:0;box-shadow:none}.field input[type=number],.field input[type=text],.field select{height:44px;width:100%;border:1px solid rgba(0,0,0,.12);border-radius:9px;background:var(--surface-2);color:var(--text);font:15px ui-monospace,SFMono-Regular,Menlo,monospace;text-align:left;padding:8px 11px;box-shadow:none}.field input:focus,.field select:focus{border-color:var(--accent);background:var(--surface);box-shadow:0 0 0 3px var(--accent-bg);outline:0}.inline-note{border:0;padding:0;color:var(--text-2);font-size:11px;text-align:left}.radio-group{justify-content:flex-start;gap:5px}.radio-group label{border:1px solid rgba(0,0,0,.1);border-radius:var(--radius-btn);background:var(--surface);color:var(--text-2);padding:9px 13px;font:12px -apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}.radio-group label:has(input:checked){border-color:var(--accent);background:var(--accent-bg);color:#0066d6;box-shadow:none}.btn{border-radius:var(--radius-btn);font:600 12px -apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;padding:11px 16px}.btn-gold{background:var(--accent);color:#fff;box-shadow:none}.btn-dark{background:#1d1d1f;color:#fff}.btn-ghost{border:1px solid var(--border);background:var(--surface);color:var(--text-2)}
-.result-panel{grid-column:2;grid-row:1;display:block!important;margin:0;padding:24px 22px;overflow:auto;text-align:left}.result-panel-top{justify-content:space-between;margin-bottom:18px;padding-bottom:14px;border-bottom:1px solid var(--border)}.result-panel-top .btn{position:static}.headline-numbers{gap:18px;padding:6px 0 20px;margin-bottom:18px;border-bottom:1px solid var(--border);text-align:left}.headline-numbers>div{width:auto}.headline-label,.headline-sub{color:var(--text-2);font-size:11px}.headline-value{color:var(--text);font:600 24px ui-monospace,SFMono-Regular,Menlo,monospace}.key-grid{grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px}.key-card{padding:10px;border:1px solid var(--border);border-radius:10px;background:var(--surface-2);text-align:left}.key-card .k,.stat .k{font-size:10px;color:var(--text-2)}.key-card .v,.stat .v{font-size:14px;color:var(--text)}.seal-row{justify-content:flex-start;gap:14px;padding-bottom:18px;margin-bottom:18px;border-bottom:1px solid var(--border)}.seal{width:76px;height:76px;background:var(--text);border:0;box-shadow:none}.seal .num{font-size:14px;color:#fff}.seal .lbl{font-size:8px;color:#fff}.seal-desc{width:auto!important;text-align:left}.seal-desc h3{font-size:15px;color:var(--text)}.seal-desc p{font-size:11px;color:var(--text-2);text-align:left}.info-grid{display:block;margin-bottom:14px}.info-grid .cols,.info-grid .diferenca-block,.info-grid .credito-block{width:100%;margin-bottom:20px}.ledger,.section-block{width:100%;text-align:left}.ledger h4,.section-block h4,.chart-wrap h4,.yield-panel h4{font-size:11px;color:var(--text);letter-spacing:0;text-align:left}.ledger-line{display:flex;margin-bottom:8px}.ledger-line .lbl{font-size:11px;color:var(--text-2);text-align:left}.ledger-line .val{font-size:12px;color:var(--text)}.formula,.lance-info{padding:11px;border:1px solid var(--border);border-radius:10px;background:var(--surface-2);font-size:10px;text-align:left}.evolution-actions{justify-content:stretch;margin:12px 0}.evolution-actions .btn{width:100%}.evolution-panel{border:0;padding:0}.chart-wrap,.yield-panel,.evolution-table-wrap,.stat{border:1px solid var(--border);border-radius:10px;background:var(--surface);box-shadow:none}.chart-wrap{padding:12px}.evolution-note,.yield-note{font-size:10px;color:var(--text-2)}.evolution-table{font-size:10px}.evolution-table th{background:var(--surface-2);color:var(--text)}.evolution-table td{color:var(--text-2);border-bottom-color:var(--border)}.summary-strip{grid-template-columns:1fr 1fr;gap:8px}.summary-strip .stat{padding:10px}.disclaimer{grid-column:1 / -1;grid-row:2;margin:0;padding:0;color:var(--text-3);font-size:10px;text-align:center}.yield-panel{padding:12px}.yield-result{grid-template-columns:1fr 1fr 1fr}.action-bar{justify-content:flex-start}.form-panel>.action-bar{margin-bottom:18px}
-@media(max-width:1100px){body{grid-template-columns:220px minmax(0,1fr)}.wrap{grid-template-columns:minmax(360px,1fr) 300px;gap:14px;padding:14px}.form-panel{padding:22px}.result-panel{padding:18px 16px}}
-@media(max-width:820px){body{display:block;overflow:auto}.hero{height:auto!important}.wrap{display:block;height:auto;min-height:0;overflow:visible;padding:12px}.form-panel,.result-panel{margin:0 0 12px;max-height:none}.result-panel{display:block!important}.disclaimer{display:block;padding:8px}.hero::after{display:none}.hero-actions{margin-top:26px}}
-@media print{body{display:block;overflow:visible;background:#fff}.hero,.form-panel,.evolution-actions,.disclaimer{display:none!important}.wrap{display:block;height:auto;padding:0}.result-panel{display:block!important;overflow:visible;border:1px solid var(--border);box-shadow:none}}
-.detail-block{margin:16px 0}.detail-block summary{cursor:pointer;color:var(--text-2);font-size:12px;text-align:center;padding:8px}.detail-block .formula,.detail-block .lance-info{margin:10px 0}
-
-/* Resultados em tela cheia; a classe active continua sendo controlada pelo JS. */
-body:has(.result-panel.active){overflow:hidden}
-.result-panel{position:fixed;inset:0;z-index:1000;display:none!important;grid-column:auto;grid-row:auto;width:100%;max-width:none;margin:0;padding:28px max(22px,calc((100vw - 1160px)/2));overflow-y:auto;background:rgba(245,245,247,.98);border:0;border-radius:0}
-.result-panel.active{display:block!important;animation:resultReveal .22s ease-out both}
-@keyframes resultReveal{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
-.result-panel>.result-panel-top,.result-panel>.headline-numbers,.result-panel>.key-grid,.result-panel>.seal-row,.result-panel>.info-grid,.result-panel>.detail-block,.result-panel>.evolution-actions,.result-panel>.evolution-panel,.result-panel>.yield-panel,.result-panel>.summary-toggle,.result-panel>.summary-strip,.result-panel>.action-bar{max-width:1160px;margin-left:auto;margin-right:auto}
-.result-panel-top{position:sticky;top:0;z-index:2;padding:12px 0 16px;background:rgba(245,245,247,.96);backdrop-filter:blur(12px)}
-@media(max-width:820px){.result-panel{padding:14px}.result-panel-top{padding-top:8px}.result-panel>.headline-numbers,.result-panel>.key-grid,.result-panel>.seal-row,.result-panel>.info-grid,.result-panel>.detail-block,.result-panel>.evolution-actions,.result-panel>.evolution-panel,.result-panel>.yield-panel,.result-panel>.summary-toggle,.result-panel>.summary-strip,.result-panel>.action-bar{width:100%}}
-
-/* Modal amplo com informações alinhadas em duas colunas. */
-.result-panel{padding:24px 32px 40px}
-.result-panel>.result-panel-top,.result-panel>.headline-numbers,.result-panel>.key-grid,.result-panel>.seal-row,.result-panel>.info-grid,.result-panel>.detail-block,.result-panel>.evolution-actions,.result-panel>.evolution-panel,.result-panel>.yield-panel,.result-panel>.summary-toggle,.result-panel>.summary-strip,.result-panel>.action-bar{max-width:none;width:100%}
-.headline-numbers{grid-template-columns:1fr 1fr}.key-grid{grid-template-columns:repeat(4,minmax(0,1fr))}
-.info-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);grid-template-areas:'parcel credit' 'difference difference';gap:28px;margin-bottom:24px}.info-grid .cols{grid-area:parcel;margin:0}.info-grid .credito-block{grid-area:credit;margin:0}.info-grid .diferenca-block{grid-area:difference;margin:0}
-.detail-block{display:grid;grid-template-columns:1fr 1fr;gap:18px}.detail-block summary{grid-column:1 / -1}.detail-block .formula,.detail-block .lance-info{margin:0}
-.yield-result{grid-template-columns:repeat(3,minmax(0,1fr))}.summary-strip{grid-template-columns:repeat(3,minmax(0,1fr))}
-@media(max-width:820px){.result-panel{padding:18px 16px 30px}.info-grid{display:block}.info-grid .cols,.info-grid .credito-block,.info-grid .diferenca-block{margin-bottom:20px}.detail-block{display:block}.detail-block .formula,.detail-block .lance-info{margin:10px 0}.key-grid,.summary-strip,.yield-result{grid-template-columns:1fr 1fr}}
-@media(max-width:520px){.headline-numbers,.key-grid,.summary-strip,.yield-result{grid-template-columns:1fr}.result-panel{padding-left:12px;padding-right:12px}}
-
-/* Refinamento de composição: conteúdo centralizado, compacto e legível. */
-.wrap{display:block;max-width:none;width:100%;padding:24px 32px 44px;overflow:auto}
-.form-panel{width:min(100%,1040px);margin:0 auto;padding:32px 46px 26px;overflow:visible}
-.form-panel>h2,.form-panel>.section-note,.form-panel>.action-bar{max-width:760px;margin-left:auto;margin-right:auto}
-.form-panel form{width:min(100%,900px);margin:0 auto;display:block}
-.form-panel fieldset{margin:0 auto 22px;padding:24px 0 8px}
-.form-panel fieldset:first-of-type{padding-top:0}
-.field-row{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:24px;margin:0 0 18px}
-.field{min-width:0;max-width:390px;width:100%;margin:0 auto}
-.field input[type=number],.field input[type=text],.field select{max-width:390px}
-.form-panel .inline-note{max-width:760px;margin:8px auto 12px}
-.form-panel .radio-group{justify-content:center;margin:12px auto 14px}
-.form-panel form>.action-bar{margin-top:28px}
-.info-grid{width:min(100%,1040px);margin:0 auto 24px}
-.result-panel{padding-left:max(28px,calc((100vw - 1160px)/2));padding-right:max(28px,calc((100vw - 1160px)/2))}
-.result-panel>.headline-numbers,.result-panel>.key-grid,.result-panel>.seal-row,.result-panel>.info-grid,.result-panel>.detail-block,.result-panel>.evolution-actions,.result-panel>.evolution-panel,.result-panel>.yield-panel,.result-panel>.summary-toggle,.result-panel>.summary-strip,.result-panel>.action-bar{width:min(100%,1040px);margin-left:auto;margin-right:auto}
-.form-panel .action-bar{margin-top:24px;margin-bottom:28px;justify-content:center}
-.action-bar{justify-content:center;gap:22px;row-gap:18px}
-.evolution-actions{justify-content:center;gap:22px}
-.summary-toggle{justify-content:center}
-.result-panel>.action-bar{justify-content:center}
-.form-panel .field-row{margin-bottom:28px}
-.form-panel fieldset{margin-bottom:30px}
-.form-panel .radio-group{margin-top:18px;margin-bottom:20px}
-.form-panel .inline-note{margin-top:14px;margin-bottom:20px}
-.result-panel>.headline-numbers{grid-template-columns:repeat(2,minmax(0,1fr));gap:48px;text-align:center}
-.result-panel>.key-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
-.result-panel .info-grid{grid-template-columns:repeat(2,minmax(0,1fr));grid-template-areas:'parcel credit' 'difference difference';gap:28px}
-.result-panel .detail-block{grid-template-columns:repeat(2,minmax(0,1fr));gap:20px}
-@media(max-width:820px){.wrap{padding:14px}.form-panel{padding:28px 24px}.field-row{grid-template-columns:1fr;gap:16px}.field{max-width:520px}.result-panel>.headline-numbers,.result-panel>.key-grid,.result-panel .info-grid,.result-panel .detail-block{grid-template-columns:1fr}.result-panel .info-grid{display:block}.result-panel .detail-block{display:block}.result-panel>.key-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
-@media(max-width:520px){.result-panel>.key-grid{grid-template-columns:1fr}.form-panel{padding-left:18px;padding-right:18px}}
-.result-panel>.result-panel-top{margin-bottom:30px;padding-bottom:22px}
-.result-panel>.headline-numbers{margin-bottom:34px;padding-bottom:30px}
-.result-panel>.key-grid{margin-bottom:34px;gap:20px}
-.result-panel>.seal-row{margin-bottom:34px;padding-bottom:30px}
-.result-panel>.info-grid{gap:40px;margin-bottom:34px}
-.result-panel .info-grid .cols,.result-panel .info-grid .credito-block,.result-panel .info-grid .diferenca-block{margin-bottom:30px}
-.result-panel .ledger-line{margin-bottom:14px}
-.result-panel>.detail-block{margin:28px auto 34px;gap:30px}
-.result-panel>.evolution-actions{margin:24px auto 32px}
-.result-panel>.evolution-panel{margin-bottom:34px}
-.result-panel>.yield-panel{margin-bottom:34px;padding:24px}
-.result-panel>.summary-toggle{margin:18px auto 22px}
-.result-panel>.summary-strip{gap:24px;margin-bottom:36px}
-.result-panel>.action-bar{padding-top:8px;margin-bottom:20px}
-@media(max-width:820px){.result-panel>.key-grid,.result-panel>.summary-strip{gap:16px}.result-panel>.info-grid{gap:24px}.result-panel>.yield-panel{padding:20px}}
-
-/* O painel de resultado é modal: o formulário usa toda a área enquanto ele está fechado. */
-.wrap{grid-template-columns:minmax(0,1fr)}
-.form-panel{grid-column:1 / -1;width:100%;max-width:none}
-.form-panel form{width:100%;max-width:1180px;margin-left:auto;margin-right:auto}
-.form-panel .field label,.form-panel .inline-note{text-align:center}
-.form-panel .field input[type=number],.form-panel .field input[type=text],.form-panel .field select{text-align:center}
-.form-panel .radio-group{justify-content:center}
-@media(max-width:820px){.wrap{display:block}.form-panel{width:100%}}
+html,body{min-height:100%;margin:0}
+body{background:var(--bg);color:var(--ink);font-size:14px}
+header{height:68px;display:flex;align-items:center;justify-content:space-between;padding:0 28px;background:var(--paper);border-bottom:1px solid var(--line)}
+.brand{display:flex;align-items:center;gap:11px;font-weight:650}.brand img{width:36px;height:36px;object-fit:contain}
+button,input,select{font:inherit}button{border:1px solid var(--line);border-radius:8px;background:var(--paper);color:var(--ink);padding:10px 15px;cursor:pointer}button:hover{border-color:#aebbbc;background:#fafcfb}button:disabled{opacity:.55;cursor:wait}
+#btnLogout{font-size:12px;color:var(--muted)}
+main{width:min(1040px,100%);margin:0 auto;padding:44px 24px 72px}
+.page-heading{margin:0 0 28px}.eyebrow{margin:0 0 9px;color:var(--teal);font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase}h1{margin:0;font-size:30px;line-height:1.16;font-weight:650} .lede{max-width:680px;margin:10px 0 0;color:var(--muted);line-height:1.5}
+.form-shell{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:26px 30px;box-shadow:0 8px 24px #243b3b0c}.form-heading{margin:0 0 4px;font-size:17px}.form-note{margin:0 0 23px;color:var(--muted);font-size:12px}
+fieldset{border:0;border-top:1px solid var(--line);padding:20px 0 0;margin:0 0 21px}fieldset:first-of-type{border-top:0;padding-top:0}legend{padding:0 8px 0 0;color:var(--teal);font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase}
+.fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px 22px}.field{display:flex;min-width:0;flex-direction:column;gap:7px}.field[hidden]{display:none!important}.field label{color:#505b5e;font-size:12px;font-weight:550}.field input,.field select{width:100%;min-width:0;height:42px;border:1px solid #d7dfe0;border-radius:7px;background:#fbfcfc;padding:8px 11px;color:var(--ink);outline:none}.field input:focus,.field select:focus{border-color:var(--teal);box-shadow:0 0 0 3px #087f7818}.input-shell{display:flex;align-items:center;min-width:0;height:42px;border:1px solid #d7dfe0;border-radius:7px;background:#fbfcfc;color:var(--muted)}.input-shell:focus-within{border-color:var(--teal);box-shadow:0 0 0 3px #087f7818}.input-shell>span{flex:none;padding:0 11px;font-size:12px;font-variant-numeric:tabular-nums}.input-shell input{flex:1;width:100%;min-width:0;height:40px;border:0;border-radius:6px;background:transparent;padding:8px 11px;color:var(--ink);font-variant-numeric:tabular-nums;text-align:right;outline:none}.input-shell input:focus{border:0;box-shadow:none}.input-shell input[aria-invalid="true"]{color:var(--red)}
+.choice-row{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}.choice{display:inline-flex;align-items:center;gap:7px;padding:8px 11px;border:1px solid var(--line);border-radius:7px;color:#4b5558;font-size:12px;cursor:pointer}.choice:has(input:checked){border-color:var(--teal);background:var(--teal-soft);color:#075b57}.choice input{accent-color:var(--teal)}
+.helper{margin:10px 0 0;color:var(--muted);font-size:11px;line-height:1.45}.actions{display:flex;justify-content:flex-end;gap:10px;margin-top:24px}.primary{border-color:var(--teal);background:var(--teal);color:#fff;font-weight:650;padding:11px 20px}.primary:hover{border-color:#066c66;background:#066c66;color:#fff}
+.field-guide{margin-top:20px;border-top:1px solid var(--line);padding-top:15px}.field-guide summary{width:fit-content;color:var(--teal);font-size:12px;font-weight:650;cursor:pointer}.field-guide-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px;padding:16px 0 2px}.field-guide h3{margin:0 0 8px;font-size:12px}.field-guide p{margin:0 0 8px;color:var(--muted);font-size:11px;line-height:1.5}.field-guide strong{color:#465154}
+.modal{position:fixed;inset:0;z-index:5;display:none;overflow:auto;background:#14201fc9;padding:22px}.modal.open{display:block}.modal-card{width:min(1180px,100%);min-height:calc(100vh - 44px);margin:0 auto;border-radius:12px;background:var(--bg);box-shadow:0 24px 90px #0005;overflow:hidden}.modal-head{position:sticky;top:0;z-index:2;display:flex;align-items:center;justify-content:space-between;gap:16px;padding:15px 22px;background:#fffF;border-bottom:1px solid var(--line);backdrop-filter:blur(12px)}.modal-head h2{margin:0;font-size:16px}.modal-body{padding:22px}
+.result-top{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:20px}.hero-stat{padding:18px 20px;border:1px solid var(--line);border-radius:9px;background:var(--paper)}.hero-stat .label,.stat .label{color:var(--muted);font-size:11px}.hero-stat .value{margin-top:7px;font-size:27px;font-variant-numeric:tabular-nums;font-weight:650}.hero-stat .sub{margin-top:5px;color:var(--muted);font-size:11px;line-height:1.4}
+.metrics{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px;margin-bottom:22px}.stat{padding:13px;border:1px solid var(--line);border-radius:8px;background:var(--paper);min-width:0}.stat .value{margin-top:7px;font-size:16px;font-weight:650;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+.section{margin:22px 0 28px}.section-head{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-bottom:10px}.section h3{margin:0;font-size:14px}.section-head p{margin:0;color:var(--muted);font-size:11px}.table-wrap{overflow:auto;border:1px solid var(--line);border-radius:8px;background:var(--paper)}table{width:100%;border-collapse:collapse;font-size:12px;font-variant-numeric:tabular-nums}th,td{padding:10px 12px;border-bottom:1px solid #edf0f0;text-align:right;white-space:nowrap}th:first-child,td:first-child{text-align:left}thead th{position:sticky;top:0;background:#f1f6f5;color:#4e6260;font-size:10px;letter-spacing:.05em;text-transform:uppercase;z-index:1}tbody tr:last-child td{border-bottom:0}.selected-col{background:#f0f8f6}
+.footnote{margin:9px 0 0;color:var(--muted);font-size:11px;line-height:1.5}.notice{margin:12px 0;padding:12px 14px;border-left:3px solid var(--gold);background:#fbf5e9;color:#554832;font-size:12px;line-height:1.5}
+.projection-controls{display:flex;align-items:end;gap:14px;flex-wrap:wrap;margin:0 0 14px}.projection-controls .field{width:180px}.projection-controls .helper{flex:1;min-width:200px;margin:0 0 3px}.chart{display:block;width:100%;height:220px;border:1px solid var(--line);border-radius:8px;background:#fff;margin-bottom:12px}.projection-table{max-height:390px}.phase-event td{background:#fff7e8;font-weight:650}.yield-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}.yield-controls{display:grid;grid-template-columns:1fr 1fr;gap:14px;max-width:500px;margin:0 0 16px}
+@media(max-width:720px){header{height:60px;padding:0 15px}main{padding:28px 14px 48px}h1{font-size:25px}.form-shell{padding:20px 16px}.fields{grid-template-columns:1fr;gap:13px}.field-guide-grid{grid-template-columns:1fr;gap:10px}.modal{padding:0}.modal-card{min-height:100vh;border-radius:0}.modal-head{padding:12px 14px}.modal-body{padding:14px}.result-top{grid-template-columns:1fr}.metrics{grid-template-columns:repeat(2,minmax(0,1fr))}.section-head{display:block}.section-head p{margin-top:5px}.projection-controls .field{width:calc(50% - 8px)}.projection-controls .helper{flex-basis:100%}.yield-grid,.yield-controls{grid-template-columns:1fr}.chart{height:190px}}
+@media print{body{background:#fff}header,main,.modal-head button{display:none!important}.modal{position:static;display:block!important;padding:0;background:#fff}.modal-card{width:100%;min-height:0;box-shadow:none}.modal-head{position:static}.modal-body{padding:8px}.projection-table{max-height:none}.section{break-inside:avoid}}
 </style>
 </head>
 <body>
-<header class="hero">
-  <div class="inner">
-    <div class="hero-actions"><button type="button" id="btnLogout" class="btn btn-logout">Sair</button></div>
-    <div class="brand-lockup"><img class="brand-logo" src="logo.svg" alt="Logo de bússola de João Vitor G."><div class="brand-name">João Vitor G.</div></div>
-    <h1>Simulador Consórcio</h1>
-    <p class="lede">Modelo educativo baseado na composição do Fundo Comum, Taxa de Administração, Fundo de Reserva, redutor, taxa antecipada e lance.</p>
-  </div>
+<header>
+  <div class="brand"><img src="logo.svg" alt=""><span>João Vitor G.</span></div>
+  <button type="button" id="btnLogout">Sair</button>
 </header>
-
-<div class="wrap">
-<section class="panel form-panel">
-  <h2>Dados da simulação</h2>
-  <p class="section-note">Use os números do contrato. O modelo abaixo segue as contas definidas em “a + b + c”.</p>
-  <div class="action-bar">
-    <button type="button" id="loadExample" class="btn btn-dark">Carregar exemplo</button>
-  </div>
-
-  <form id="calcForm">
-    <fieldset>
-      <legend>Plano</legend>
-      <div class="field-row"><div class="field"><label for="credito">Valor do crédito (R$)</label><input type="number" id="credito" value="1000000" placeholder="Ex.: 1000000" min="1" step="100"></div><div class="field"><label for="prazo">Prazo total (meses)</label><input type="number" id="prazo" value="240" placeholder="Ex.: 240" min="1" step="1"></div></div>
-      <div class="field-row"><div class="field"><label for="ta">Taxa de administração total (%)</label><input type="number" id="ta" value="18" placeholder="Ex.: 18" min="0" step="0.1"></div><div class="field"><label for="fr">Fundo de reserva total (%)</label><input type="number" id="fr" value="2" placeholder="Ex.: 2" min="0" step="0.1"></div></div>
-      <div class="field-row"><div class="field"><label for="mesContemplacao">Contemplação na parcela nº</label><input type="number" id="mesContemplacao" value="11" placeholder="Ex.: 11" min="1" step="1"></div></div>
-      <div class="field-row"><div class="field"><label for="inccPct">IPCA / INCC / reajuste anual (%)</label><input type="number" id="inccPct" value="5" placeholder="Ex.: 5" min="0" step="0.1"></div><div class="field"><label>Aplicação</label><div class="inline-note" style="margin:0">Reajuste proporcional aplicado sobre o saldo devedor remanescente. A parcela é recalculada para diminuir até zerar.</div></div></div>
-      <div class="field-row"><div class="field"><label for="tipoBem">Tipo de bem</label><select id="tipoBem"><option value="auto">Automóvel — 1% do saldo devedor</option><option value="imovel" selected>Imóvel — 0,5% do saldo devedor</option></select></div><div class="field"><label>Regra pós-contemplação</label><div class="inline-note" style="margin:0">A parcela mínima usa o saldo devedor inicial, com taxas: 1% para automóvel e 0,5% para imóvel.</div></div></div>
-      <div class="inline-note">A atualização do crédito e da parcela segue a decomposição oficial do contrato.</div>
-    </fieldset>
-
-    <fieldset>
-      <legend>Plano redutor</legend>
-      <div class="radio-group"><label><input type="radio" name="redutor" value="0"> Sem redução</label><label><input type="radio" name="redutor" value="25"> 25%</label><label><input type="radio" name="redutor" value="50" checked> 50%</label><label><input type="radio" name="redutor" value="custom"> Outro %</label></div>
-      <div class="field" id="redutorCustomField"><label for="redutorCustom">Percentual do redutor (%)</label><input type="number" id="redutorCustom" value="50" placeholder="Ex.: 50" min="0" max="95" step="1"></div>
-      <p class="inline-note">O redutor reduz Fundo Comum e Fundo de Reserva. A Taxa de Administração não sofre o redutor.</p>
-    </fieldset>
-
-    <fieldset>
-      <legend>Taxa de adesão antecipada</legend>
-      <div class="field"><label for="adesaoPct">Adesão-base (% do crédito)</label><input type="number" id="adesaoPct" value="2.5" placeholder="Ex.: 2,5" min="0" max="100" step="0.1"></div>
-      <div class="radio-group"><label><input type="radio" name="adesaoForma" value="avista" checked> À vista</label><label><input type="radio" name="adesaoForma" value="diluida"> Diluída</label></div>
-      <div class="field" id="adesaoMesesField"><label for="adesaoMeses">Diluir em quantas parcelas</label><input type="number" id="adesaoMeses" value="12" min="1" step="1"></div>
-      <p class="inline-note">A adesão é separada da TA. No comparativo, ela parte do percentual sobre o crédito e é ajustada pela diferença entre a parcela cheia e a parcela reduzida.</p>
-    </fieldset>
-
-    <fieldset>
-      <legend>Lance na contemplação</legend>
-      <div class="field-row"><div class="field"><label for="dinheiro">Lance com recursos próprios (R$)</label><input type="number" id="dinheiro" value="250000" placeholder="Ex.: 250000" min="0" step="100"></div><div class="field"><label for="embutido">Lance embutido (%)</label><input type="number" id="embutido" value="0" placeholder="Ex.: 20" min="0" max="100" step="0.1"></div></div>
-      <div class="radio-group"><label><input type="radio" name="restante" value="parcelas" checked> Amortizar parcelas</label><label><input type="radio" name="restante" value="prazo"> Amortizar prazo</label></div>
-      <p class="inline-note">Abater no prazo: o lance quita parcelas de trás para frente e reduz meses. Abater na parcela: o lance é diluído em todas as parcelas restantes, reduzindo o valor sem ultrapassar a parcela mínima.</p>
-    </fieldset>
-    <div class="action-bar"><button type="button" id="btnShowResults" class="btn btn-gold">Realizar pesquisa ↓</button></div>
-  </form>
-</section>
-
-<section class="panel result-panel" id="resultsPanel">
-  <div class="result-panel-top"><div class="headline-tag" id="headlineTag">Extrato simulado</div><button type="button" class="btn btn-ghost btn-sm" id="btnHideResults">Ocultar ↑</button></div>
-
-  <div class="headline-numbers">
-    <div><div class="headline-label">1ª parcela</div><div class="headline-value" id="headline1a">—</div><div class="headline-sub" id="headline1aSub"></div></div>
-    <div><div class="headline-label">Parcela pós-contemplação</div><div class="headline-value" id="headlinePos">—</div><div class="headline-sub" id="headlinePosSub"></div></div>
-  </div>
-
-  <div class="key-grid">
-    <div class="key-card"><div class="k">Lance embutido</div><div class="v" id="keyEmbutido">—</div><div class="s">utilizado no saldo</div></div>
-    <div class="key-card"><div class="k">Lance próprio</div><div class="v" id="keyProprio">—</div><div class="s">utilizado no saldo</div></div>
-    <div class="key-card"><div class="k">Meses restantes</div><div class="v" id="keyMeses">—</div><div class="s">após contemplação</div></div>
-    <div class="key-card"><div class="k">Crédito líquido</div><div class="v" id="keyCredito">—</div><div class="s">crédito − embutido</div></div>
-  </div>
-
-  <section class="section-block" aria-labelledby="planComparisonTitle">
-    <h4 id="planComparisonTitle">Conferência do plano: cheio e redutor</h4>
-    <p class="evolution-note">Comparativo calculado com o crédito, prazo, TA, FR e adesão informados.</p>
-    <div class="evolution-table-wrap"><table class="evolution-table"><thead><tr><th>Componente</th><th>Cheio</th><th>Redutor 25%</th><th>Redutor 50%</th></tr></thead><tbody id="planComparisonRows"></tbody></table></div>
+<main>
+  <div class="page-heading"><p class="eyebrow">Simulador de consórcio</p><h1>Monte sua simulação</h1><p class="lede">Informe as condições do plano para comparar crédito cheio, redutores e os cenários de pagamento após a contemplação.</p></div>
+  <section class="form-shell">
+    <h2 class="form-heading">Dados do plano</h2>
+    <p class="form-note">Os percentuais de administração e adesão são informados como no contrato.</p>
+    <form id="simulationForm">
+      <fieldset>
+        <legend>Crédito e taxas</legend>
+        <div class="fields">
+          <div class="field"><label for="credit">Crédito contratado</label><div class="input-shell"><span>R$</span><input id="credit" inputmode="decimal" type="text" data-format="currency" data-min="0" value="1000000,00" required></div></div>
+          <div class="field"><label for="term">Prazo total</label><div class="input-shell"><input id="term" type="number" min="1" step="1" value="240" required><span>meses</span></div></div>
+          <div class="field"><label for="adminPct">Taxa de administração total</label><div class="input-shell"><input id="adminPct" inputmode="decimal" type="text" data-format="percent" data-min="0" value="20" required><span>%</span></div></div>
+          <div class="field"><label for="adhesionPct">Taxa de adesão</label><div class="input-shell"><input id="adhesionPct" inputmode="decimal" type="text" data-format="percent" data-min="0" value="2" required><span>%</span></div></div>
+          <div class="field"><label for="adhesionMode">Forma de cobrança</label><select id="adhesionMode"><option value="avista" selected>À vista, com 1 parcela</option><option value="diluida">Diluída por mês</option></select></div>
+          <div class="field" id="adhesionMonthsField" hidden><label for="adhesionMonths">Diluir em quantos meses</label><div class="input-shell"><input id="adhesionMonths" type="number" min="1" step="1" value="12" disabled><span>meses</span></div></div>
+          <div class="field"><label for="reservePct">Fundo de reserva</label><div class="input-shell"><input id="reservePct" inputmode="decimal" type="text" data-format="percent" data-min="0" value="2" required><span>%</span></div></div>
+          <div class="field"><label for="paidBefore">Pagamentos antes da contemplação</label><div class="input-shell"><input id="paidBefore" type="number" min="0" step="1" value="10" required><span>parcelas</span></div></div>
+          <div class="field"><label for="assetType">Tipo de bem</label><select id="assetType"><option value="imovel" selected>Imóvel</option><option value="auto">Automóvel</option></select></div>
+          <div class="field"><label for="redutor">Redutor selecionado</label><select id="redutor"><option value="0">Cheio, sem redutor</option><option value="25">Redutor de 25%</option><option value="50" selected>Redutor de 50%</option></select></div>
+        </div>
+      </fieldset>
+      <fieldset>
+        <legend>Lance e amortização</legend>
+        <div class="fields">
+          <div class="field"><label for="bidOwn">Lance com recursos próprios</label><div class="input-shell"><span>R$</span><input id="bidOwn" inputmode="decimal" type="text" data-format="currency" data-min="0" value="250000,00"></div></div>
+          <div class="field"><label for="bidEmbedded">Lance embutido</label><div class="input-shell"><span>R$</span><input id="bidEmbedded" inputmode="decimal" type="text" data-format="currency" data-min="0" value="0,00"></div></div>
+        </div>
+        <div class="choice-row" role="radiogroup" aria-label="Forma de amortização">
+          <label class="choice"><input type="radio" name="mode" value="prazo" checked> Abater no prazo</label>
+          <label class="choice"><input type="radio" name="mode" value="parcelas"> Abater na parcela</label>
+        </div>
+      </fieldset>
+      <details class="field-guide">
+        <summary>Informações dos campos e critérios de cálculo</summary>
+        <div class="field-guide-grid">
+          <section>
+            <h3>Plano e taxas</h3>
+            <p><strong>Crédito:</strong> base do Fundo Comum e dos percentuais informados.</p>
+            <p><strong>Administração:</strong> a adesão é descontada da taxa total para formar a TA líquida do plano.</p>
+            <p><strong>Fundo de reserva:</strong> percentual aplicado sobre o Fundo Comum, acompanhando o redutor.</p>
+            <p><strong>Prazo:</strong> número de parcelas do contrato.</p>
+          </section>
+          <section>
+            <h3>Adesão, redutor e lance</h3>
+            <p id="adhesionHelp">À vista, a adesão equivale ao percentual do crédito mais uma parcela. Diluída, a taxa é dividida pelos meses escolhidos e adicionada temporariamente à parcela.</p>
+            <p><strong>Redutor:</strong> reduz Fundo Comum e Fundo de Reserva; não reduz a TA líquida.</p>
+            <p><strong>Tipo de bem:</strong> define o piso pós-contemplação de 0,5% para imóvel ou 1% para automóvel, sobre o saldo inicial com taxas.</p>
+            <p><strong>Lance:</strong> recursos próprios e lance embutido são somados para abater o saldo.</p>
+            <p><strong>Amortização:</strong> o modo prazo recalcula meses; o modo parcela mantém o piso e estende o prazo quando necessário.</p>
+          </section>
+          <section>
+            <h3>Projeções</h3>
+            <p><strong>Pagamentos antes:</strong> quantidade de pagamentos realizados antes da contemplação, incluindo a adesão conforme a modalidade.</p>
+            <p><strong>INCC/IPCA:</strong> reajusta crédito, saldo e parcelas a cada 12 meses até a quitação.</p>
+            <p><strong>Rendimento:</strong> juros compostos sobre o crédito líquido, sem descontar parcelas.</p>
+            <p><strong>Última parcela:</strong> não ultrapassa o saldo restante; se a parcela calculada for menor, o prazo continua.</p>
+          </section>
+        </div>
+      </details>
+      <div class="actions"><button class="primary" type="submit">Calcular simulação</button></div>
+    </form>
   </section>
+</main>
 
-  <section class="section-block" aria-labelledby="postComparisonTitle">
-    <h4 id="postComparisonTitle">Pós-contemplação por cenário</h4>
-    <p class="evolution-note" id="postComparisonNote"></p>
-    <div class="evolution-table-wrap"><table class="evolution-table"><thead><tr><th>Componente</th><th>Cheio</th><th>Redutor 25%</th><th>Redutor 50%</th></tr></thead><tbody id="postComparisonRows"></tbody></table></div>
-  </section>
-
-  <div class="seal-row">
-    <div class="seal"><div class="num" id="sealTaxa">—</div><div class="lbl">taxa real pós-contemplação</div></div>
-    <div class="seal-desc"><h3>Resumo financeiro</h3><p id="sealText">—</p></div>
+<section class="modal" id="resultsModal" role="dialog" aria-modal="true" aria-labelledby="resultsTitle">
+  <div class="modal-card">
+    <div class="modal-head"><h2 id="resultsTitle">Resultado da simulação</h2><button type="button" id="closeResults">Fechar</button></div>
+    <div class="modal-body">
+      <div class="result-top">
+        <div class="hero-stat"><div class="label">Parcela antes da contemplação</div><div class="value" id="beforeInstallment">—</div><div class="sub" id="beforeInstallmentSub"></div></div>
+        <div class="hero-stat"><div class="label">Parcela após a contemplação</div><div class="value" id="afterInstallment">—</div><div class="sub" id="afterInstallmentSub"></div></div>
+      </div>
+      <div class="metrics">
+        <div class="stat"><div class="label">TA líquida</div><div class="value" id="netAdminResult">—</div></div>
+        <div class="stat"><div class="label">Saldo inicial cheio</div><div class="value" id="fullDebtResult">—</div></div>
+        <div class="stat"><div class="label">Piso pós-contemplação</div><div class="value" id="minimumResult">—</div></div>
+        <div class="stat"><div class="label">Prazo pós-contemplação</div><div class="value" id="monthsResult">—</div></div>
+        <div class="stat"><div class="label">Prazo total estimado</div><div class="value" id="totalTermResult">—</div></div>
+      </div>
+      <section class="section">
+        <div class="section-head"><h3>Plano antes da contemplação</h3><p>Cheio, redutor de 25% e redutor de 50%</p></div>
+        <div class="table-wrap"><table><thead><tr><th>Componente</th><th>Cheio</th><th>Redutor 25%</th><th>Redutor 50%</th></tr></thead><tbody id="planRows"></tbody></table></div>
+      </section>
+      <section class="section">
+        <div class="section-head"><h3>Pós-contemplação</h3><p id="postModeLabel"></p></div>
+        <div class="table-wrap"><table><thead><tr><th>Componente</th><th>Cheio</th><th>Redutor 25%</th><th>Redutor 50%</th></tr></thead><tbody id="postRows"></tbody></table></div>
+        <p class="notice" id="postNote"></p>
+      </section>
+      <section class="section">
+        <div class="section-head"><h3>Evolução anual do crédito e saldo</h3><p id="indexName">INCC</p></div>
+        <div class="projection-controls">
+          <div class="field"><label for="indexRate">Reajuste anual</label><div class="input-shell"><input id="indexRate" inputmode="decimal" type="text" data-format="percent" data-min="0" value="5"><span>% ao ano</span></div></div>
+          <p class="helper">O reajuste ocorre a cada 12 meses, antes ou depois da contemplação, e segue até a quitação do saldo.</p>
+        </div>
+        <canvas class="chart" id="projectionChart" width="1000" height="260" aria-label="Gráfico de saldo devedor e parcela ao longo do prazo"></canvas>
+        <div class="table-wrap projection-table"><table><thead><tr><th>Mês</th><th>Fase</th><th>Índice acumulado</th><th>Crédito atualizado</th><th>Parcela</th><th>Saldo devedor</th></tr></thead><tbody id="projectionRows"></tbody></table></div>
+      </section>
+      <section class="section">
+        <div class="section-head"><h3>Rendimento do crédito contemplado</h3><p>Juros compostos mensais, sem descontar parcelas</p></div>
+        <div class="yield-controls">
+          <div class="field"><label for="yieldRate">Rendimento mensal</label><div class="input-shell"><input id="yieldRate" inputmode="decimal" type="text" data-format="percent" data-min="0" value="1"><span>%</span></div></div>
+          <div class="field"><label for="yieldMonths">Prazo do rendimento</label><div class="input-shell"><input id="yieldMonths" type="number" min="0" step="1" value="12"><span>meses</span></div></div>
+        </div>
+        <div class="yield-grid">
+          <div class="stat"><div class="label">Crédito líquido contemplado</div><div class="value" id="yieldBase">—</div></div>
+          <div class="stat"><div class="label">Rendimento no primeiro mês</div><div class="value" id="yieldFirst">—</div></div>
+          <div class="stat"><div class="label">Valor após o prazo</div><div class="value" id="yieldTotal">—</div></div>
+        </div>
+      </section>
+      <div class="actions"><button type="button" id="printResults">Imprimir</button></div>
+    </div>
   </div>
-
-  <div class="info-grid">
-  <div class="cols parcela-block">
-    <div class="ledger"><h4>Parcela pós-contemplação</h4><div class="ledger-line"><span class="lbl">Saldo devedor inicial</span><span class="fill"></span><span class="val" id="posFundo">—</span></div><div class="ledger-line"><span class="lbl">Percentual pós-contemplação</span><span class="fill"></span><span class="val" id="posTA">—</span></div><div class="ledger-line"><span class="lbl">Parcela mínima sobre saldo inicial</span><span class="fill"></span><span class="val" id="posFR">—</span></div><div class="ledger-line"><span class="lbl">Diferença diluída</span><span class="fill"></span><span class="val" id="posDiluicao">—</span></div><div class="ledger-line total"><span class="lbl">Parcela pós-contemplação</span><span class="fill"></span><span class="val" id="posTotal">—</span></div></div>
-  </div>
-
-  <div class="section-block diferenca-block"><h4>Diferença faltante do redutor</h4><div class="ledger-line"><span class="lbl">Diferença mensal</span><span class="fill"></span><span class="val" id="difMensal">—</span></div><div class="ledger-line total"><span class="lbl">Diferença acumulada até contemplação</span><span class="fill"></span><span class="val" id="difAcumulada">—</span></div><div class="ledger-line"><span class="lbl">Diferença diluída no pós</span><span class="fill"></span><span class="val" id="difDiluida">—</span></div></div>
-
-  <div class="section-block credito-block"><h4>Crédito, saldo e prazo</h4><div class="ledger-line"><span class="lbl">Crédito contratado</span><span class="fill"></span><span class="val" id="creditoContratado">—</span></div><div class="ledger-line"><span class="lbl">Lance embutido</span><span class="fill"></span><span class="val" id="creditoEmbutido">—</span></div><div class="ledger-line total"><span class="lbl">Crédito líquido recebido</span><span class="fill"></span><span class="val" id="creditoLiquido">—</span></div><div class="ledger-line"><span class="lbl">Saldo antes do lance</span><span class="fill"></span><span class="val" id="saldoAntesLance">—</span></div><div class="ledger-line ok"><span class="lbl">Lance utilizado no saldo</span><span class="fill"></span><span class="val" id="lanceUtilizado">—</span></div><div class="ledger-line total"><span class="lbl">Saldo após o lance</span><span class="fill"></span><span class="val" id="saldoDepoisLance">—</span></div><div class="ledger-line"><span class="lbl">Meses contratuais restantes</span><span class="fill"></span><span class="val" id="mesesRestantesContrato">—</span></div><div class="ledger-line"><span class="lbl">Meses economizados</span><span class="fill"></span><span class="val" id="mesesEconomizados">—</span></div><div class="ledger-line total"><span class="lbl">Meses pós-contemplação</span><span class="fill"></span><span class="val" id="mesesPos">—</span></div><div class="ledger-line"><span class="lbl">Lance não utilizado</span><span class="fill"></span><span class="val" id="lanceNaoUtilizado">—</span></div></div>
-  </div>
-
-  <details class="detail-block"><summary>Ver fórmulas e composição do lance</summary><div class="formula" id="formula"></div><div class="lance-info" id="lanceInfo"></div></details>
-
-  <div class="evolution-actions"><button type="button" id="btnToggleEvolution" class="btn btn-gold">Ver evolução com reajuste anual ↓</button></div>
-  <div class="evolution-panel" id="evolutionPanel"><div class="chart-wrap"><h4>Evolução do saldo e das parcelas</h4><p class="evolution-note">A evolução usa a parcela calculada após a contemplação. O reajuste anual é aplicado sobre ela e o lance é abatido conforme a opção escolhida: parcela ou prazo.</p><canvas id="chart" width="900" height="150"></canvas></div><div class="evolution-table-wrap"><table class="evolution-table"><thead><tr><th>Mês</th><th>Fase</th><th>Reajuste no saldo</th><th>Saldo remanescente</th><th>Parcela pós calculada</th></tr></thead><tbody id="evolutionRows"></tbody></table></div></div>
-
-  <div class="yield-panel"><h4>Rendimento da carta contemplada</h4><p class="yield-note">Simulação de juros compostos mensais aplicados sobre o valor do crédito contemplado.</p><div class="yield-controls"><label class="yield-toggle"><input type="checkbox" id="rendimentoAtivo" checked> Considerar rendimento</label><label class="yield-rate" for="rendimentoPct">Taxa mensal <input type="number" id="rendimentoPct" value="1" min="0" step="0.1">%</label><label class="yield-rate" for="rendimentoMeses">Prazo <input type="number" id="rendimentoMeses" value="12" min="1" step="1"> meses</label></div><div class="yield-result"><div class="stat"><div class="k">Crédito contemplado</div><div class="v" id="rendimentoBase">—</div></div><div class="stat"><div class="k">Rendimento no 1º mês</div><div class="v" id="rendimentoMensal">—</div></div><div class="stat"><div class="k">Valor após o prazo</div><div class="v" id="rendimentoTotal">—</div></div></div></div>
-
-  <div class="summary-toggle"><button type="button" id="btnToggleSummary" class="btn btn-ghost btn-sm">Ocultar resumo ↑</button></div>
-  <div class="summary-strip"><div class="stat"><div class="k">Total pago em parcelas</div><div class="v" id="statTotalParcelas">—</div></div><div class="stat"><div class="k">Contemplado − lance (qualquer um)</div><div class="v" id="statDesembolso">—</div><div class="s" id="statDesembolsoFormula">—</div></div><div class="stat"><div class="k">Taxa real anual equivalente</div><div class="v" id="statTaxa">—</div></div></div>
-
-  <div class="action-bar"><button type="button" id="btnExportPDF" class="btn btn-gold">Imprimir resumo</button></div>
 </section>
-
-<p class="disclaimer"><strong>Sobre esta simulação:</strong> ferramenta educacional independente. As contas seguem o modelo didático de “a + b + c”. Regras reais de cobrança, atualização do crédito, contemplação e amortização devem ser confirmadas na decomposição dos pagamentos e no contrato da administradora.</p>
-</div>
-
+<script src="/JS/calc.js"></script>
 <script>
-/* =============================================================
-   MODELO A + B + C
-   ============================================================= */
-function calc(inp){
-  const credito=Math.max(0,Number(inp.credito)||0);
-  const N=Math.max(1,Math.floor(Number(inp.prazo)||1));
-  const taPct=Math.max(0,Number(inp.taPct)||0);
-  const frPct=Math.max(0,Number(inp.frPct)||0);
-  const seguroPct=Math.max(0,Number(inp.seguroPct)||0);
-  const inccPct=Math.max(0,Number(inp.inccPct ?? 5)||0);
-  const seguro=credito*seguroPct/100;
-
-  let redutorPct=Number(inp.redutorPct);
-  if(inp.redutorPct==='custom') redutorPct=Number(inp.redutorCustomPct)||0;
-  redutorPct=Math.min(Math.max(redutorPct,0),95);
-
-  const k=Math.min(Math.max(Math.floor(Number(inp.mesContemplacao)||1),1),N);
-  const tipoBem=inp.tipoBem==='auto'?'auto':'imovel';
-  const percentualPos=tipoBem==='auto'?0.01:0.005;
-
-  /* A — taxa antecipada dentro da TA total */
-  const adesaoPct=Math.min(Math.max(Number(inp.adesaoPct)||0,0),100);
-  const adesaoBaseValor=credito*adesaoPct/100;
-  const adesaoForma=inp.adesaoForma==='diluida'?'diluida':'avista';
-  let adesaoMeses=adesaoForma==='avista'?1:Math.max(1,Math.floor(Number(inp.adesaoMeses)||1));
-  adesaoMeses=Math.min(adesaoMeses,N);
-
-  /* B — componentes mensais */
-  const fundoComumMensal=credito/N;
-  const frMensalCheio=credito*frPct/100/N;
-  const taMensal=credito*taPct/100/N;
-  const fatorRedutor=1-redutorPct/100;
-  const fundoComumReduzido=fundoComumMensal*fatorRedutor;
-  const frReduzido=frMensalCheio*fatorRedutor;
-
-  const parcelaCheiaBase=fundoComumMensal+frMensalCheio+taMensal+seguro;
-  const parcelaReduzida=fundoComumReduzido+frReduzido+taMensal+seguro;
-  const adesaoValor=Math.max(0,adesaoBaseValor+parcelaReduzida-parcelaCheiaBase);
-  const adesaoPorParcela=adesaoMeses>0?adesaoValor/adesaoMeses:0;
-  const primeiraParcela=adesaoForma==='avista' && adesaoValor>0
-    ? adesaoValor
-    : parcelaReduzida+(adesaoForma==='diluida'?adesaoPorParcela:0);
-
-  function calcularPlano(redutor){
-    const fator=1-redutor/100;
-    const fundoComum=credito*fator;
-    const fundoReserva=credito*frPct/100*fator;
-    const saldoDevedor=fundoComum+credito*taPct/100+fundoReserva;
-    const parcela=saldoDevedor/N;
-    const adesao=Math.max(0,adesaoBaseValor+parcela-credito*(1+(taPct+frPct)/100)/N);
-    return {redutor,fundoComum,fundoReserva,saldoDevedor,adesao,parcela};
-  }
-  const comparativoPlanilha=[0,25,50].map(calcularPlano);
-  const planoSelecionado=calcularPlano(redutorPct);
-
-  /* C — diferença criada pelo redutor */
-  const diferencaMensal=(fundoComumMensal-fundoComumReduzido)+(frMensalCheio-frReduzido);
-
-  /* Lance: próprio + embutido = valor total utilizado para amortizar o saldo. */
-  const lanceProprio=inp.dinheiro!==undefined
-    ? Math.min(Math.max(Number(inp.dinheiro)||0,0),credito)
-    : credito*Math.min(Math.max(Number(inp.dinheiroPct)||0,0),100)/100;
-  const lanceEmbutido=inp.embutidoPct!==undefined
-    ? credito*Math.min(Math.max(Number(inp.embutidoPct)||0,0),100)/100
-    : Math.min(Math.max(Number(inp.embutido)||0,0),credito);
-  const lanceSomado=lanceProprio+lanceEmbutido;
-
-  /* Crédito líquido: o embutido reduz o crédito que será disponibilizado. */
-  const creditoLiquido=Math.max(0,credito-lanceEmbutido);
-
-  const primeiroMesPosContemplacao=k===1?2:k;
-  const parcelasPagasAntesContemplacao=Math.max(0,Math.min(k===1?1:k-1,N));
-  const mesesRestantesContrato=Math.max(0,N-parcelasPagasAntesContemplacao);
-  const taxasTotais=credito*(taPct+frPct)/100+seguro*N;
-  const saldoDevedorInicial=comparativoPlanilha[0].saldoDevedor;
-
-  function pagamentoPreContemplacao(plano,mes){
-    if(adesaoForma==='avista' && mes===1 && plano.adesao>0) return plano.adesao;
-    const adesaoMes=adesaoForma==='diluida' && mes<=adesaoMeses?plano.adesao/adesaoMeses:0;
-    return plano.parcela+adesaoMes;
-  }
-
-  function pagamentosAntes(plano){
-    let total=0;
-    let adesaoPaga=0;
-    for(let mes=1;mes<=parcelasPagasAntesContemplacao;mes++){
-      total+=pagamentoPreContemplacao(plano,mes);
-      if(adesaoForma==='avista' && mes===1) adesaoPaga+=plano.adesao;
-      else if(adesaoForma==='diluida' && mes<=adesaoMeses) adesaoPaga+=plano.adesao/adesaoMeses;
-    }
-    return {total,adesaoPaga};
-  }
-
-  const pagamentosPlanoCheio=pagamentosAntes(comparativoPlanilha[0]);
-  const lancePlanoCheio=Math.min(lanceSomado,Math.max(0,comparativoPlanilha[0].saldoDevedor-pagamentosPlanoCheio.total));
-  const saldoCheioPosPagamentos=Math.max(0,comparativoPlanilha[0].saldoDevedor-pagamentosPlanoCheio.total-lancePlanoCheio);
-  const mesesPosBase=Math.max(1,mesesRestantesContrato);
-  const comparativoPos=comparativoPlanilha.map(plano=>{
-    const pagos=pagamentosAntes(plano);
-    const saldoAntesLance=Math.max(0,plano.saldoDevedor-pagos.total);
-    const lancePlano=Math.min(lanceSomado,saldoAntesLance);
-    const saldoPosLance=Math.max(0,plano.saldoDevedor-lancePlano);
-    const saldoPosPagamentos=Math.max(0,saldoPosLance-pagos.total);
-    const diferencaSaldo=Math.max(0,saldoCheioPosPagamentos-saldoPosPagamentos);
-    const diferencaMes=mesesPosBase>0?diferencaSaldo/mesesPosBase:0;
-    const diferencaAcumulada=Math.max(0,comparativoPlanilha[0].parcela-plano.parcela)*parcelasPagasAntesContemplacao;
-    const parcelaMinima=saldoDevedorInicial*percentualPos;
-    const parcelaPorPrazo=mesesPosBase>0?saldoPosPagamentos/mesesPosBase:0;
-    const parcelaReal=Math.max(parcelaMinima,parcelaPorPrazo)+diferencaMes;
-    const saldoPrazo=saldoPosPagamentos+diferencaSaldo;
-    const saldoParcelas=saldoPrazo+diferencaAcumulada;
-    return {
-      ...plano,
-      saldoAntesLance,
-      lanceUtilizado:lancePlano,
-      saldoPosLance,
-      valorParcelasPagasAntes:pagos.total,
-      adesaoPagaAteContemplacao:pagos.adesaoPaga,
-      saldoPosPagamentos,
-      diferencaSaldo,
-      diferencaMensal:diferencaMes,
-      diferencaAcumulada,
-      parcelaMinima,
-      parcelaPorPrazo,
-      parcelaReal,
-      saldoPrazo,
-      mesesPrazo:Math.max(1,Math.round(saldoPrazo/Math.max(parcelaReal,0.01))),
-      saldoParcelas,
-      mesesParcelas:Math.max(1,Math.round(saldoParcelas/Math.max(parcelaMinima,0.01)))
-    };
-  });
-  const planoPosSelecionado=comparativoPos.find(plano=>plano.redutor===redutorPct) || (()=>{
-    const pagos=pagamentosAntes(planoSelecionado);
-    const saldoAntesLance=Math.max(0,planoSelecionado.saldoDevedor-pagos.total);
-    const lancePlano=Math.min(lanceSomado,saldoAntesLance);
-    const saldoPosLance=Math.max(0,planoSelecionado.saldoDevedor-lancePlano);
-    const saldoPosPagamentos=Math.max(0,saldoPosLance-pagos.total);
-    const diferencaSaldo=Math.max(0,saldoCheioPosPagamentos-saldoPosPagamentos);
-    const diferencaMes=diferencaSaldo/mesesPosBase;
-    const diferencaAcumulada=Math.max(0,comparativoPlanilha[0].parcela-planoSelecionado.parcela)*parcelasPagasAntesContemplacao;
-    const parcelaMinima=saldoDevedorInicial*percentualPos;
-    const parcelaPorPrazo=saldoPosPagamentos/mesesPosBase;
-    const parcelaReal=Math.max(parcelaMinima,parcelaPorPrazo)+diferencaMes;
-    const saldoPrazo=saldoPosPagamentos+diferencaSaldo;
-    const saldoParcelas=saldoPrazo+diferencaAcumulada;
-    return {...planoSelecionado,saldoAntesLance,lanceUtilizado:lancePlano,saldoPosLance,valorParcelasPagasAntes:pagos.total,adesaoPagaAteContemplacao:pagos.adesaoPaga,saldoPosPagamentos,diferencaSaldo,diferencaMensal:diferencaMes,diferencaAcumulada,parcelaMinima,parcelaPorPrazo,parcelaReal,saldoPrazo,mesesPrazo:Math.max(1,Math.round(saldoPrazo/Math.max(parcelaReal,0.01))),saldoParcelas,mesesParcelas:Math.max(1,Math.round(saldoParcelas/Math.max(parcelaMinima,0.01)))};
-  })();
-
-  const valorParcelasPagasAntes=planoPosSelecionado.valorParcelasPagasAntes;
-  const saldoDevedorPlano=planoSelecionado.saldoDevedor;
-  const saldoDevedorAntesLance=planoPosSelecionado.saldoAntesLance;
-  const lanceUtilizado=planoPosSelecionado.lanceUtilizado;
-  const lanceNaoUtilizado=Math.max(0,lanceSomado-lanceUtilizado);
-  const saldoDevedor=planoPosSelecionado.saldoPosPagamentos;
-  const obrigacaoPos=inp.formaRestante==='prazo'?planoPosSelecionado.saldoPrazo:planoPosSelecionado.saldoParcelas;
-  const diferencaTotal=planoPosSelecionado.diferencaSaldo;
-  const diferencaAcumulada=planoPosSelecionado.diferencaAcumulada;
-  const diferencaDiluidaBase=planoPosSelecionado.diferencaMensal;
-  const parcelaMinima=planoPosSelecionado.parcelaMinima;
-  const parcelaMinimaComDiferenca=parcelaMinima+diferencaDiluidaBase;
-  const parcelaBaseAntesAmortizacao=planoPosSelecionado.parcelaReal;
-  const parcelaPos=inp.formaRestante==='prazo'?planoPosSelecionado.parcelaReal:parcelaMinima;
-  const mesesPosContemplacao=inp.formaRestante==='prazo'?planoPosSelecionado.mesesPrazo:planoPosSelecionado.mesesParcelas;
-  const mesesEconomizados=Math.max(0,mesesRestantesContrato-mesesPosContemplacao);
-  const prazoEfetivo=parcelasPagasAntesContemplacao+mesesPosContemplacao;
-  const mesesDiluidos=mesesRestantesContrato;
-  const mesesExtras=Math.max(0,prazoEfetivo-N);
-  const reducaoParcela=mesesDiluidos>0?lanceUtilizado/mesesDiluidos:0;
-  const pisoBloqueouReducao=inp.formaRestante==='parcelas' && parcelaPos<=parcelaMinima+0.000001;
-
-  /* Apenas para informar de onde veio o lance utilizado. */
-  const embutidoUtilizado=Math.min(lanceEmbutido,lanceUtilizado);
-  const proprioUtilizado=Math.min(
-    lanceProprio,
-    Math.max(0,lanceUtilizado-embutidoUtilizado)
-  );
-
-  /* Fluxo das parcelas. A parcela da contemplação é a k-ésima. */
-  function pagamentoPrincipalPos(mes){
-    return Math.min(
-      parcelaPos,
-      Math.max(0,obrigacaoPos-parcelaPos*(mes-1))
-    );
-  }
-
-  const outflow=new Array(prazoEfetivo+1).fill(0);
-  for(let t=1;t<=prazoEfetivo;t++){
-    if(k===1 && t===1){
-      outflow[t]=primeiraParcela;
-    }else if(t<k){
-      outflow[t]=pagamentoPreContemplacao(planoSelecionado,t);
-    }else{
-      const adesaoFutura=adesaoForma==='diluida' && t<=adesaoMeses?adesaoPorParcela:0;
-      outflow[t]=pagamentoPrincipalPos(t-primeiroMesPosContemplacao+1)+adesaoFutura;
-    }
-  }
-
-  /* A contemplação na parcela k deixa k - 1 parcelas pagas.
-     A primeira delas já contém a adesão. */
-  const valorParcelasAntesContemplacao=valorParcelasPagasAntes;
-
-  const adesaoPagaAteContemplacao=planoPosSelecionado.adesaoPagaAteContemplacao;
-
-  const pagoAntesContemplacao=valorParcelasAntesContemplacao;
-
-  /* Desembolso total: parcelas + lance próprio efetivamente desembolsado. */
-  const desembolsoAteContemplacao=pagoAntesContemplacao+proprioUtilizado;
-
-  /* Total de parcelas + desembolso de lance próprio. */
-  const totalPagoParcelas=outflow
-    .slice(1)
-    .reduce((s,v)=>s+v,0);
-  const totalPagoParcelasReajustado=totalPagoParcelas;
-
-  /*
-     TAXA REAL PÓS-CONTEMPLAÇÃO
-
-     Não recalculamos a taxa do plano inteiro.
-     A pergunta aqui é: "quanto eu recebo na contemplação em relação
-     ao que ainda vou desembolsar depois dela?"
-
-     No instante da contemplação (t = 0):
-       entrada líquida = crédito líquido − lance próprio
-
-     Depois da contemplação:
-       saídas = parcelas pós + eventuais parcelas de adesão ainda não pagas
-
-     A taxa mensal é a taxa que faz o VPL do fluxo pós-contemplação ser zero.
-     Depois, anualizamos pela capitalização de 12 meses.
-  */
-  const mesesPos=Math.max(0,mesesPosContemplacao);
-  const posCashflows=new Array(mesesPos+1).fill(0);
-
-  /*
-     Para a taxa pós, o valor que ainda está sendo financiado é o saldo
-     devedor DEPOIS do lance. O lance já foi descontado desse saldo, então
-     não pode ser descontado novamente da entrada.
-  */
-  const valorFinanciadoPos=saldoDevedor;
-  posCashflows[0]=valorFinanciadoPos;
-
-  let totalPagoPos=0;
-  for(let m=1;m<=mesesPos;m++){
-    const t=primeiroMesPosContemplacao+m-1;
-    const adesaoFutura=t<=adesaoMeses?adesaoPorParcela:0;
-    const pagamento=pagamentoPrincipalPos(m)+adesaoFutura;
-    posCashflows[m]=-pagamento;
-    totalPagoPos+=pagamento;
-  }
-
-  function npvPos(rate){
-    let s=posCashflows[0];
-    for(let m=1;m<posCashflows.length;m++){
-      s+=posCashflows[m]/Math.pow(1+rate,m);
-    }
-    return s;
-  }
-
-  /* Para um único recebimento hoje e pagamentos futuros, o fluxo tem uma
-     raiz econômica única para taxa >= 0. Usamos bisseção diretamente. */
-  let taxaPosMensal=null;
-  const npvZero=npvPos(0);
-
-  if(valorFinanciadoPos>0 && npvZero<0){
-    /* NPV(0) < 0 e, em uma taxa positiva suficientemente alta, o valor
-       presente dos pagamentos cai até ficar menor que o saldo inicial. */
-    let lo=0,hi=1;
-    while(npvPos(hi)<0 && hi<1000000) hi*=2;
-
-    if(npvPos(hi)>=0){
-      for(let i=0;i<220;i++){
-        const mid=(lo+hi)/2;
-        if(npvPos(mid)>0) hi=mid;
-        else lo=mid;
-      }
-      taxaPosMensal=(lo+hi)/2;
-    }
-  }else if(valorFinanciadoPos>0 && Math.abs(npvZero)<1e-9){
-    taxaPosMensal=0;
-  }
-
-  const taxaRealPosAnual=taxaPosMensal===null
-    ? null
-    : (Math.pow(1+taxaPosMensal,12)-1)*100;
-
-  return {
-    credito,N,k,taPct,frPct,seguroPct,seguro,inccPct,redutorPct,
-    adesaoPct,adesaoValor,adesaoForma,adesaoMeses,adesaoPorParcela,parcelaCheiaBase,
-    fundoComumMensal,frMensalCheio,taMensal,fundoComumReduzido,frReduzido,
-    parcelaReduzida,primeiraParcela,diferencaMensal,diferencaAcumulada,
-    lanceProprio,lanceEmbutido,lanceSomado,
-    proprioUtilizado,embutidoUtilizado,lanceUtilizado,lanceNaoUtilizado,
-    creditoLiquido,
-    mesesRestantesContrato,taxasTotais,saldoDevedorInicial,saldoDevedorPlano,saldoPosLance:planoPosSelecionado.saldoPosLance,valorParcelasPagasAntes,valorParcelasAntesContemplacao,saldoDevedorAntesLance,saldoDevedor,obrigacaoPos,
-    percentualPos,parcelaMinima,parcelaMinimaComDiferenca,parcelaBaseAntesAmortizacao,diferencaDiluidaBase,pisoBloqueouReducao,comparativoPlanilha,
-    comparativoPos,diferencaTotal,diferencaDiluida:diferencaDiluidaBase,
-    reducaoParcela,parcelaPos,
-    tipoBem,formaRestante:inp.formaRestante,
-    mesesEconomizados,mesesPosContemplacao,mesesDiluidos,mesesExtras,prazoEfetivo,
-    parcelasPagasAntesContemplacao,adesaoPagaAteContemplacao,
-    pagoAntesContemplacao,desembolsoAteContemplacao,totalPagoParcelas,totalPagoParcelasReajustado,
-    totalPagoPos,taxaPosMensal,taxaRealPosAnual,outflow
-  };
-}
-
-function fmtNum(v,d=2){if(!Number.isFinite(v))return '—';const fixed=Math.abs(v).toFixed(d);let [integer,decimal]=fixed.split('.');integer=integer.replace(/\B(?=(\d{3})+(?!\d))/g,'.');return `${v<0?'-':''}${integer}${d?`'${decimal}`:''}`}
-function fmtBRL(v){return Number.isFinite(v)?`R$ ${fmtNum(v)}`:'—'}
-function fmtPct(v,d=2){return Number.isFinite(v)?fmtNum(v,d)+'%':'—'}
 async function requireSession(){
   try{
     const response=await fetch('/api/session',{credentials:'same-origin',cache:'no-store'});
     const result=await response.json().catch(()=>({}));
-    if(!response.ok || !result.user){ location.href='/'; return false; }
-    return true;
-  }catch(error){ location.href='/'; return false; }
+    if(!response.ok||!result.user) location.href='/';
+  }catch(error){location.href='/';}
 }
 requireSession();
 
-const $id=id=>document.getElementById(id);
-function setText(id,value){const element=$id(id);if(element) element.textContent=value}
-function setHTML(id,value){const element=$id(id);if(element) element.innerHTML=value}
-function parseInputNumber(value){
-  const text=String(value??'').trim();
-  if(!text) return 0;
-  if(text.includes("'")) return Number(text.replace(/\./g,'').replace(String.fromCharCode(39),'.'))||0;
-  return Number(text.replace(',','.'))||0;
+document.getElementById('btnLogout').addEventListener('click',async event=>{
+  const button=event.currentTarget;
+  button.disabled=true;
+  button.textContent='Saindo...';
+  try{await fetch('/api/logout',{method:'POST',headers:{'Content-Type':'application/json'}});}
+  finally{location.href='/';}
+});
+
+const form=document.getElementById('simulationForm');
+const modal=document.getElementById('resultsModal');
+const $=id=>document.getElementById(id);
+const money=value=>new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL'}).format(value);
+const percent=value=>`${new Intl.NumberFormat('pt-BR',{maximumFractionDigits:2}).format(value)}%`;
+function parseInput(input){
+  const value=String(input?.value??'').trim().replace(/\s/g,'').replace(/[R$%]/g,'');
+  if(!value)return NaN;
+  if(value.includes(','))return Number(value.replace(/\./g,'').replace(',','.'));
+  if(/^[-+]?\d{1,3}(\.\d{3})+$/.test(value))return Number(value.replace(/\./g,''));
+  return Number(value);
 }
-function num(id){const element=$id(id);return element?parseInputNumber(element.value):0}
-function formatInputNumber(input){
-  if(!['credito','dinheiro'].includes(input.id)) return;
-  input.value=fmtNum(parseInputNumber(input.value),2);
+const numberValue=id=>{const value=parseInput($(id));return Number.isFinite(value)?value:0;};
+const checkedMode=()=>document.querySelector('input[name="mode"]:checked').value;
+let currentResult=null;
+
+function formatInput(input){
+  const value=parseInput(input);
+  if(!Number.isFinite(value))return;
+  const options=input.dataset.format==='currency'
+    ? {minimumFractionDigits:2,maximumFractionDigits:2}
+    : {minimumFractionDigits:0,maximumFractionDigits:2};
+  input.value=new Intl.NumberFormat('pt-BR',options).format(value);
 }
-function setupFormattedInputs(){
-  document.querySelectorAll('.field input').forEach(input=>{
-    if(['credito','dinheiro'].includes(input.id) && input.type==='number'){
-      input.type='text';
-      input.inputMode='decimal';
-      input.addEventListener('blur',()=>formatInputNumber(input));
-    }
-    formatInputNumber(input);
+
+function validateFormattedInputs(){
+  let valid=true;
+  form.querySelectorAll('[data-format]').forEach(input=>{
+    const value=parseInput(input);
+    const min=Number(input.dataset.min);
+    const message=!Number.isFinite(value)
+      ? (input.required?'Informe um número válido.':'')
+      : value<min?'O valor não pode ser negativo.':'';
+    input.setCustomValidity(message);
+    input.setAttribute('aria-invalid',message?'true':'false');
+    if(message)valid=false;
   });
-}
-function checked(name){return document.querySelector(`input[name="${name}"]:checked`)?.value}
-
-function readInputs(){return{
-  credito:num('credito'),prazo:num('prazo'),taPct:num('ta'),frPct:num('fr'),seguroPct:0,inccPct:num('inccPct'),mesContemplacao:num('mesContemplacao'),tipoBem:$id('tipoBem').value,
-  redutorPct:checked('redutor'),redutorCustomPct:num('redutorCustom'),
-  adesaoPct:num('adesaoPct'),adesaoForma:checked('adesaoForma'),adesaoMeses:1,
-  dinheiro:num('dinheiro'),embutidoPct:num('embutido'),formaRestante:checked('restante')
-}}
-
-function updateVisibility(){
-  $id('redutorCustomField').style.display=checked('redutor')==='custom'?'flex':'none';
-  const adesaoMesesField=$id('adesaoMesesField');
-  if(adesaoMesesField) adesaoMesesField.style.display='none';
+  return valid&&form.reportValidity();
 }
 
-function render(r){
-  const primeiraTotal=r.primeiraParcela;
+form.querySelectorAll('[data-format]').forEach(input=>{
+  input.addEventListener('blur',()=>formatInput(input));
+  input.addEventListener('input',()=>input.setCustomValidity(''));
+  formatInput(input);
+});
 
-  const planRows=[
-    ['Fundo comum',scenario=>scenario.fundoComum],
-    ['Fundo de reserva reduzido',scenario=>scenario.fundoReserva],
-    ['Saldo devedor do plano',scenario=>scenario.saldoDevedor],
-    ['Adesão',scenario=>scenario.adesao],
-    ['Parcela mensal',scenario=>scenario.parcela]
+function showModal(){modal.classList.add('open');document.body.style.overflow='hidden';$('closeResults').focus();}
+function closeModal(){modal.classList.remove('open');document.body.style.overflow='';}
+$('closeResults').addEventListener('click',closeModal);
+modal.addEventListener('click',event=>{if(event.target===modal)closeModal();});
+document.addEventListener('keydown',event=>{if(event.key==='Escape'&&modal.classList.contains('open'))closeModal();});
+$('printResults').addEventListener('click',()=>window.print());
+
+function readForm(){
+  return {
+    credit:numberValue('credit'),
+    adminPct:numberValue('adminPct'),
+    adhesionPct:numberValue('adhesionPct'),
+    adhesionMode:$('adhesionMode').value,
+    adhesionMonths:numberValue('adhesionMonths'),
+    reservePct:numberValue('reservePct'),
+    term:numberValue('term'),
+    paidBefore:numberValue('paidBefore'),
+    redutor:numberValue('redutor'),
+    assetType:$('assetType').value,
+    bidOwn:numberValue('bidOwn'),
+    bidEmbedded:numberValue('bidEmbedded'),
+    mode:checkedMode()
+  };
+}
+
+function tableRows(rows,scenarios){
+  $('planRows').innerHTML=rows.map(([label,get])=>`<tr><td>${label}</td>${scenarios.map(item=>`<td>${get(item)}</td>`).join('')}</tr>`).join('');
+}
+
+function render(result){
+  const selected=result.selected;
+  const plans=result.plans;
+  $('netAdminResult').textContent=percent(result.netAdminPct);
+  $('fullDebtResult').textContent=money(result.plans[0].debt);
+  $('minimumResult').textContent=money(result.minimumInstallment);
+  $('monthsResult').textContent=`${result.monthsAfter} meses`;
+  $('totalTermResult').textContent=`${result.totalMonths} meses`;
+  $('beforeInstallment').textContent=money(selected.firstInstallment);
+  $('beforeInstallmentSub').textContent=result.adhesionMode==='diluida'
+    ? `Adesão: ${money(result.adhesionPerMonth)}/mês nos primeiros ${result.adhesionMonths} meses; depois a parcela pré volta a ${money(selected.installment)}`
+    : `Adesão à vista: ${money(selected.adhesion)}; parcela pré regular depois: ${money(selected.installment)}`;
+  $('afterInstallment').textContent=money(result.postInstallment);
+  $('afterInstallmentSub').textContent=`${result.mode==='prazo'?'Abatimento no prazo':'Abatimento na parcela'} · piso de ${money(result.minimumInstallment)}`;
+
+  const planData=[
+    ['Fundo comum',plan=>money(plan.commonFund)],
+    ['Fundo de reserva',plan=>money(plan.reserveFund)],
+    ['Taxa de administração líquida',plan=>money(plan.adminFee)],
+    ['Saldo devedor inicial',plan=>money(plan.debt)],
+    [result.adhesionMode==='diluida'?'Adesão total diluída':'Adesão (taxa + 1 parcela)',plan=>money(plan.adhesion)],
+    ['Parcela antes da contemplação',plan=>money(plan.installment)]
   ];
-  setHTML('planComparisonRows',planRows.map(([label,value])=>`<tr><td>${label}</td>${r.comparativoPlanilha.map(scenario=>`<td>${fmtBRL(value(scenario))}</td>`).join('')}</tr>`).join(''));
-  const postRows=[
-    ['Saldo Dev',scenario=>fmtBRL(scenario.saldoDevedor)],
-    ['S. pós lance',scenario=>fmtBRL(scenario.saldoPosLance)],
-    ['Qtd P.P',scenario=>fmtBRL(scenario.valorParcelasPagasAntes)],
-    ['Prazo restante',()=>`${r.mesesRestantesContrato} meses`],
-    ['Saldo P.P',scenario=>fmtBRL(scenario.saldoPosPagamentos)],
-    ['P. mínima',scenario=>fmtBRL(scenario.parcelaMinima)],
-    ['P/Prazo',scenario=>fmtBRL(scenario.parcelaPorPrazo)],
-    ['Diferença total',scenario=>fmtBRL(scenario.diferencaSaldo)],
-    ['Diferença mensal',scenario=>fmtBRL(scenario.diferencaMensal)],
-    ['Parcela real (prazo)',scenario=>fmtBRL(scenario.parcelaReal)],
-    ['Meses reais (prazo)',scenario=>`${scenario.mesesPrazo} meses`],
-    ['Saldo Dev (parcela)',scenario=>fmtBRL(scenario.saldoParcelas)],
-    ['Meses reais (parcela)',scenario=>`${scenario.mesesParcelas} meses`]
+  $('planRows').innerHTML=planData.map(([label,get])=>`<tr><td>${label}</td>${plans.map(plan=>`<td>${get(plan)}</td>`).join('')}</tr>`).join('');
+
+  const postData=[
+    ['Saldo devedor do plano',plan=>money(plan.debt)],
+    ['Saldo após lance',plan=>money(plan.balanceAfterBid)],
+    ['Pagamentos antes da contemplação',plan=>money(plan.paidAmount)],
+    ['Saldo P.P',plan=>money(plan.postBalance)],
+    ['Parcela mínima',plan=>money(plan.minimumInstallment)],
+    ['Parcela pelo prazo',plan=>money(plan.installmentByTerm)],
+    ['Diferença total do redutor',plan=>money(plan.differenceTotal)],
+    ['Diferença mensal diluída',plan=>money(plan.differencePerMonth)],
+    ['Parcela real no modo prazo',plan=>money(plan.realInstallment)],
+    ['Meses reais no modo prazo',plan=>`${plan.monthsByTerm} meses`],
+    ['Saldo no modo parcela',plan=>money(plan.installmentBalance)],
+    ['Meses reais no modo parcela',plan=>`${plan.monthsByInstallment} meses`]
   ];
-  setHTML('postComparisonRows',postRows.map(([label,value])=>`<tr><td>${label}</td>${r.comparativoPos.map(scenario=>`<td>${value(scenario)}</td>`).join('')}</tr>`).join(''));
-  const cenario25=r.comparativoPos.find(scenario=>scenario.redutor===25);
-  setText('postComparisonNote',`${r.parcelasPagasAntesContemplacao} pagamentos antes da contemplação; lance usado: ${fmtBRL(r.lanceUtilizado)}. Piso = ${fmtPct(r.percentualPos*100,1)} × saldo inicial com taxas ${fmtBRL(r.saldoDevedorInicial)} = ${fmtBRL(r.parcelaMinima)}. A planilha mostra 90 meses no modo prazo para 25%, mas, somando saldo P.P e diferença, o cálculo resulta em ${cenario25?.mesesPrazo||0} meses neste cenário.`);
+  $('postRows').innerHTML=postData.map(([label,get])=>`<tr><td>${label}</td>${result.postPlans.map(plan=>`<td>${get(plan)}</td>`).join('')}</tr>`).join('');
+  $('postModeLabel').textContent=`Cenário selecionado: ${result.redutor}% de redutor · lance total ${money(result.bidTotal)}`;
+  const scenario25=result.postPlans.find(plan=>plan.redutor===25);
+  $('postNote').textContent=`Piso = ${percent(result.minimumPct)} do saldo cheio com taxas (${money(result.plans[0].debt)}). O saldo após o lance não inclui os pagamentos pré; o Saldo P.P já os desconta. A diferença do redutor é adicionada ao saldo que falta quitar.`+
+    (scenario25&&scenario25.monthsByTerm!==90?` Na planilha, os 90 meses do redutor de 25% deixam a diferença de ${money(scenario25.differenceTotal)} sem quitação; incluindo-a, o prazo calculado é ${scenario25.monthsByTerm} meses.`:'');
 
-  setText('headlineTag',`Exemplo de contemplação na parcela ${r.k}`);
-  setText('headline1a',fmtBRL(primeiraTotal));
-  setText('headline1aSub',r.adesaoValor>0
-    ? (r.adesaoForma==='avista'
-      ? `Adesão substitui a parcela regular: ${fmtBRL(r.adesaoValor)}`
-      : `${fmtBRL(r.parcelaReduzida)} + ${fmtBRL(r.adesaoPorParcela)}/mês de adesão`)
-    : 'Sem taxa antecipada');
-
-  setText('headlinePos',fmtBRL(r.parcelaPos));
-  setText('headlinePosSub',
-    `${r.tipoBem==='imovel'?'0,5%':'1,0%'} do saldo inicial com taxas • ${r.mesesPosContemplacao} meses pós-contemplação`+
-    (r.mesesEconomizados>0?` • ${r.mesesEconomizados} meses economizados`:'')+
-    (r.formaRestante==='parcelas'
-      ? ' • parcela mínima; prazo recalculado'
-      : ' • lance usado para reduzir prazo'));
-
-  /* Cards principais */
-  setText('keyPagoParcelas',fmtBRL(r.pagoAntesContemplacao));
-  setText('keyPagoSub',`${r.parcelasPagasAntesContemplacao} pagamento(s) pré-contemplação`);
-  setText('keyProprio',fmtBRL(r.proprioUtilizado));
-  setText('keyEmbutido',fmtBRL(r.embutidoUtilizado));
-  setText('keyMeses',`${r.mesesPosContemplacao} meses`);
-  setText('keyCredito',fmtBRL(r.creditoLiquido));
-
-  /* Selo */
-  setText('sealTaxa',fmtPct(r.taxaRealPosAnual,1));
-  setText('sealText',
-    `Pós-contemplação: saldo devedor de ${fmtBRL(r.saldoDevedor)} contra ${fmtBRL(r.totalPagoPos)} de pagamentos futuros em ${r.mesesPosContemplacao} meses. `+
-    `Taxa real equivalente: ${fmtPct(r.taxaRealPosAnual,1)} ao ano.`);
-
-  /* Pós */
-  setText('posFundo',fmtBRL(r.saldoDevedorInicial));
-  setText('posTA',fmtPct(r.percentualPos*100,1));
-  setText('posFR',fmtBRL(r.parcelaMinima));
-  setText('posDiluicao',r.diferencaDiluida>0?`+ ${fmtBRL(r.diferencaDiluida)}`:'não diluída');
-  setText('posTotal',fmtBRL(r.parcelaPos));
-
-  /* Saldo e amortização */
-  setText('saldoAntesLance',fmtBRL(r.saldoDevedorAntesLance));
-  setText('lanceUtilizado',fmtBRL(r.lanceUtilizado));
-  setText('saldoDepoisLance',fmtBRL(r.saldoDevedor));
-  setText('lanceNaoUtilizado',fmtBRL(r.lanceNaoUtilizado));
-  setText('mesesRestantesContrato',`${r.mesesRestantesContrato} meses`);
-  setText('mesesEconomizados',r.mesesEconomizados>0?`− ${r.mesesEconomizados} meses`:'0 meses');
-  setText('mesesPos',`${r.mesesPosContemplacao} meses`);
-
-  /* Diferença redutor */
-  setText('difMensal',fmtBRL(r.diferencaMensal));
-  setText('difAcumulada',fmtBRL(r.diferencaAcumulada));
-  setText('difDiluida',r.diferencaDiluida>0?`${fmtBRL(r.diferencaDiluida)}/mês`:'—');
-
-  /* Crédito */
-  setText('creditoContratado',fmtBRL(r.credito));
-  setText('creditoEmbutido',fmtBRL(r.lanceEmbutido));
-  setText('creditoLiquido',fmtBRL(r.creditoLiquido));
-
-  setHTML('formula',`
-    <strong>Conta-base da parcela reduzida</strong><br>
-    Fundo Comum = ${fmtBRL(r.credito)} ÷ ${r.N} = ${fmtBRL(r.fundoComumMensal)}<br>
-    Fundo Comum reduzido = ${fmtBRL(r.fundoComumMensal)} × (1 − ${fmtPct(r.redutorPct,0)}) = ${fmtBRL(r.fundoComumReduzido)}<br>
-    Fundo de Reserva = ${fmtBRL(r.credito)} × ${fmtPct(r.frPct,0)} ÷ ${r.N} = ${fmtBRL(r.frMensalCheio)}<br>
-    Fundo de Reserva reduzido = ${fmtBRL(r.frMensalCheio)} × (1 − ${fmtPct(r.redutorPct,0)}) = ${fmtBRL(r.frReduzido)}<br>
-    TA mensal = ${fmtBRL(r.credito)} × ${fmtPct(r.taPct,0)} ÷ ${r.N} = ${fmtBRL(r.taMensal)}/mês<br>
-    Adesão-base = ${fmtBRL(r.credito)} × ${fmtPct(r.adesaoPct,1)} = ${fmtBRL(r.credito*r.adesaoPct/100)}; ajuste do redutor = ${fmtBRL(r.parcelaReduzida-r.parcelaCheiaBase)}<br>
-    <span class="final">Parcela reduzida = ${fmtBRL(r.fundoComumReduzido)} + ${fmtBRL(r.frReduzido)} + ${fmtBRL(r.taMensal)}${r.seguro>0?' + '+fmtBRL(r.seguro):''} = ${fmtBRL(r.parcelaReduzida)}</span><br><br>
-    Diferença mensal do redutor = ${fmtBRL(r.diferencaMensal)}<br>
-    Diferença total após os pagamentos = <span class="final">${fmtBRL(r.diferencaTotal)}</span><br>
-    Diferença acumulada antes da contemplação = ${fmtBRL(r.diferencaMensal)} × ${r.parcelasPagasAntesContemplacao} = <span class="final">${fmtBRL(r.diferencaAcumulada)}</span><br><br>
-    Saldo antes do lance = ${fmtBRL(r.saldoDevedorAntesLance)}<br>
-    Lance utilizado = ${fmtBRL(r.lanceUtilizado)}<br>
-    Saldo após o lance = <span class="final">${fmtBRL(r.saldoDevedor)}</span><br>
-    Parcela-base protegida = ${fmtBRL(r.parcelaBaseAntesAmortizacao-r.diferencaDiluidaBase)}<br>
-    Piso pós = mínimo ${fmtBRL(r.parcelaMinima)} + diferença mensal ${fmtBRL(r.diferencaDiluidaBase)} = <span class="final">${fmtBRL(r.parcelaMinimaComDiferenca)}</span><br>
-    Piso pós = ${fmtPct(r.percentualPos*100,1)} × saldo inicial com taxas ${fmtBRL(r.saldoDevedorInicial)} = <span class="final">${fmtBRL(r.parcelaMinima)}</span><br>
-    ${r.formaRestante==='parcelas'?`Parcela no modo parcela = mínimo de ${fmtBRL(r.parcelaMinima)}; saldo com diferença = ${fmtBRL(r.obrigacaoPos)}`:`Parcela real = max(${fmtBRL(r.parcelaMinima)}, ${fmtBRL(r.saldoDevedor)}/${r.mesesRestantesContrato}) + ${fmtBRL(r.diferencaDiluidaBase)} = ${fmtBRL(r.parcelaPos)}` }<br>
-    Taxa real pós = taxa que iguala ${fmtBRL(r.saldoDevedor)} hoje ao valor presente de ${fmtBRL(r.totalPagoPos)} pagos depois da contemplação.
-  `);
-
-  setHTML('lanceInfo',`
-    <strong>Pago até a contemplação:</strong> ${fmtBRL(r.k===1?r.primeiraParcela:r.valorParcelasAntesContemplacao)} em ${r.parcelasPagasAntesContemplacao} pagamento(s)${r.adesaoPagaAteContemplacao>0?` (adesão de ${fmtBRL(r.adesaoPagaAteContemplacao)} substitui a primeira parcela)`:''} = <strong>${fmtBRL(r.pagoAntesContemplacao)}</strong><br>
-    <strong>Lance próprio:</strong> ${fmtBRL(r.lanceProprio)} → utilizado: ${fmtBRL(r.proprioUtilizado)}<br>
-    <strong>Lance embutido:</strong> ${fmtBRL(r.lanceEmbutido)} → utilizado: ${fmtBRL(r.embutidoUtilizado)}<br>
-    <strong>Lance somado:</strong> ${fmtBRL(r.lanceSomado)} → utilizado: ${fmtBRL(r.lanceUtilizado)}<br>
-    <strong>Saldo devedor antes do lance:</strong> ${fmtBRL(r.saldoDevedorAntesLance)}<br>
-    <strong>Saldo devedor após o lance:</strong> ${fmtBRL(r.saldoDevedor)}<br>
-    <strong>Meses contratuais restantes:</strong> ${r.mesesRestantesContrato}<br>
-    <strong>Meses pós-contemplação:</strong> ${r.mesesPosContemplacao}${r.mesesEconomizados>0?` (− ${r.mesesEconomizados} pelo lance)`:''}${r.mesesExtras>0?` (+ ${r.mesesExtras} extras)`:''}<br><br>
-    ${r.formaRestante==='parcelas'
-      ? `<strong>Amortização por parcela:</strong> parcela mínima de ${fmtBRL(r.parcelaMinima)}; o saldo com diferença é pago em ${r.mesesPosContemplacao} meses.`
-      : `<strong>Amortização por prazo:</strong> parcela real de ${fmtBRL(r.parcelaPos)}; saldo e diferença quitados em ${r.mesesPosContemplacao} meses.`}
-    ${r.lanceNaoUtilizado>0?`<br><br><strong>Lance não utilizado:</strong> ${fmtBRL(r.lanceNaoUtilizado)} (saldo devedor zerado).`:''}
-  `);
-
-  setText('statTotalParcelas',fmtBRL(r.totalPagoParcelasReajustado));
-  const contempladoMenosLance=Math.max(0,r.credito-r.lanceSomado);
-  setText('statDesembolso',fmtBRL(contempladoMenosLance));
-  setText('statDesembolsoFormula',`${fmtBRL(r.credito)} − (${fmtBRL(r.lanceProprio)} + ${fmtBRL(r.lanceEmbutido)})`);
-  setText('statTaxa',fmtPct(r.taxaRealPosAnual,1));
-
-  drawChart(r);
-  renderEvolution(r);
-  renderRendimento(r);
-  window.currentResult=r;
+  const indexName=result.assetType==='imovel'?'INCC':'IPCA';
+  $('indexName').textContent=`${indexName} anual`;
+  updateProjection();
+  updateYield();
+  showModal();
 }
 
-function renderRendimento(r){
-  const rate=$id('rendimentoPct');
-  const active=$id('rendimentoAtivo');
-  const months=Math.max(1,Math.floor(Number($id('rendimentoMeses')?.value)||1));
-  const pct=Math.max(0,Number(rate?.value)||0);
-  const rendimentoBase=r.creditoLiquido;
-  const rendimento=active?.checked ? rendimentoBase*pct/100 : 0;
-  const total=active?.checked ? rendimentoBase*Math.pow(1+pct/100,months) : 0;
-  setText('rendimentoBase',fmtBRL(rendimentoBase));
-  setText('rendimentoMensal',active?.checked ? fmtBRL(rendimento) : 'Desativado');
-  setText('rendimentoTotal',active?.checked ? `${fmtBRL(total)} (${months} meses)` : '—');
+function updateProjection(){
+  if(!currentResult)return;
+  const rows=SimuladorCalc.buildProjection(currentResult,numberValue('indexRate'));
+  $('projectionRows').innerHTML=rows.map(row=>`<tr${row.phase==='Contemplação'?' class="phase-event"':''}><td>${row.month}</td><td>${row.phase}</td><td>${percent((row.factor-1)*100)}</td><td>${money(row.adjustedCredit)}</td><td>${money(row.payment)}</td><td>${money(row.balance)}</td></tr>`).join('');
+  drawChart(rows);
 }
 
-function evolucaoSaldo(r){
-  const totalMeses=Math.max(1,r.prazoEfetivo);
-  const taxaAnual=Math.max(0,r.inccPct)/100;
-  let saldo=r.saldoDevedorPlano;
-  let acumulado=1;
-  const meses=[];
-  for(let month=1;month<=totalMeses;month++){
-    if(month>1 && (month-1)%12===0){saldo*=1+taxaAnual;acumulado*=1+taxaAnual;}
-    if(month===r.k) saldo=Math.max(0,saldo-r.lanceUtilizado);
-    const parcelaBase=Math.max(0,r.outflow[month]||0);
-    const parcela=month===totalMeses?saldo:parcelaBase*acumulado;
-    const amortizacao=Math.min(saldo,parcela);
-    saldo=Math.max(0,saldo-amortizacao);
-    meses.push({month,fator:acumulado,saldo,parcela,lance:month===r.k?r.lanceUtilizado:0,fase:month<r.k?'Pré':(month===r.k?'Contemplação':'Pós')});
-  }
-  return meses;
-}
-
-function renderEvolution(r){
-  const rows=$id('evolutionRows');
-  if(!rows) return;
-  const indiceReajuste=r.tipoBem==='imovel'?'INCC':'IPCA';
-  const evolutionTitle=document.querySelector('#evolutionPanel .chart-wrap h4');
-  const evolutionButton=$id('btnToggleEvolution');
-  if(evolutionTitle) evolutionTitle.textContent=`Evolução do saldo e das parcelas com ${indiceReajuste}`;
-  if(evolutionButton && !evolutionPanel.classList.contains('active')) evolutionButton.textContent=`Ver evolução com ${indiceReajuste} / reajuste anual ↓`;
-  const html=[];
-  evolucaoSaldo(r).forEach(item=>{
-    const reajuste=(item.fator-1)*100;
-    html.push(`<tr${item.month===r.k?' class="contemplacao-row"':''}><td>${item.month}</td><td>${item.fase}</td><td>${fmtPct(reajuste,1)}${item.lance>0?` • lance ${fmtBRL(item.lance)}`:''}</td><td>${fmtBRL(item.saldo)}</td><td>${fmtBRL(item.parcela)}</td></tr>`);
-  });
-  rows.innerHTML=html.join('');
-}
-
-function drawChart(r){
-  const canvas=$id('chart');
-  if(!canvas)return;
+function drawChart(rows){
+  const canvas=$('projectionChart');
   const ctx=canvas.getContext('2d');
-  const W=canvas.width,H=canvas.height;ctx.clearRect(0,0,W,H);
-  const vals=evolucaoSaldo(r).map(item=>item.parcela);
-  const maxV=Math.max(...vals,1),pL=6,pR=6,pT=10,pB=18,pW=W-pL-pR,pH=H-pT-pB;
-  ctx.strokeStyle='rgba(34,27,16,.15)';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(pL,H-pB);ctx.lineTo(W-pR,H-pB);ctx.stroke();
-  const kx=pL+((r.k-1)/Math.max(r.prazoEfetivo-1,1))*pW;
-  ctx.strokeStyle='#B98A2E';ctx.setLineDash([3,3]);ctx.beginPath();ctx.moveTo(kx,pT);ctx.lineTo(kx,H-pB);ctx.stroke();ctx.setLineDash([]);
-  ctx.fillStyle='#B98A2E';ctx.font='10px monospace';ctx.fillText('contemplação',Math.min(kx+4,W-90),pT+10);
-  ctx.strokeStyle='#0F2438';ctx.lineWidth=2;ctx.beginPath();
-  vals.forEach((v,i)=>{const x=pL+(i/Math.max(vals.length-1,1))*pW,y=H-pB-(v/maxV)*pH;i?ctx.lineTo(x,y):ctx.moveTo(x,y)});ctx.stroke();
+  const width=canvas.width,height=canvas.height;
+  ctx.clearRect(0,0,width,height);
+  const maxBalance=Math.max(1,...rows.map(row=>row.balance));
+  const maxPayment=Math.max(1,...rows.map(row=>row.payment));
+  const left=52,right=20,top=18,bottom=30,plotWidth=width-left-right,plotHeight=height-top-bottom;
+  ctx.strokeStyle='#dfe7e6';ctx.lineWidth=1;
+  for(let i=0;i<=4;i++){const y=top+plotHeight*i/4;ctx.beginPath();ctx.moveTo(left,y);ctx.lineTo(width-right,y);ctx.stroke();}
+  function line(key,max,color){
+    ctx.beginPath();ctx.strokeStyle=color;ctx.lineWidth=2;
+    rows.forEach((row,index)=>{
+      const x=left+index/Math.max(1,rows.length-1)*plotWidth;
+      const y=top+plotHeight-(row[key]/max)*plotHeight;
+      if(index===0)ctx.moveTo(x,y);else ctx.lineTo(x,y);
+    });
+    ctx.stroke();
+  }
+  line('balance',maxBalance,'#087f78');
+  line('payment',maxPayment,'#b47b2b');
+  const eventIndex=rows.findIndex(row=>row.phase==='Contemplação');
+  if(eventIndex>=0){
+    const x=left+eventIndex/Math.max(1,rows.length-1)*plotWidth;
+    ctx.setLineDash([4,4]);ctx.strokeStyle='#a83f38';ctx.beginPath();ctx.moveTo(x,top);ctx.lineTo(x,height-bottom);ctx.stroke();ctx.setLineDash([]);
+  }
+  ctx.font='11px sans-serif';ctx.fillStyle='#087f78';ctx.fillText('Saldo',left,13);ctx.fillStyle='#b47b2b';ctx.fillText('Parcela',left+54,13);
+  ctx.fillStyle='#697278';ctx.fillText('Mês 1',left,height-9);ctx.fillText(`Mês ${rows.length}`,width-right-50,height-9);
 }
 
+function updateYield(){
+  if(!currentResult)return;
+  const value=SimuladorCalc.calculateYield(currentResult.creditAfterBid,numberValue('yieldRate'),numberValue('yieldMonths'));
+  $('yieldBase').textContent=money(value.base);
+  $('yieldFirst').textContent=money(value.firstMonth);
+  $('yieldTotal').textContent=money(value.total);
+}
 
-const panel=$id('resultsPanel');
-const btnShowResults=$id('btnShowResults');
-const btnHideResults=$id('btnHideResults');
-function showResults(){if(!panel)return;setupFormattedInputs();render(calc(readInputs()));panel.classList.add('active');setTimeout(()=>panel.scrollIntoView({behavior:'smooth',block:'start'}),50)}
-if(btnShowResults) btnShowResults.addEventListener('click',showResults);
-if(btnHideResults) btnHideResults.addEventListener('click',()=>{if(!panel)return;panel.classList.remove('active');const formPanel=document.querySelector('.form-panel');if(formPanel) formPanel.scrollIntoView({behavior:'smooth',block:'start'})});
-let debounce;
-function onFormChange(){updateVisibility();if(panel && panel.classList.contains('active')){clearTimeout(debounce);debounce=setTimeout(()=>render(calc(readInputs())),180)}}
-const calcForm=$id('calcForm');
-if(calcForm){calcForm.addEventListener('input',onFormChange);calcForm.addEventListener('change',onFormChange);}
+form.addEventListener('submit',event=>{
+  event.preventDefault();
+  if(!validateFormattedInputs())return;
+  currentResult=SimuladorCalc.calculate(readForm());
+  render(currentResult);
+});
+$('indexRate').addEventListener('input',updateProjection);
+$('yieldRate').addEventListener('input',updateYield);
+$('yieldMonths').addEventListener('input',updateYield);
 
-
-const evolutionPanel=$id('evolutionPanel');
-const btnToggleEvolution=$id('btnToggleEvolution');
-if(btnToggleEvolution && evolutionPanel){btnToggleEvolution.addEventListener('click',()=>{
-  const isOpen=evolutionPanel.classList.toggle('active');
-  const indiceReajuste=window.currentResult?.tipoBem==='imovel'?'INCC':'IPCA';
-  btnToggleEvolution.textContent=isOpen?'Ocultar evolução ↑':`Ver evolução com ${indiceReajuste} / reajuste anual ↓`;
-  if(isOpen && window.currentResult){
-    drawChart(window.currentResult);
-    renderEvolution(window.currentResult);
-    setTimeout(()=>evolutionPanel.scrollIntoView({behavior:'smooth',block:'nearest'}),30);
-  }
-});}
-
-const btnLoadExample=$id('loadExample');
-if(btnLoadExample){btnLoadExample.addEventListener('click',()=>{
-  $id('credito').value=1000000;$id('prazo').value=240;$id('ta').value=18;$id('fr').value=2;$id('mesContemplacao').value=11;if($id('tipoBem'))$id('tipoBem').value='imovel';
-  document.querySelector('input[name="redutor"][value="50"]').checked=true;$id('redutorCustom').value=50;
-  $id('adesaoPct').value=2.5;document.querySelector('input[name="adesaoForma"][value="avista"]').checked=true;$id('adesaoMeses').value=12;
-  $id('dinheiro').value=250000;$id('embutido').value=0;document.querySelector('input[name="restante"][value="prazo"]').checked=true;
-  updateVisibility();showResults();
-});}
-
-const btnExportPDF=$id('btnExportPDF');
-const btnToggleSummary=$id('btnToggleSummary');
-const rendimentoAtivo=$id('rendimentoAtivo');
-const rendimentoPct=$id('rendimentoPct');
-const rendimentoMeses=$id('rendimentoMeses');
-if(btnExportPDF){btnExportPDF.addEventListener('click',()=>window.print());}
-if(btnToggleSummary){btnToggleSummary.addEventListener('click',()=>{
-  const summary=$id('resultsPanel').querySelector('.summary-strip');
-  const hidden=summary.classList.toggle('is-hidden');
-  btnToggleSummary.textContent=hidden?'Mostrar resumo ↓':'Ocultar resumo ↑';
-});}
-if(rendimentoAtivo){rendimentoAtivo.addEventListener('change',()=>{if(panel && panel.classList.contains('active'))render(calc(readInputs()))});}
-if(rendimentoPct){rendimentoPct.addEventListener('input',()=>{if(panel && panel.classList.contains('active'))render(calc(readInputs()))});}
-if(rendimentoMeses){rendimentoMeses.addEventListener('input',()=>{if(panel && panel.classList.contains('active'))render(calc(readInputs()))});}
-const btnLogout=$id('btnLogout');
-if(btnLogout){btnLogout.addEventListener('click',async()=>{btnLogout.disabled=true;btnLogout.textContent='Saindo...';try{const response=await fetch('/api/logout',{method:'POST',headers:{'Content-Type':'application/json'}});if(!response.ok)throw new Error('logout');}catch(error){}finally{location.href='/';}});}
-
-updateVisibility();
-setupFormattedInputs();
+function updateAdhesionFields(){
+  const diluted=$('adhesionMode').value==='diluida';
+  $('adhesionMonthsField').hidden=!diluted;
+  $('adhesionMonths').disabled=!diluted;
+  $('adhesionHelp').textContent=diluted
+    ? 'A taxa de adesão é descontada da taxa de administração e dividida pelo número de meses. Ela é adicionada à parcela durante esse período; depois, a parcela volta ao valor normal.'
+    : 'A taxa de adesão é descontada da taxa de administração. À vista, a adesão cobrada equivale ao percentual sobre o crédito mais uma parcela do cenário.';
+}
+$('adhesionMode').addEventListener('change',updateAdhesionFields);
+updateAdhesionFields();
 </script>
 </body>
 </html>

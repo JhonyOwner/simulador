@@ -1,9 +1,7 @@
 # Simulador de Consórcio
 
-Ferramenta educativa e independente para simular a evolução da parcela de um
-consórcio: valor pré e pós-contemplação, efeito do redutor, uso de lance
-(embutido e em recursos próprios), taxa de adesão antecipada e a taxa real
-anual equivalente do plano (calculada por TIR).
+Aplicação privada com acesso controlado para simular planos de consórcio,
+comparar redutores e projetar os pagamentos pós-contemplação.
 
 > Este projeto não é afiliado a nenhuma administradora de consórcio. Os
 > resultados são estimativas para fins de estudo — consulte sempre o
@@ -14,22 +12,21 @@ anual equivalente do plano (calculada por TIR).
 ```
 .
 ├── index.html            # Página inicial
-├── simulador.html         # Formulário (landing page) + popup de resultados
+├── simulador.html         # Simulador autenticado e resultados
 ├── JS/
-│   └── calc.js             # Implementação legada testada separadamente
+│   └── calc.js             # Cálculos puros do simulador
 ├── api/                    # Serverless Functions usadas no deploy da Vercel
 ├── server.js              # Servidor HTTP + autenticação e proteção do simulador
 ├── auth.js                # Autenticação do servidor local com PostgreSQL
 ├── package.json           # Dependências do backend
 ├── TESTES/
-│   └── calc.test.js        # Testes do módulo e do cálculo ativo
+│   └── calc.test.js        # Regressões do cálculo e da projeção
 └── README.md
 ```
 
 ## Como executar
 
-O simulador é uma aplicação client-side (HTML + CSS + JavaScript embutidos), sem
-dependências de build. Para rodar localmente:
+Para rodar localmente:
 
 ```bash
 npm install
@@ -69,36 +66,14 @@ O acesso ao `simulador.html` exige login quando servido por `server.js` ou pela
 Vercel. O arquivo `index.html` pode ser aberto diretamente apenas para
 inspecionar a interface; as chamadas de autenticação precisam de um servidor.
 
-Ao preencher o formulário e clicar em "Mostrar resultados", o extrato abre
-em um popup (modal) por cima da página — pode ser fechado pelo × no canto,
-clicando fora do card, ou com Esc.
+## Cálculos
 
-## Testes
-
-O teste valida o cálculo ativo embutido em `simulador.html`, incluindo os valores
-da planilha para os planos cheio, com redutor de 25% e de 50%, além do piso e da
-amortização pós-contemplação. O módulo legado `JS/calc.js` também é testado
-separadamente. O comando retorna código diferente de zero se alguma checagem
-falhar:
-
-```bash
-node TESTES/calc.test.js
-```
-
-## Como funciona o cálculo, em resumo
-
-- **Fundo Comum e Fundo de Reserva** são recolhidos na proporção do redutor
-  (quando houver) até o mês da contemplação.
-- **Taxa de Administração** incide sobre 100% do crédito desde a 1ª parcela,
-  independentemente do redutor.
-- A **adesão à vista** substitui a primeira parcela regular; os pagamentos
-  seguintes usam a parcela reduzida.
-- O **piso pós-contemplação** é calculado sobre o saldo devedor inicial com
-  taxas: 1% para automóvel e 0,5% para imóvel.
-- O **comparativo pós-contemplação** mostra saldo após lance, pagamentos
-  pré-contemplação, diferença do redutor e os prazos nos modos parcela e prazo.
-- A **taxa real anual equivalente** é calculada por TIR (fluxo de caixa
-  descontado) sobre o fluxo de entradas e saídas do plano.
+A interface usa `JS/calc.js` para calcular a taxa de administração líquida,
+planos cheio/25%/50%, lance, amortização por prazo ou parcela, piso
+pós-contemplação, reajuste anual e rendimento composto. A adesão pode ser paga
+à vista (taxa mais uma parcela) ou diluída em um número configurável de meses;
+durante esse período, o adicional mensal é somado à parcela e depois cessa. Os
+cenários são validados com `npm test`.
 
 ## Licença
 
