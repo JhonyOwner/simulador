@@ -16,13 +16,13 @@ anual equivalente do plano (calculada por TIR).
 ├── index.html            # Página inicial
 ├── simulador.html         # Formulário (landing page) + popup de resultados
 ├── JS/
-│   └── calc.js             # Núcleo de cálculo usado pelos testes
+│   └── calc.js             # Implementação legada testada separadamente
 ├── api/                    # Serverless Functions usadas no deploy da Vercel
 ├── server.js              # Servidor HTTP + autenticação e proteção do simulador
 ├── auth.js                # Autenticação do servidor local com PostgreSQL
 ├── package.json           # Dependências do backend
 ├── TESTES/
-│   └── calc.test.js        # Teste de regressão de js/calc.js
+│   └── calc.test.js        # Testes do módulo e do cálculo ativo
 └── README.md
 ```
 
@@ -75,15 +75,11 @@ clicando fora do card, ou com Esc.
 
 ## Testes
 
-A lógica de cálculo de regressão vive em `JS/calc.js` como uma função pura (`calc(input)`,
-sem acesso a DOM), exportada via UMD e importada diretamente pelo teste com
-`require()`. O cálculo executado pela tela está embutido em `simulador.html` e
-é verificado separadamente pelo teste.
-O teste roda alguns
-cenários (com e sem lance, amortizando por parcelas ou por prazo), imprime os
-resultados e valida invariantes básicas (saldo devedor não-negativo, total
-pago ≥ crédito líquido, parcela nunca abaixo do piso mínimo etc.), retornando
-código de saída diferente de zero se alguma checagem falhar:
+O teste valida o cálculo ativo embutido em `simulador.html`, incluindo os valores
+da planilha para os planos cheio, com redutor de 25% e de 50%, além do piso e da
+amortização pós-contemplação. O módulo legado `JS/calc.js` também é testado
+separadamente. O comando retorna código diferente de zero se alguma checagem
+falhar:
 
 ```bash
 node TESTES/calc.test.js
@@ -95,10 +91,12 @@ node TESTES/calc.test.js
   (quando houver) até o mês da contemplação.
 - **Taxa de Administração** incide sobre 100% do crédito desde a 1ª parcela,
   independentemente do redutor.
-- Na **contemplação**, a diferença acumulada entre a parcela cheia e a
-  parcela reduzida pode ser coberta por lance em recursos próprios; o que
-  sobrar é diluído nas parcelas restantes ou pago com parcelas extras ao
-  final do prazo, conforme a forma de amortização escolhida.
+- A **adesão à vista** substitui a primeira parcela regular; os pagamentos
+  seguintes usam a parcela reduzida.
+- O **piso pós-contemplação** é calculado sobre o saldo devedor inicial com
+  taxas: 1% para automóvel e 0,5% para imóvel.
+- O **comparativo pós-contemplação** mostra saldo após lance, pagamentos
+  pré-contemplação, diferença do redutor e os prazos nos modos parcela e prazo.
 - A **taxa real anual equivalente** é calculada por TIR (fluxo de caixa
   descontado) sobre o fluxo de entradas e saídas do plano.
 

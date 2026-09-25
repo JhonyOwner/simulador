@@ -355,11 +355,11 @@ body:has(.result-panel.active){overflow:hidden}
   <form id="calcForm">
     <fieldset>
       <legend>Plano</legend>
-      <div class="field-row"><div class="field"><label for="credito">Valor do crédito (R$)</label><input type="number" id="credito" value="45000" placeholder="Ex.: 45000" min="1" step="100"></div><div class="field"><label for="prazo">Prazo total (meses)</label><input type="number" id="prazo" value="100" placeholder="Ex.: 100" min="1" step="1"></div></div>
-      <div class="field-row"><div class="field"><label for="ta">Taxa de administração total (%)</label><input type="number" id="ta" value="16" placeholder="Ex.: 16" min="0" step="0.1"></div><div class="field"><label for="fr">Fundo de reserva total (%)</label><input type="number" id="fr" value="3" placeholder="Ex.: 3" min="0" step="0.1"></div></div>
-      <div class="field-row"><div class="field"><label for="mesContemplacao">Contemplação na parcela nº</label><input type="number" id="mesContemplacao" value="10" placeholder="Ex.: 10" min="1" step="1"></div></div>
+      <div class="field-row"><div class="field"><label for="credito">Valor do crédito (R$)</label><input type="number" id="credito" value="1000000" placeholder="Ex.: 1000000" min="1" step="100"></div><div class="field"><label for="prazo">Prazo total (meses)</label><input type="number" id="prazo" value="240" placeholder="Ex.: 240" min="1" step="1"></div></div>
+      <div class="field-row"><div class="field"><label for="ta">Taxa de administração total (%)</label><input type="number" id="ta" value="18" placeholder="Ex.: 18" min="0" step="0.1"></div><div class="field"><label for="fr">Fundo de reserva total (%)</label><input type="number" id="fr" value="2" placeholder="Ex.: 2" min="0" step="0.1"></div></div>
+      <div class="field-row"><div class="field"><label for="mesContemplacao">Contemplação na parcela nº</label><input type="number" id="mesContemplacao" value="11" placeholder="Ex.: 11" min="1" step="1"></div></div>
       <div class="field-row"><div class="field"><label for="inccPct">IPCA / INCC / reajuste anual (%)</label><input type="number" id="inccPct" value="5" placeholder="Ex.: 5" min="0" step="0.1"></div><div class="field"><label>Aplicação</label><div class="inline-note" style="margin:0">Reajuste proporcional aplicado sobre o saldo devedor remanescente. A parcela é recalculada para diminuir até zerar.</div></div></div>
-      <div class="field-row"><div class="field"><label for="tipoBem">Tipo de bem</label><select id="tipoBem"><option value="auto" selected>Automóvel — 1% do saldo devedor</option><option value="imovel">Imóvel — 0,5% do saldo devedor</option></select></div><div class="field"><label>Regra pós-contemplação</label><div class="inline-note" style="margin:0">Parcela pós = parcela mínima + diferença mensal do redutor. Ela passa a valer no mês da contemplação.</div></div></div>
+      <div class="field-row"><div class="field"><label for="tipoBem">Tipo de bem</label><select id="tipoBem"><option value="auto">Automóvel — 1% do saldo devedor</option><option value="imovel" selected>Imóvel — 0,5% do saldo devedor</option></select></div><div class="field"><label>Regra pós-contemplação</label><div class="inline-note" style="margin:0">A parcela mínima usa o saldo devedor inicial, com taxas: 1% para automóvel e 0,5% para imóvel.</div></div></div>
       <div class="inline-note">A atualização do crédito e da parcela segue a decomposição oficial do contrato.</div>
     </fieldset>
 
@@ -372,15 +372,15 @@ body:has(.result-panel.active){overflow:hidden}
 
     <fieldset>
       <legend>Taxa de adesão antecipada</legend>
-      <div class="field"><label for="adesaoPct">Percentual antecipado, dentro da TA total (%)</label><input type="number" id="adesaoPct" value="2" placeholder="Ex.: 2" min="0" step="0.1"></div>
+      <div class="field"><label for="adesaoPct">Adesão-base (% do crédito)</label><input type="number" id="adesaoPct" value="2.5" placeholder="Ex.: 2,5" min="0" max="100" step="0.1"></div>
       <div class="radio-group"><label><input type="radio" name="adesaoForma" value="avista" checked> À vista</label><label><input type="radio" name="adesaoForma" value="diluida"> Diluída</label></div>
       <div class="field" id="adesaoMesesField"><label for="adesaoMeses">Diluir em quantas parcelas</label><input type="number" id="adesaoMeses" value="12" min="1" step="1"></div>
-      <p class="inline-note">A adesão é somada integralmente à primeira parcela. Exemplo-base: 2% do crédito = R$ 900,00. Como os 2% estão dentro dos 16%, a TA restante é 14%.</p>
+      <p class="inline-note">A adesão é separada da TA. No comparativo, ela parte do percentual sobre o crédito e é ajustada pela diferença entre a parcela cheia e a parcela reduzida.</p>
     </fieldset>
 
     <fieldset>
       <legend>Lance na contemplação</legend>
-      <div class="field-row"><div class="field"><label for="dinheiro">Lance com recursos próprios (R$)</label><input type="number" id="dinheiro" value="0" placeholder="Ex.: 5000" min="0" step="100"></div><div class="field"><label for="embutido">Lance embutido (%)</label><input type="number" id="embutido" value="0" placeholder="Ex.: 20" min="0" max="100" step="0.1"></div></div>
+      <div class="field-row"><div class="field"><label for="dinheiro">Lance com recursos próprios (R$)</label><input type="number" id="dinheiro" value="250000" placeholder="Ex.: 250000" min="0" step="100"></div><div class="field"><label for="embutido">Lance embutido (%)</label><input type="number" id="embutido" value="0" placeholder="Ex.: 20" min="0" max="100" step="0.1"></div></div>
       <div class="radio-group"><label><input type="radio" name="restante" value="parcelas" checked> Amortizar parcelas</label><label><input type="radio" name="restante" value="prazo"> Amortizar prazo</label></div>
       <p class="inline-note">Abater no prazo: o lance quita parcelas de trás para frente e reduz meses. Abater na parcela: o lance é diluído em todas as parcelas restantes, reduzindo o valor sem ultrapassar a parcela mínima.</p>
     </fieldset>
@@ -403,6 +403,18 @@ body:has(.result-panel.active){overflow:hidden}
     <div class="key-card"><div class="k">Crédito líquido</div><div class="v" id="keyCredito">—</div><div class="s">crédito − embutido</div></div>
   </div>
 
+  <section class="section-block" aria-labelledby="planComparisonTitle">
+    <h4 id="planComparisonTitle">Conferência do plano: cheio e redutor</h4>
+    <p class="evolution-note">Comparativo calculado com o crédito, prazo, TA, FR e adesão informados.</p>
+    <div class="evolution-table-wrap"><table class="evolution-table"><thead><tr><th>Componente</th><th>Cheio</th><th>Redutor 25%</th><th>Redutor 50%</th></tr></thead><tbody id="planComparisonRows"></tbody></table></div>
+  </section>
+
+  <section class="section-block" aria-labelledby="postComparisonTitle">
+    <h4 id="postComparisonTitle">Pós-contemplação por cenário</h4>
+    <p class="evolution-note" id="postComparisonNote"></p>
+    <div class="evolution-table-wrap"><table class="evolution-table"><thead><tr><th>Componente</th><th>Cheio</th><th>Redutor 25%</th><th>Redutor 50%</th></tr></thead><tbody id="postComparisonRows"></tbody></table></div>
+  </section>
+
   <div class="seal-row">
     <div class="seal"><div class="num" id="sealTaxa">—</div><div class="lbl">taxa real pós-contemplação</div></div>
     <div class="seal-desc"><h3>Resumo financeiro</h3><p id="sealText">—</p></div>
@@ -410,7 +422,7 @@ body:has(.result-panel.active){overflow:hidden}
 
   <div class="info-grid">
   <div class="cols parcela-block">
-    <div class="ledger"><h4>Parcela pós-contemplação</h4><div class="ledger-line"><span class="lbl">Saldo devedor inicial</span><span class="fill"></span><span class="val" id="posFundo">—</span></div><div class="ledger-line"><span class="lbl">Percentual pós-contemplação</span><span class="fill"></span><span class="val" id="posTA">—</span></div><div class="ledger-line"><span class="lbl">Parcela mínima pelo saldo inicial</span><span class="fill"></span><span class="val" id="posFR">—</span></div><div class="ledger-line"><span class="lbl">Diferença diluída</span><span class="fill"></span><span class="val" id="posDiluicao">—</span></div><div class="ledger-line total"><span class="lbl">Parcela pós-contemplação</span><span class="fill"></span><span class="val" id="posTotal">—</span></div></div>
+    <div class="ledger"><h4>Parcela pós-contemplação</h4><div class="ledger-line"><span class="lbl">Saldo devedor inicial</span><span class="fill"></span><span class="val" id="posFundo">—</span></div><div class="ledger-line"><span class="lbl">Percentual pós-contemplação</span><span class="fill"></span><span class="val" id="posTA">—</span></div><div class="ledger-line"><span class="lbl">Parcela mínima sobre saldo inicial</span><span class="fill"></span><span class="val" id="posFR">—</span></div><div class="ledger-line"><span class="lbl">Diferença diluída</span><span class="fill"></span><span class="val" id="posDiluicao">—</span></div><div class="ledger-line total"><span class="lbl">Parcela pós-contemplação</span><span class="fill"></span><span class="val" id="posTotal">—</span></div></div>
   </div>
 
   <div class="section-block diferenca-block"><h4>Diferença faltante do redutor</h4><div class="ledger-line"><span class="lbl">Diferença mensal</span><span class="fill"></span><span class="val" id="difMensal">—</span></div><div class="ledger-line total"><span class="lbl">Diferença acumulada até contemplação</span><span class="fill"></span><span class="val" id="difAcumulada">—</span></div><div class="ledger-line"><span class="lbl">Diferença diluída no pós</span><span class="fill"></span><span class="val" id="difDiluida">—</span></div></div>
@@ -456,29 +468,42 @@ function calc(inp){
   const percentualPos=tipoBem==='auto'?0.01:0.005;
 
   /* A — taxa antecipada dentro da TA total */
-  const adesaoPct=Math.min(Math.max(Number(inp.adesaoPct)||0,0),taPct);
-  const adesaoValor=credito*adesaoPct/100;
-  const taRestantePct=Math.max(0,taPct-adesaoPct);
+  const adesaoPct=Math.min(Math.max(Number(inp.adesaoPct)||0,0),100);
+  const adesaoBaseValor=credito*adesaoPct/100;
   const adesaoForma=inp.adesaoForma==='diluida'?'diluida':'avista';
   let adesaoMeses=adesaoForma==='avista'?1:Math.max(1,Math.floor(Number(inp.adesaoMeses)||1));
   adesaoMeses=Math.min(adesaoMeses,N);
-  const adesaoPorParcela=adesaoMeses>0?adesaoValor/adesaoMeses:0;
 
   /* B — componentes mensais */
   const fundoComumMensal=credito/N;
   const frMensalCheio=credito*frPct/100/N;
-  const taMensal=credito*taRestantePct/100/N;
+  const taMensal=credito*taPct/100/N;
   const fatorRedutor=1-redutorPct/100;
   const fundoComumReduzido=fundoComumMensal*fatorRedutor;
   const frReduzido=frMensalCheio*fatorRedutor;
 
+  const parcelaCheiaBase=fundoComumMensal+frMensalCheio+taMensal+seguro;
   const parcelaReduzida=fundoComumReduzido+frReduzido+taMensal+seguro;
-  const primeiraParcela=parcelaReduzida+
-    adesaoValor;
+  const adesaoValor=Math.max(0,adesaoBaseValor+parcelaReduzida-parcelaCheiaBase);
+  const adesaoPorParcela=adesaoMeses>0?adesaoValor/adesaoMeses:0;
+  const primeiraParcela=adesaoForma==='avista' && adesaoValor>0
+    ? adesaoValor
+    : parcelaReduzida+(adesaoForma==='diluida'?adesaoPorParcela:0);
+
+  function calcularPlano(redutor){
+    const fator=1-redutor/100;
+    const fundoComum=credito*fator;
+    const fundoReserva=credito*frPct/100*fator;
+    const saldoDevedor=fundoComum+credito*taPct/100+fundoReserva;
+    const parcela=saldoDevedor/N;
+    const adesao=Math.max(0,adesaoBaseValor+parcela-credito*(1+(taPct+frPct)/100)/N);
+    return {redutor,fundoComum,fundoReserva,saldoDevedor,adesao,parcela};
+  }
+  const comparativoPlanilha=[0,25,50].map(calcularPlano);
+  const planoSelecionado=calcularPlano(redutorPct);
 
   /* C — diferença criada pelo redutor */
   const diferencaMensal=(fundoComumMensal-fundoComumReduzido)+(frMensalCheio-frReduzido);
-  const diferencaAcumulada=diferencaMensal*k;
 
   /* Lance: próprio + embutido = valor total utilizado para amortizar o saldo. */
   const lanceProprio=inp.dinheiro!==undefined
@@ -493,33 +518,104 @@ function calc(inp){
   const creditoLiquido=Math.max(0,credito-lanceEmbutido);
 
   const primeiroMesPosContemplacao=k===1?2:k;
-  const mesesRestantesContrato=Math.max(0,N-primeiroMesPosContemplacao+1);
-
-  /* Saldo devedor antes do lance: crédito + taxas contratadas,
-     menos as parcelas efetivamente pagas antes da contemplação. */
+  const parcelasPagasAntesContemplacao=Math.max(0,Math.min(k===1?1:k-1,N));
+  const mesesRestantesContrato=Math.max(0,N-parcelasPagasAntesContemplacao);
   const taxasTotais=credito*(taPct+frPct)/100+seguro*N;
-  const parcelasPagasAntesContemplacao=Math.max(0,Math.min(k-1,N));
-  const parcelasNormaisDepoisDaPrimeira=Math.max(0,parcelasPagasAntesContemplacao-1);
-  const valorPrimeiraParcelaPaga=parcelasPagasAntesContemplacao>0
-    ? primeiraParcela
-    : 0;
-  const adesaoPagaDepoisDaPrimeira=0;
-  const valorParcelasPagasAntes=k===1
-    ? primeiraParcela
-    : valorPrimeiraParcelaPaga+
-      parcelaReduzida*parcelasNormaisDepoisDaPrimeira+
-      adesaoPagaDepoisDaPrimeira;
-  const saldoDevedorInicial=credito+taxasTotais;
-  const saldoDevedorAntesLance=Math.max(
-    0,
-    credito+taxasTotais-valorParcelasPagasAntes
-  );
+  const saldoDevedorInicial=comparativoPlanilha[0].saldoDevedor;
 
-  /* Todo lance (próprio + embutido) é usado para abater o saldo. */
-  const lanceUtilizado=Math.min(lanceSomado,saldoDevedorAntesLance);
+  function pagamentoPreContemplacao(plano,mes){
+    if(adesaoForma==='avista' && mes===1 && plano.adesao>0) return plano.adesao;
+    const adesaoMes=adesaoForma==='diluida' && mes<=adesaoMeses?plano.adesao/adesaoMeses:0;
+    return plano.parcela+adesaoMes;
+  }
+
+  function pagamentosAntes(plano){
+    let total=0;
+    let adesaoPaga=0;
+    for(let mes=1;mes<=parcelasPagasAntesContemplacao;mes++){
+      total+=pagamentoPreContemplacao(plano,mes);
+      if(adesaoForma==='avista' && mes===1) adesaoPaga+=plano.adesao;
+      else if(adesaoForma==='diluida' && mes<=adesaoMeses) adesaoPaga+=plano.adesao/adesaoMeses;
+    }
+    return {total,adesaoPaga};
+  }
+
+  const pagamentosPlanoCheio=pagamentosAntes(comparativoPlanilha[0]);
+  const lancePlanoCheio=Math.min(lanceSomado,Math.max(0,comparativoPlanilha[0].saldoDevedor-pagamentosPlanoCheio.total));
+  const saldoCheioPosPagamentos=Math.max(0,comparativoPlanilha[0].saldoDevedor-pagamentosPlanoCheio.total-lancePlanoCheio);
+  const mesesPosBase=Math.max(1,mesesRestantesContrato);
+  const comparativoPos=comparativoPlanilha.map(plano=>{
+    const pagos=pagamentosAntes(plano);
+    const saldoAntesLance=Math.max(0,plano.saldoDevedor-pagos.total);
+    const lancePlano=Math.min(lanceSomado,saldoAntesLance);
+    const saldoPosLance=Math.max(0,plano.saldoDevedor-lancePlano);
+    const saldoPosPagamentos=Math.max(0,saldoPosLance-pagos.total);
+    const diferencaSaldo=Math.max(0,saldoCheioPosPagamentos-saldoPosPagamentos);
+    const diferencaMes=mesesPosBase>0?diferencaSaldo/mesesPosBase:0;
+    const diferencaAcumulada=Math.max(0,comparativoPlanilha[0].parcela-plano.parcela)*parcelasPagasAntesContemplacao;
+    const parcelaMinima=saldoDevedorInicial*percentualPos;
+    const parcelaPorPrazo=mesesPosBase>0?saldoPosPagamentos/mesesPosBase:0;
+    const parcelaReal=Math.max(parcelaMinima,parcelaPorPrazo)+diferencaMes;
+    const saldoPrazo=saldoPosPagamentos+diferencaSaldo;
+    const saldoParcelas=saldoPrazo+diferencaAcumulada;
+    return {
+      ...plano,
+      saldoAntesLance,
+      lanceUtilizado:lancePlano,
+      saldoPosLance,
+      valorParcelasPagasAntes:pagos.total,
+      adesaoPagaAteContemplacao:pagos.adesaoPaga,
+      saldoPosPagamentos,
+      diferencaSaldo,
+      diferencaMensal:diferencaMes,
+      diferencaAcumulada,
+      parcelaMinima,
+      parcelaPorPrazo,
+      parcelaReal,
+      saldoPrazo,
+      mesesPrazo:Math.max(1,Math.round(saldoPrazo/Math.max(parcelaReal,0.01))),
+      saldoParcelas,
+      mesesParcelas:Math.max(1,Math.round(saldoParcelas/Math.max(parcelaMinima,0.01)))
+    };
+  });
+  const planoPosSelecionado=comparativoPos.find(plano=>plano.redutor===redutorPct) || (()=>{
+    const pagos=pagamentosAntes(planoSelecionado);
+    const saldoAntesLance=Math.max(0,planoSelecionado.saldoDevedor-pagos.total);
+    const lancePlano=Math.min(lanceSomado,saldoAntesLance);
+    const saldoPosLance=Math.max(0,planoSelecionado.saldoDevedor-lancePlano);
+    const saldoPosPagamentos=Math.max(0,saldoPosLance-pagos.total);
+    const diferencaSaldo=Math.max(0,saldoCheioPosPagamentos-saldoPosPagamentos);
+    const diferencaMes=diferencaSaldo/mesesPosBase;
+    const diferencaAcumulada=Math.max(0,comparativoPlanilha[0].parcela-planoSelecionado.parcela)*parcelasPagasAntesContemplacao;
+    const parcelaMinima=saldoDevedorInicial*percentualPos;
+    const parcelaPorPrazo=saldoPosPagamentos/mesesPosBase;
+    const parcelaReal=Math.max(parcelaMinima,parcelaPorPrazo)+diferencaMes;
+    const saldoPrazo=saldoPosPagamentos+diferencaSaldo;
+    const saldoParcelas=saldoPrazo+diferencaAcumulada;
+    return {...planoSelecionado,saldoAntesLance,lanceUtilizado:lancePlano,saldoPosLance,valorParcelasPagasAntes:pagos.total,adesaoPagaAteContemplacao:pagos.adesaoPaga,saldoPosPagamentos,diferencaSaldo,diferencaMensal:diferencaMes,diferencaAcumulada,parcelaMinima,parcelaPorPrazo,parcelaReal,saldoPrazo,mesesPrazo:Math.max(1,Math.round(saldoPrazo/Math.max(parcelaReal,0.01))),saldoParcelas,mesesParcelas:Math.max(1,Math.round(saldoParcelas/Math.max(parcelaMinima,0.01)))};
+  })();
+
+  const valorParcelasPagasAntes=planoPosSelecionado.valorParcelasPagasAntes;
+  const saldoDevedorPlano=planoSelecionado.saldoDevedor;
+  const saldoDevedorAntesLance=planoPosSelecionado.saldoAntesLance;
+  const lanceUtilizado=planoPosSelecionado.lanceUtilizado;
   const lanceNaoUtilizado=Math.max(0,lanceSomado-lanceUtilizado);
-  const saldoDevedor=Math.max(0,saldoDevedorAntesLance-lanceUtilizado);
-  const obrigacaoPos=Math.max(0,saldoDevedor+diferencaAcumulada);
+  const saldoDevedor=planoPosSelecionado.saldoPosPagamentos;
+  const obrigacaoPos=inp.formaRestante==='prazo'?planoPosSelecionado.saldoPrazo:planoPosSelecionado.saldoParcelas;
+  const diferencaTotal=planoPosSelecionado.diferencaSaldo;
+  const diferencaAcumulada=planoPosSelecionado.diferencaAcumulada;
+  const diferencaDiluidaBase=planoPosSelecionado.diferencaMensal;
+  const parcelaMinima=planoPosSelecionado.parcelaMinima;
+  const parcelaMinimaComDiferenca=parcelaMinima+diferencaDiluidaBase;
+  const parcelaBaseAntesAmortizacao=planoPosSelecionado.parcelaReal;
+  const parcelaPos=inp.formaRestante==='prazo'?planoPosSelecionado.parcelaReal:parcelaMinima;
+  const mesesPosContemplacao=inp.formaRestante==='prazo'?planoPosSelecionado.mesesPrazo:planoPosSelecionado.mesesParcelas;
+  const mesesEconomizados=Math.max(0,mesesRestantesContrato-mesesPosContemplacao);
+  const prazoEfetivo=parcelasPagasAntesContemplacao+mesesPosContemplacao;
+  const mesesDiluidos=mesesRestantesContrato;
+  const mesesExtras=Math.max(0,prazoEfetivo-N);
+  const reducaoParcela=mesesDiluidos>0?lanceUtilizado/mesesDiluidos:0;
+  const pisoBloqueouReducao=inp.formaRestante==='parcelas' && parcelaPos<=parcelaMinima+0.000001;
 
   /* Apenas para informar de onde veio o lance utilizado. */
   const embutidoUtilizado=Math.min(lanceEmbutido,lanceUtilizado);
@@ -527,107 +623,6 @@ function calc(inp){
     lanceProprio,
     Math.max(0,lanceUtilizado-embutidoUtilizado)
   );
-
-  /* Diferença criada pelo redutor. Ela é uma obrigação separada e,
-     no modo por parcela, é diluída junto das parcelas pós-contemplação. */
-  const diferencaDiluidaBase=mesesRestantesContrato>0
-    ? diferencaAcumulada/mesesRestantesContrato
-    : 0;
-
-  /*
-     PARCELA PÓS — base antes de amortizar o lance:
-     percentual sobre o saldo devedor ANTES do lance + diferença do redutor.
-     O lance será aplicado de duas formas, conforme a escolha do usuário:
-       - parcelas: divide o lance pelo prazo restante e reduz a parcela;
-       - prazo: usa o lance para pagar parcelas de trás para frente.
-  */
-  /* Piso da parcela = percentual do saldo devedor inicial, antes de pagamentos e lance. */
-  const parcelaMinima=
-    saldoDevedorInicial*percentualPos;
-
-  /* A base é o saldo diluído; o mínimo com a diferença é o piso. */
-  const parcelaMinimaComDiferenca=parcelaMinima+diferencaDiluidaBase;
-  const parcelaBaseAntesAmortizacao=Math.max(
-    parcelaMinimaComDiferenca,
-    mesesRestantesContrato>0
-      ? saldoDevedorAntesLance/mesesRestantesContrato+diferencaDiluidaBase
-      : parcelaMinimaComDiferenca
-  );
-
-  let parcelaPos=parcelaBaseAntesAmortizacao;
-  let reducaoParcela=0;
-  let mesesEconomizados=0;
-  let mesesPosContemplacao=mesesRestantesContrato;
-  let prazoEfetivo=N;
-  let mesesDiluidos=mesesRestantesContrato;
-  let mesesExtras=0;
-
-  if(mesesRestantesContrato>0){
-
-    if(inp.formaRestante==='prazo'){
-      /*
-         Amortização por prazo: o lance quita parcelas do final e reduz meses;
-         o valor pós calculado permanece como referência mensal.
-      */
-      const valorParcelaParaPrazo = Math.max(parcelaBaseAntesAmortizacao, 0.01);
-      const abatimentoMaximo = Math.max(0, mesesRestantesContrato - 1);
-      mesesEconomizados = Math.min(abatimentoMaximo, Math.floor(lanceUtilizado / valorParcelaParaPrazo));
-      mesesPosContemplacao = Math.max(1, mesesRestantesContrato - mesesEconomizados);
-      prazoEfetivo = primeiroMesPosContemplacao-1+mesesPosContemplacao;
-      parcelaPos = Math.max(
-        parcelaMinimaComDiferenca,
-        obrigacaoPos / mesesPosContemplacao
-      );
-    }else{
-      /*
-         Amortização por parcela: o prazo permanece e o lance é dividido
-         pelos meses restantes para reduzir o valor mensal, respeitando o piso.
-      */
-      mesesDiluidos = mesesRestantesContrato;
-      reducaoParcela = lanceUtilizado / Math.max(1, mesesDiluidos);
-      parcelaPos = Math.max(
-        parcelaMinimaComDiferenca,
-        obrigacaoPos/mesesDiluidos
-      );
-      mesesPosContemplacao = mesesRestantesContrato;
-      prazoEfetivo = N;
-    }
-
-  }else if(lanceUtilizado<saldoDevedorAntesLance){
-    /* Contemplação no último mês: eventual saldo remanescente exige prazo extra. */
-    if(inp.formaRestante==='prazo'){
-      const valorParcelaParaPrazo=Math.max(parcelaBaseAntesAmortizacao,0.01);
-      mesesExtras=Math.max(
-        1,
-        Math.ceil(saldoDevedor/valorParcelaParaPrazo)
-      );
-      mesesPosContemplacao=mesesExtras;
-      prazoEfetivo=N+mesesExtras;
-      parcelaPos=parcelaBaseAntesAmortizacao;
-    }else{
-      mesesDiluidos=1;
-      reducaoParcela=lanceUtilizado;
-      parcelaPos=Math.max(
-        parcelaMinimaComDiferenca,
-        parcelaBaseAntesAmortizacao-reducaoParcela
-      );
-      mesesPosContemplacao=mesesDiluidos;
-      mesesExtras=mesesDiluidos;
-      prazoEfetivo=N+mesesExtras;
-    }
-  }
-
-  const pisoBloqueouReducao=inp.formaRestante==='parcelas' && lanceUtilizado>0 &&
-    parcelaPos<=parcelaMinimaComDiferenca+0.000001;
-
-  if(pisoBloqueouReducao && mesesRestantesContrato>0){
-    const mesesPorPiso=Math.max(1,Math.ceil(obrigacaoPos/parcelaMinimaComDiferenca));
-    if(mesesPorPiso<mesesPosContemplacao){
-      mesesEconomizados=mesesRestantesContrato-mesesPorPiso;
-      mesesPosContemplacao=mesesPorPiso;
-      prazoEfetivo=primeiroMesPosContemplacao-1+mesesPosContemplacao;
-    }
-  }
 
   /* Fluxo das parcelas. A parcela da contemplação é a k-ésima. */
   function pagamentoPrincipalPos(mes){
@@ -639,17 +634,21 @@ function calc(inp){
 
   const outflow=new Array(prazoEfetivo+1).fill(0);
   for(let t=1;t<=prazoEfetivo;t++){
-    const adesao=t===1?adesaoValor:0;
-    if(t<k) outflow[t]=parcelaReduzida+adesao;
-    else if(k===1 && t===1) outflow[t]=primeiraParcela;
-    else outflow[t]=pagamentoPrincipalPos(t-primeiroMesPosContemplacao+1)+adesao;
+    if(k===1 && t===1){
+      outflow[t]=primeiraParcela;
+    }else if(t<k){
+      outflow[t]=pagamentoPreContemplacao(planoSelecionado,t);
+    }else{
+      const adesaoFutura=adesaoForma==='diluida' && t<=adesaoMeses?adesaoPorParcela:0;
+      outflow[t]=pagamentoPrincipalPos(t-primeiroMesPosContemplacao+1)+adesaoFutura;
+    }
   }
 
   /* A contemplação na parcela k deixa k - 1 parcelas pagas.
      A primeira delas já contém a adesão. */
   const valorParcelasAntesContemplacao=valorParcelasPagasAntes;
 
-  const adesaoPagaAteContemplacao=parcelasPagasAntesContemplacao>0?adesaoValor:0;
+  const adesaoPagaAteContemplacao=planoPosSelecionado.adesaoPagaAteContemplacao;
 
   const pagoAntesContemplacao=valorParcelasAntesContemplacao;
 
@@ -735,15 +734,15 @@ function calc(inp){
 
   return {
     credito,N,k,taPct,frPct,seguroPct,seguro,inccPct,redutorPct,
-    adesaoPct,adesaoValor,adesaoForma,adesaoMeses,adesaoPorParcela,taRestantePct,
+    adesaoPct,adesaoValor,adesaoForma,adesaoMeses,adesaoPorParcela,parcelaCheiaBase,
     fundoComumMensal,frMensalCheio,taMensal,fundoComumReduzido,frReduzido,
     parcelaReduzida,primeiraParcela,diferencaMensal,diferencaAcumulada,
     lanceProprio,lanceEmbutido,lanceSomado,
     proprioUtilizado,embutidoUtilizado,lanceUtilizado,lanceNaoUtilizado,
     creditoLiquido,
-    mesesRestantesContrato,taxasTotais,saldoDevedorInicial,valorParcelasPagasAntes,valorParcelasAntesContemplacao,saldoDevedorAntesLance,saldoDevedor,obrigacaoPos,
-    percentualPos,parcelaMinima,parcelaMinimaComDiferenca,parcelaBaseAntesAmortizacao,diferencaDiluidaBase,pisoBloqueouReducao,
-    diferencaDiluida:diferencaDiluidaBase,
+    mesesRestantesContrato,taxasTotais,saldoDevedorInicial,saldoDevedorPlano,saldoPosLance:planoPosSelecionado.saldoPosLance,valorParcelasPagasAntes,valorParcelasAntesContemplacao,saldoDevedorAntesLance,saldoDevedor,obrigacaoPos,
+    percentualPos,parcelaMinima,parcelaMinimaComDiferenca,parcelaBaseAntesAmortizacao,diferencaDiluidaBase,pisoBloqueouReducao,comparativoPlanilha,
+    comparativoPos,diferencaTotal,diferencaDiluida:diferencaDiluidaBase,
     reducaoParcela,parcelaPos,
     tipoBem,formaRestante:inp.formaRestante,
     mesesEconomizados,mesesPosContemplacao,mesesDiluidos,mesesExtras,prazoEfetivo,
@@ -808,25 +807,52 @@ function updateVisibility(){
 function render(r){
   const primeiraTotal=r.primeiraParcela;
 
+  const planRows=[
+    ['Fundo comum',scenario=>scenario.fundoComum],
+    ['Fundo de reserva reduzido',scenario=>scenario.fundoReserva],
+    ['Saldo devedor do plano',scenario=>scenario.saldoDevedor],
+    ['Adesão',scenario=>scenario.adesao],
+    ['Parcela mensal',scenario=>scenario.parcela]
+  ];
+  setHTML('planComparisonRows',planRows.map(([label,value])=>`<tr><td>${label}</td>${r.comparativoPlanilha.map(scenario=>`<td>${fmtBRL(value(scenario))}</td>`).join('')}</tr>`).join(''));
+  const postRows=[
+    ['Saldo Dev',scenario=>fmtBRL(scenario.saldoDevedor)],
+    ['S. pós lance',scenario=>fmtBRL(scenario.saldoPosLance)],
+    ['Qtd P.P',scenario=>fmtBRL(scenario.valorParcelasPagasAntes)],
+    ['Prazo restante',()=>`${r.mesesRestantesContrato} meses`],
+    ['Saldo P.P',scenario=>fmtBRL(scenario.saldoPosPagamentos)],
+    ['P. mínima',scenario=>fmtBRL(scenario.parcelaMinima)],
+    ['P/Prazo',scenario=>fmtBRL(scenario.parcelaPorPrazo)],
+    ['Diferença total',scenario=>fmtBRL(scenario.diferencaSaldo)],
+    ['Diferença mensal',scenario=>fmtBRL(scenario.diferencaMensal)],
+    ['Parcela real (prazo)',scenario=>fmtBRL(scenario.parcelaReal)],
+    ['Meses reais (prazo)',scenario=>`${scenario.mesesPrazo} meses`],
+    ['Saldo Dev (parcela)',scenario=>fmtBRL(scenario.saldoParcelas)],
+    ['Meses reais (parcela)',scenario=>`${scenario.mesesParcelas} meses`]
+  ];
+  setHTML('postComparisonRows',postRows.map(([label,value])=>`<tr><td>${label}</td>${r.comparativoPos.map(scenario=>`<td>${value(scenario)}</td>`).join('')}</tr>`).join(''));
+  const cenario25=r.comparativoPos.find(scenario=>scenario.redutor===25);
+  setText('postComparisonNote',`${r.parcelasPagasAntesContemplacao} pagamentos antes da contemplação; lance usado: ${fmtBRL(r.lanceUtilizado)}. Piso = ${fmtPct(r.percentualPos*100,1)} × saldo inicial com taxas ${fmtBRL(r.saldoDevedorInicial)} = ${fmtBRL(r.parcelaMinima)}. A planilha mostra 90 meses no modo prazo para 25%, mas, somando saldo P.P e diferença, o cálculo resulta em ${cenario25?.mesesPrazo||0} meses neste cenário.`);
+
   setText('headlineTag',`Exemplo de contemplação na parcela ${r.k}`);
   setText('headline1a',fmtBRL(primeiraTotal));
   setText('headline1aSub',r.adesaoValor>0
     ? (r.adesaoForma==='avista'
-      ? `${fmtBRL(r.parcelaReduzida)} + adesão ${fmtBRL(r.adesaoValor)}`
+      ? `Adesão substitui a parcela regular: ${fmtBRL(r.adesaoValor)}`
       : `${fmtBRL(r.parcelaReduzida)} + ${fmtBRL(r.adesaoPorParcela)}/mês de adesão`)
     : 'Sem taxa antecipada');
 
   setText('headlinePos',fmtBRL(r.parcelaPos));
   setText('headlinePosSub',
-    `${r.tipoBem==='imovel'?'0,5%':'1,0%'} do saldo devedor inicial • ${r.mesesPosContemplacao} meses pós-contemplação`+
+    `${r.tipoBem==='imovel'?'0,5%':'1,0%'} do saldo inicial com taxas • ${r.mesesPosContemplacao} meses pós-contemplação`+
     (r.mesesEconomizados>0?` • ${r.mesesEconomizados} meses economizados`:'')+
     (r.formaRestante==='parcelas'
-      ? (r.pisoBloqueouReducao?' • piso mínimo atingido':' • lance diluído na parcela')
+      ? ' • parcela mínima; prazo recalculado'
       : ' • lance usado para reduzir prazo'));
 
   /* Cards principais */
   setText('keyPagoParcelas',fmtBRL(r.pagoAntesContemplacao));
-  setText('keyPagoSub',`${Math.max(1,r.parcelasPagasAntesContemplacao)} parcela(s) pagas + adesão`);
+  setText('keyPagoSub',`${r.parcelasPagasAntesContemplacao} pagamento(s) pré-contemplação`);
   setText('keyProprio',fmtBRL(r.proprioUtilizado));
   setText('keyEmbutido',fmtBRL(r.embutidoUtilizado));
   setText('keyMeses',`${r.mesesPosContemplacao} meses`);
@@ -870,22 +896,24 @@ function render(r){
     Fundo Comum reduzido = ${fmtBRL(r.fundoComumMensal)} × (1 − ${fmtPct(r.redutorPct,0)}) = ${fmtBRL(r.fundoComumReduzido)}<br>
     Fundo de Reserva = ${fmtBRL(r.credito)} × ${fmtPct(r.frPct,0)} ÷ ${r.N} = ${fmtBRL(r.frMensalCheio)}<br>
     Fundo de Reserva reduzido = ${fmtBRL(r.frMensalCheio)} × (1 − ${fmtPct(r.redutorPct,0)}) = ${fmtBRL(r.frReduzido)}<br>
-    TA diluída = (${fmtPct(r.taPct,0)} − ${fmtPct(r.adesaoPct,0)}) = ${fmtPct(r.taRestantePct,0)} → ${fmtBRL(r.taMensal)}/mês<br>
+    TA mensal = ${fmtBRL(r.credito)} × ${fmtPct(r.taPct,0)} ÷ ${r.N} = ${fmtBRL(r.taMensal)}/mês<br>
+    Adesão-base = ${fmtBRL(r.credito)} × ${fmtPct(r.adesaoPct,1)} = ${fmtBRL(r.credito*r.adesaoPct/100)}; ajuste do redutor = ${fmtBRL(r.parcelaReduzida-r.parcelaCheiaBase)}<br>
     <span class="final">Parcela reduzida = ${fmtBRL(r.fundoComumReduzido)} + ${fmtBRL(r.frReduzido)} + ${fmtBRL(r.taMensal)}${r.seguro>0?' + '+fmtBRL(r.seguro):''} = ${fmtBRL(r.parcelaReduzida)}</span><br><br>
     Diferença mensal do redutor = ${fmtBRL(r.diferencaMensal)}<br>
-    Diferença acumulada = ${fmtBRL(r.diferencaMensal)} × ${r.k} = <span class="final">${fmtBRL(r.diferencaAcumulada)}</span><br><br>
+    Diferença total após os pagamentos = <span class="final">${fmtBRL(r.diferencaTotal)}</span><br>
+    Diferença acumulada antes da contemplação = ${fmtBRL(r.diferencaMensal)} × ${r.parcelasPagasAntesContemplacao} = <span class="final">${fmtBRL(r.diferencaAcumulada)}</span><br><br>
     Saldo antes do lance = ${fmtBRL(r.saldoDevedorAntesLance)}<br>
     Lance utilizado = ${fmtBRL(r.lanceUtilizado)}<br>
     Saldo após o lance = <span class="final">${fmtBRL(r.saldoDevedor)}</span><br>
     Parcela-base protegida = ${fmtBRL(r.parcelaBaseAntesAmortizacao-r.diferencaDiluidaBase)}<br>
     Piso pós = mínimo ${fmtBRL(r.parcelaMinima)} + diferença mensal ${fmtBRL(r.diferencaDiluidaBase)} = <span class="final">${fmtBRL(r.parcelaMinimaComDiferenca)}</span><br>
-    Piso pós = ${fmtPct(r.percentualPos*100,1)} × saldo devedor inicial ${fmtBRL(r.saldoDevedorInicial)} = <span class="final">${fmtBRL(r.parcelaMinima)}</span><br>
-    ${r.formaRestante==='parcelas'?`Lance ÷ meses diluídos = ${fmtBRL(r.lanceUtilizado)} ÷ ${r.mesesDiluidos} = ${fmtBRL(r.reducaoParcela)}/mês`:`Lance ÷ parcela = ${fmtBRL(r.lanceUtilizado)} ÷ ${fmtBRL(r.parcelaBaseAntesAmortizacao)} = ${Math.floor(r.lanceUtilizado/Math.max(r.parcelaBaseAntesAmortizacao,0.01))} mês(es) abatido(s)`}<br>
+    Piso pós = ${fmtPct(r.percentualPos*100,1)} × saldo inicial com taxas ${fmtBRL(r.saldoDevedorInicial)} = <span class="final">${fmtBRL(r.parcelaMinima)}</span><br>
+    ${r.formaRestante==='parcelas'?`Parcela no modo parcela = mínimo de ${fmtBRL(r.parcelaMinima)}; saldo com diferença = ${fmtBRL(r.obrigacaoPos)}`:`Parcela real = max(${fmtBRL(r.parcelaMinima)}, ${fmtBRL(r.saldoDevedor)}/${r.mesesRestantesContrato}) + ${fmtBRL(r.diferencaDiluidaBase)} = ${fmtBRL(r.parcelaPos)}` }<br>
     Taxa real pós = taxa que iguala ${fmtBRL(r.saldoDevedor)} hoje ao valor presente de ${fmtBRL(r.totalPagoPos)} pagos depois da contemplação.
   `);
 
   setHTML('lanceInfo',`
-    <strong>Pago até a contemplação:</strong> ${fmtBRL(r.k===1?r.primeiraParcela:r.valorParcelasAntesContemplacao)} em ${r.k===1?1:r.parcelasPagasAntesContemplacao} parcela(s)${r.k===1&&r.adesaoValor>0?` (parcela + adesão ${fmtBRL(r.adesaoValor)})`:r.adesaoPagaAteContemplacao>0?` + adesão ${fmtBRL(r.adesaoPagaAteContemplacao)}`:''} = <strong>${fmtBRL(r.k===1?r.primeiraParcela:r.pagoAntesContemplacao)}</strong><br>
+    <strong>Pago até a contemplação:</strong> ${fmtBRL(r.k===1?r.primeiraParcela:r.valorParcelasAntesContemplacao)} em ${r.parcelasPagasAntesContemplacao} pagamento(s)${r.adesaoPagaAteContemplacao>0?` (adesão de ${fmtBRL(r.adesaoPagaAteContemplacao)} substitui a primeira parcela)`:''} = <strong>${fmtBRL(r.pagoAntesContemplacao)}</strong><br>
     <strong>Lance próprio:</strong> ${fmtBRL(r.lanceProprio)} → utilizado: ${fmtBRL(r.proprioUtilizado)}<br>
     <strong>Lance embutido:</strong> ${fmtBRL(r.lanceEmbutido)} → utilizado: ${fmtBRL(r.embutidoUtilizado)}<br>
     <strong>Lance somado:</strong> ${fmtBRL(r.lanceSomado)} → utilizado: ${fmtBRL(r.lanceUtilizado)}<br>
@@ -894,8 +922,8 @@ function render(r){
     <strong>Meses contratuais restantes:</strong> ${r.mesesRestantesContrato}<br>
     <strong>Meses pós-contemplação:</strong> ${r.mesesPosContemplacao}${r.mesesEconomizados>0?` (− ${r.mesesEconomizados} pelo lance)`:''}${r.mesesExtras>0?` (+ ${r.mesesExtras} extras)`:''}<br><br>
     ${r.formaRestante==='parcelas'
-      ? `<strong>Amortização por parcela:</strong> lance de ${fmtBRL(r.lanceUtilizado)} ÷ ${r.mesesDiluidos} meses = ${fmtBRL(r.reducaoParcela)}/mês de redução. A parcela ficou em ${fmtBRL(r.parcelaPos)}, respeitando o piso de ${fmtBRL(r.parcelaMinima)}.`
-      : `<strong>Amortização por prazo:</strong> o lance é usado para quitar parcelas do final para o início → ${r.mesesEconomizados} meses economizados.`}
+      ? `<strong>Amortização por parcela:</strong> parcela mínima de ${fmtBRL(r.parcelaMinima)}; o saldo com diferença é pago em ${r.mesesPosContemplacao} meses.`
+      : `<strong>Amortização por prazo:</strong> parcela real de ${fmtBRL(r.parcelaPos)}; saldo e diferença quitados em ${r.mesesPosContemplacao} meses.`}
     ${r.lanceNaoUtilizado>0?`<br><br><strong>Lance não utilizado:</strong> ${fmtBRL(r.lanceNaoUtilizado)} (saldo devedor zerado).`:''}
   `);
 
@@ -927,23 +955,15 @@ function renderRendimento(r){
 function evolucaoSaldo(r){
   const totalMeses=Math.max(1,r.prazoEfetivo);
   const taxaAnual=Math.max(0,r.inccPct)/100;
-  let saldo=r.saldoDevedorInicial;
+  let saldo=r.saldoDevedorPlano;
   let acumulado=1;
   const meses=[];
   for(let month=1;month<=totalMeses;month++){
     if(month>1 && (month-1)%12===0){saldo*=1+taxaAnual;acumulado*=1+taxaAnual;}
     if(month===r.k) saldo=Math.max(0,saldo-r.lanceUtilizado);
-    const mesesRestantes=Math.max(1,totalMeses-month+1);
-    const adesao=month===1?r.adesaoValor:0;
-    const parcelaBase=month===1||month<r.k
-      ? r.parcelaReduzida
-      : r.parcelaPos;
-    const parcelaCorrigida=parcelaBase*acumulado;
-    const parcelaPorPrazo=month>r.k?saldo/mesesRestantes:parcelaCorrigida;
-    let parcela=month===r.k
-      ? r.parcelaPos+adesao
-      : (month===totalMeses?saldo+adesao:Math.max(parcelaCorrigida,parcelaPorPrazo)+adesao);
-    const amortizacao=Math.min(saldo,Math.max(0,parcela-adesao));
+    const parcelaBase=Math.max(0,r.outflow[month]||0);
+    const parcela=month===totalMeses?saldo:parcelaBase*acumulado;
+    const amortizacao=Math.min(saldo,parcela);
     saldo=Math.max(0,saldo-amortizacao);
     meses.push({month,fator:acumulado,saldo,parcela,lance:month===r.k?r.lanceUtilizado:0,fase:month<r.k?'Pré':(month===r.k?'Contemplação':'Pós')});
   }
@@ -1009,10 +1029,10 @@ if(btnToggleEvolution && evolutionPanel){btnToggleEvolution.addEventListener('cl
 
 const btnLoadExample=$id('loadExample');
 if(btnLoadExample){btnLoadExample.addEventListener('click',()=>{
-  $id('credito').value=45000;$id('prazo').value=100;$id('ta').value=16;$id('fr').value=3;$id('mesContemplacao').value=10;if($id('tipoBem'))$id('tipoBem').value='auto';
+  $id('credito').value=1000000;$id('prazo').value=240;$id('ta').value=18;$id('fr').value=2;$id('mesContemplacao').value=11;if($id('tipoBem'))$id('tipoBem').value='imovel';
   document.querySelector('input[name="redutor"][value="50"]').checked=true;$id('redutorCustom').value=50;
-  $id('adesaoPct').value=2;document.querySelector('input[name="adesaoForma"][value="avista"]').checked=true;$id('adesaoMeses').value=12;
-  $id('dinheiro').value=0;$id('embutido').value=0;document.querySelector('input[name="restante"][value="parcelas"]').checked=true;
+  $id('adesaoPct').value=2.5;document.querySelector('input[name="adesaoForma"][value="avista"]').checked=true;$id('adesaoMeses').value=12;
+  $id('dinheiro').value=250000;$id('embutido').value=0;document.querySelector('input[name="restante"][value="prazo"]').checked=true;
   updateVisibility();showResults();
 });}
 

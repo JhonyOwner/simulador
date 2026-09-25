@@ -65,31 +65,31 @@
 
 <section class="section">
   <h2>2. Taxas e parcela antes da contemplação</h2>
-  <p>A taxa antecipada A é limitada à TA total e é retirada da parte da TA diluída. O código soma o valor total da adesão à primeira parcela.</p>
-  <div class="formula">Adesão = C × A / 100</div>
-  <div class="formula">TA restante = max(0, TA − A)</div>
+  <p>A taxa de administração é integral e independente da adesão. A adesão-base A é um percentual do crédito; no comparativo da planilha, ela é ajustada pela diferença da parcela do plano reduzido para o plano cheio.</p>
+  <div class="formula">Adesão-base = C × A / 100</div>
+  <div class="formula">TA mensal = C × TA / 100 / N</div>
   <div class="formula">Fundo comum mensal FC = C / N</div>
   <div class="formula">Fundo de reserva mensal FRm = C × FR / 100 / N</div>
-  <div class="formula">TA mensal TAm = C × TA restante / 100 / N</div>
+  <div class="formula">Parcela cheia = FC + FRm + TAm + seguro mensal</div>
   <div class="formula">Fator do redutor f = 1 − R / 100</div>
   <div class="formula">FC reduzido = FC × f; FR reduzido = FRm × f</div>
   <div class="formula">Parcela reduzida = FC reduzido + FR reduzido + TAm + seguro mensal</div>
-  <div class="formula">Primeira parcela = parcela reduzida + adesão</div>
-  <p>O redutor incide no FC e no FR, mas não na TA. A taxa de adesão é subtraída da TA total antes de calcular TAm, evitando somá-la novamente como taxa contratada.</p>
+  <div class="formula">Adesão no cenário = max(0, adesão-base + parcela reduzida − parcela cheia)</div>
+  <div class="formula">1º pagamento à vista = adesão; pagamentos seguintes = parcela reduzida</div>
+  <p>O redutor incide no FC e no FR, mas não na TA. No comparativo, o saldo do plano é a soma dos componentes totais: FC reduzido + TA integral + FR reduzido. Para crédito de R$ 1.000.000, TA de 18%, FR de 2% e prazo de 240 meses, isso resulta em R$ 1.200.000 (cheio), R$ 945.000 (redutor de 25%) e R$ 690.000 (redutor de 50%).</p>
+  <p class="small">A planilha mostra R$ 1.000.000 na linha “F. Redutor / Cheio”, mas esse valor não fecha com o saldo de R$ 1.200.000. A composição coerente com FR de 2% é R$ 20.000; o comparativo exibe esse valor corrigido.</p>
 </section>
 
 <section class="section page">
   <h2>3. Diferença causada pelo redutor</h2>
-  <p>O simulador calcula o que deixou de ser recolhido mensalmente em FC e FR e acumula o valor até o mês de contemplação.</p>
-  <div class="formula">Diferença mensal Dm = (FC − FC reduzido) + (FRm − FR reduzido)</div>
-  <div class="formula">Diferença acumulada D = Dm × k</div>
-  <p>Essa diferença é mantida separada do saldo após o lance e somada para formar a obrigação pós:</p>
-  <div class="formula">Saldo antes do lance B = max(0, C + taxas totais − parcelas pagas antes de k)</div>
-  <div class="formula">Lance usado L = min(lance próprio + lance embutido, B)</div>
-  <div class="formula">Saldo após o lance S = max(0, B − L)</div>
-  <div class="formula">Obrigação pós O = max(0, S + D)</div>
-  <div class="formula">Taxas totais = C × (TA + FR) / 100 + seguro mensal × N</div>
-  <p>Parcelas pagas antes da contemplação: para k &gt; 1, o código soma a primeira parcela (incluindo adesão) e as demais parcelas reduzidas até k−1. Para k = 1, considera a primeira parcela paga no mês 1.</p>
+  <p>O comparativo calcula o saldo de cada plano pela soma de FC reduzido, TA integral e FR reduzido. A adesão à vista substitui a primeira parcela regular; os pagamentos seguintes usam a parcela reduzida.</p>
+  <div class="formula">Saldo do plano = C × (1 − R) + C × TA + C × FR × (1 − R)</div>
+  <div class="formula">Pagamentos pré = adesão + parcela reduzida × (meses pagos − 1)</div>
+  <div class="formula">Saldo P.P = max(0, saldo do plano − lance − pagamentos pré)</div>
+  <div class="formula">Diferença total D = saldo P.P cheio − saldo P.P do cenário reduzido</div>
+  <div class="formula">Diferença mensal = D / meses restantes</div>
+  <div class="formula">Diferença acumulada pré = (parcela cheia − parcela reduzida) × meses pagos</div>
+  <p>O saldo após o lance mostrado na tabela é calculado antes de descontar os pagamentos pré. O saldo P.P já desconta esses pagamentos.</p>
 </section>
 
 <section class="section">
@@ -104,28 +104,21 @@
 
 <section class="section page">
   <h2>5. Parcela e prazo após a contemplação</h2>
-  <p>Meses pós considerados pelo cálculo-base: se k = 1, a primeira parcela já foi contabilizada e o pós começa no mês 2; nos demais casos, o pós começa no próprio mês k.</p>
-  <div class="formula">primeiro mês pós = 2, se k = 1; caso contrário, k</div>
-  <div class="formula">M = max(0, N − primeiro mês pós + 1)</div>
-  <p>O piso pós usa o saldo devedor inicial antes de pagamentos e lances:</p>
-  <div class="formula">Piso = saldo devedor inicial × 1% (automóvel) ou × 0,5% (imóvel)</div>
-  <div class="formula">Diferença mensal diluída = D / M (quando M &gt; 0)</div>
-  <div class="formula">Piso efetivo = piso + diferença mensal diluída</div>
-  <p><strong>Amortizar parcelas:</strong> o lance reduz o saldo; o resultado é dividido pelos meses disponíveis, respeitando o piso efetivo.</p>
-  <div class="formula">Parcela pós = max(piso efetivo, O / M)</div>
-  <p>Se o piso impedir a redução e houver lance, o código estima meses pelo piso: ceil(O / piso efetivo). Se o prazo resultante for menor, ele reduz os meses. O pagamento de cada mês é limitado ao saldo ainda não pago, para que a última parcela não ultrapasse O.</p>
-  <p><strong>Amortizar prazo:</strong> o número de meses abatidos é estimado pelo lance dividido pela parcela-base antes da amortização; o cálculo depois recalcula a parcela sobre a obrigação remanescente e os meses resultantes.</p>
-  <div class="formula">Meses economizados = min(M − 1, floor(L / parcela-base))</div>
-  <div class="formula">Meses pós = max(1, M − meses economizados)</div>
-  <div class="formula">Parcela pós = max(piso efetivo, O / meses pós)</div>
-  <p class="small">A parcela-base antes da amortização é max(piso efetivo, saldo antes do lance / M + diferença mensal diluída). A lógica do modo prazo, portanto, também recalcula a parcela; ela não mantém necessariamente o valor mensal anterior.</p>
-  <p class="small"><strong>Exceção quando M = 0:</strong> o código cria prazo extra. No modo parcelas usa uma parcela pós calculada a partir da parcela-base menos o lance; no modo prazo estima os meses extras com o saldo depois do lance dividido pela parcela-base. Esse caminho não usa a mesma fórmula O / M dos casos com meses restantes.</p>
-  <p class="small"><strong>Texto de fórmula da tela:</strong> exibe “lance ÷ meses = redução mensal”, mas o valor da parcela agora vem diretamente de O / M, limitado pelo piso. A redução informativa não é a fórmula que determina a parcela final.</p>
+  <p>O piso usa o saldo devedor inicial do plano cheio, já com as taxas. O número de meses restantes é o prazo total menos os pagamentos feitos antes da contemplação.</p>
+  <div class="formula">Piso = saldo devedor inicial com taxas × 1% (automóvel) ou × 0,5% (imóvel)</div>
+  <div class="formula">P/Prazo = saldo P.P / meses restantes</div>
+  <div class="formula">Parcela real = max(Piso, P/Prazo) + diferença mensal</div>
+  <p><strong>Amortizar prazo:</strong> quita o saldo P.P mais a diferença total com a parcela real.</p>
+  <div class="formula">Meses reais = round((saldo P.P + diferença total) / parcela real)</div>
+  <p><strong>Amortizar parcelas:</strong> mantém a parcela no piso mínimo e calcula o prazo pelo saldo acrescido da diferença total e da diferença acumulada antes da contemplação.</p>
+  <div class="formula">Saldo no modo parcela = saldo P.P + diferença total + diferença acumulada pré</div>
+  <div class="formula">Meses reais = round(saldo no modo parcela / Piso)</div>
+  <p class="small">A imagem da planilha informa 90 meses no modo prazo para o redutor de 25%. Esse valor divide apenas o saldo P.P (R$ 635.625) pela parcela real (R$ 7.062,50), deixando a diferença de R$ 244.375 sem quitação. Pela fórmula aplicada também ao cenário de 50%, o prazo é 125 meses. O piso no exemplo é R$ 6.000, pois corresponde a 0,5% do saldo inicial com taxas (R$ 1.200.000).</p>
 </section>
 
 <section class="section">
   <h2>6. Fluxos, totais e taxa equivalente</h2>
-  <p>O fluxo principal registra parcelas reduzidas antes da contemplação e pagamentos pós a partir do mês definido acima. A adesão entra no primeiro mês. O principal pós mensal é limitado ao valor que resta da obrigação:</p>
+  <p>O fluxo registra a adesão no lugar da primeira parcela regular quando ela é à vista, as parcelas reduzidas seguintes e os pagamentos pós a partir da contemplação. O principal pós mensal é limitado ao valor que resta da obrigação:</p>
   <div class="formula">Pagamento pós no mês m = min(parcela pós, max(0, O − parcela pós × (m − 1)))</div>
   <div class="formula">Total de parcelas = soma dos pagamentos do mês 1 ao prazo efetivo</div>
   <div class="formula">Total pago pós = soma dos pagamentos pós + eventual adesão futura</div>
@@ -172,16 +165,12 @@
 <section class="section">
   <h2>10. Pontos que merecem correção/decisão</h2>
   <ol>
-    <li><strong>Saldo baseado em pagamentos brutos:</strong> o saldo antes do lance parte de crédito + TA/FR/seguro totais e subtrai o valor das parcelas pagas. Isso não separa quanto de cada pagamento amortiza principal, taxa e reserva.</li>
-    <li><strong>Diferença do redutor adicionada ao saldo:</strong> a diferença acumulada D é adicionada ao saldo já após o lance para formar O. É preciso confirmar se esse déficit já está incluído no saldo contratual; se estiver, a soma pode duplicá-lo.</li>
-    <li><strong>Piso pós:</strong> é calculado sobre o saldo devedor inicial, não sobre o saldo após o lance. A parcela mínima pode, portanto, superar O dividido pelos meses e alterar o prazo.</li>
-    <li><strong>Reajuste fora do cálculo-base:</strong> IPCA/INCC altera somente a tabela e o gráfico. Não altera saldo-base, total pago-base ou taxa equivalente.</li>
-    <li><strong>Projeção anual independente:</strong> a tabela pode divergir do fluxo-base; no mês da contemplação subtrai o lance e usa parcela pós, inclusive no mês 1, enquanto o fluxo-base considera a primeira parcela e exclui mês 1 da série pós. No último mês, a projeção força quitação do saldo.</li>
-    <li><strong>Taxa equivalente e obrigação:</strong> o valor inicial da taxa usa saldo após lance, enquanto pagamentos incluem a diferença acumulada do redutor e eventual adesão futura. Confirmar se esse é o fluxo econômico que se deseja medir.</li>
-    <li><strong>Adesão e seguro na tela:</strong> o formulário envia seguro igual a zero e prazo de adesão igual a um. Mesmo se a adesão for marcada como “diluída”, o fluxo principal soma o valor integral à primeira parcela; apenas o fluxo usado pela taxa pós considera parcelas futuras de adesão. A configuração visível não envia um número de meses diluído.</li>
-    <li><strong>Contemplação no mês 1:</strong> o saldo antes do lance subtrai a primeira parcela, e o fluxo total registra a primeira parcela; já o pós começa no mês 2 e o fluxo de taxa não inclui a parcela do mês 1. A projeção anual, por outro lado, aplica lance e parcela pós no mês 1.</li>
+    <li><strong>Fundo de reserva no cenário cheio:</strong> a imagem mostra R$ 1.000.000 em “F. Redutor / Cheio”, mas FR de 2% sobre R$ 1.000.000 é R$ 20.000. O saldo de R$ 1.200.000 confirma o valor de R$ 20.000.</li>
+    <li><strong>Meses do cenário de 25%:</strong> a imagem informa 90 meses, mas esse cálculo divide somente o saldo P.P pela parcela real e não quita a diferença. Incluindo saldo P.P + diferença, são 125 meses.</li>
+    <li><strong>Piso pós:</strong> usa o saldo do plano cheio com taxas. No exemplo, imóvel = 0,5% × R$ 1.200.000 = R$ 6.000; automóvel = 1% × R$ 1.200.000 = R$ 12.000.</li>
+    <li><strong>Projeção anual:</strong> IPCA/INCC é aplicado à tabela e ao gráfico, sem alterar os saldos-base nem os totais comparativos.</li>
   </ol>
-  <div class="note"><strong>Para corrigir com segurança:</strong> definir primeiro qual saldo contratual oficial deve ser amortizado pelo lance; em seguida decidir se o déficit do redutor integra esse saldo, qual parcela entra no mês da contemplação, como o piso afeta o prazo e se o IPCA/INCC deve apenas projetar valores ou compor o cálculo-base.</div>
+  <div class="note"><strong>Escopo:</strong> as fórmulas reproduzem o modelo visível nas imagens e corrigem as inconsistências listadas. Regras oficiais do grupo e do contrato podem diferir.</div>
 </section>
 
 <div class="footer">Documento gerado a partir da leitura do cálculo ativo de simulador.html. Valores monetários internos mantêm precisão decimal; a interface formata a exibição em centavos. Material de auditoria técnica, não substitui a memória oficial de cálculo da administradora.</div>
