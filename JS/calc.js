@@ -49,7 +49,7 @@
     const bidOwn = clamp(number(input.bidOwn, 0), 0, credit);
     const bidEmbedded = clamp(number(input.bidEmbedded, 0), 0, credit);
     const bidTotal = bidOwn + bidEmbedded;
-    const mode = input.mode === 'parcelas' ? 'parcelas' : 'prazo';
+    const mode = redutor === 0 ? 'prazo' : input.mode === 'parcelas' ? 'parcelas' : 'prazo';
     const adhesionMode = input.adhesionMode === 'diluida' ? 'diluida' : 'avista';
     const adhesionMonths = clamp(Math.floor(number(input.adhesionMonths, 1)), 1, term);
     const adhesionBase = credit * adhesionPct / 100;
@@ -165,7 +165,7 @@
     const postInstallment = mode === 'prazo' ? selected.realInstallment : minimumInstallment;
     const postBalance = mode === 'prazo' ? selected.termBalance : selected.installmentBalance;
     const totalMonths = paidBefore + monthsAfter;
-    const creditAfterBid = Math.max(0, credit - bidTotal);
+    const creditAfterBid = Math.max(0, credit - bidEmbedded);
 
     return {
       credit,
@@ -235,7 +235,7 @@
           phase = 'Contemplação';
           bid = Math.min(result.bidTotal, balance);
           balance = Math.max(0, balance - bid);
-          adjustedCredit = Math.max(0, adjustedCredit - bid);
+          adjustedCredit = Math.max(0, adjustedCredit - result.bidEmbedded);
         } else {
           phase = 'Pós-contemplação';
         }

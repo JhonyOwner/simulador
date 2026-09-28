@@ -17,6 +17,9 @@ const example = {
 
 const result = calculate(example);
 assert.equal(result.netAdminPct, 18);
+assert.equal(calculate({ ...example, redutor: 0, mode: 'parcelas' }).mode, 'prazo');
+assert.equal(result.creditAfterBid, 1000000);
+assert.equal(calculate({ ...example, bidOwn: 100000, bidEmbedded: 250000 }).creditAfterBid, 750000);
 assert.deepEqual(result.plans.map(plan => plan.debt), [1200000, 945000, 690000]);
 assert.deepEqual(result.plans.map(plan => plan.installment), [5000, 3937.5, 2875]);
 assert.deepEqual(result.plans.map(plan => plan.adhesion), [25000, 23937.5, 22875]);
@@ -63,7 +66,7 @@ assert.equal(noIndexProjection.length - result.paidBefore, result.monthsAfter);
 
 const reducedProjection = buildProjection(calculate({ ...example, redutor: 25 }), 0);
 assert.equal(reducedProjection[0].balance, 1200000 - 23937.5);
-assert.equal(reducedProjection[10].adjustedCredit, 750000);
+assert.equal(reducedProjection[10].adjustedCredit, 1000000);
 
 for (const redutor of [0, 25, 50]) {
   const scenario = calculate({ ...example, redutor });
@@ -111,8 +114,8 @@ const extendedPaymentProjection = buildProjection({
 assert.deepEqual(extendedPaymentProjection.map(row => row.payment), [1200, 1200, 1200, 400]);
 
 const yieldResult = calculateYield(result.creditAfterBid, 1, 12);
-assert.equal(yieldResult.base, 750000);
-assert.equal(yieldResult.firstMonth, 7500);
-assert(Math.abs(yieldResult.total - 845118.7726) < 0.01);
+assert.equal(yieldResult.base, 1000000);
+assert.equal(yieldResult.firstMonth, 10000);
+assert(Math.abs(yieldResult.total - 1126825.0301) < 0.01);
 
 console.log('Cálculos do plano, amortização, projeção e rendimento passaram.');

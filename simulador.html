@@ -68,8 +68,8 @@ fieldset{border:0;border-top:1px solid var(--line);padding:20px 0 0;margin:0 0 2
           <div class="field"><label for="bidEmbedded">Lance embutido</label><div class="input-shell"><input id="bidEmbedded" inputmode="numeric" type="text" data-format="integer-percent" data-min="0" data-max="100" value="0" required><span>%</span></div></div>
         </div>
         <div class="choice-row" role="radiogroup" aria-label="Forma de amortização">
-          <label class="choice"><input type="radio" name="mode" value="prazo" checked> Abater no prazo</label>
-          <label class="choice"><input type="radio" name="mode" value="parcelas"> Abater na parcela</label>
+          <label class="choice"><input id="modePrazo" type="radio" name="mode" value="prazo" checked> Abater no prazo</label>
+          <label class="choice" id="parcelasModeChoice"><input type="radio" name="mode" value="parcelas"> Abater na parcela</label>
         </div>
       </fieldset>
       <details class="field-guide">
@@ -184,6 +184,15 @@ function parseInput(input){
 const numberValue=id=>{const value=parseInput($(id));return Number.isFinite(value)?value:0;};
 const checkedMode=()=>document.querySelector('input[name="mode"]:checked').value;
 let currentResult=null;
+
+function updateAmortizationModes(){
+  const fullPlan=$('redutor').value==='0';
+  const parcelasChoice=$('parcelasModeChoice');
+  parcelasChoice.hidden=fullPlan;
+  if(fullPlan){
+    $('modePrazo').checked=true;
+  }
+}
 
 function formatInput(input){
   const value=parseInput(input);
@@ -354,6 +363,8 @@ function updateAdhesionFields(){
 }
 $('adhesionMode').addEventListener('change',updateAdhesionFields);
 updateAdhesionFields();
+$('redutor').addEventListener('change',updateAmortizationModes);
+updateAmortizationModes();
 </script>
 </body>
 </html>
