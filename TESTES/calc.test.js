@@ -118,4 +118,19 @@ assert.equal(yieldResult.base, 1000000);
 assert.equal(yieldResult.firstMonth, 10000);
 assert(Math.abs(yieldResult.total - 1126825.0301) < 0.01);
 
+const indexedContemplation = calculate({
+  credit: 1000000,
+  term: 240,
+  paidBefore: 24,
+  indexRate: 5,
+  bidEmbeddedPct: 25
+});
+assert.equal(indexedContemplation.creditAtContemplation, 1102500);
+assert.equal(indexedContemplation.bidEmbedded, 275625);
+assert.equal(indexedContemplation.creditAfterBid, 826875);
+const indexedContemplationRow = buildProjection(indexedContemplation, 5)[24];
+assert.equal(indexedContemplationRow.phase, 'Contemplação');
+assert.equal(indexedContemplationRow.bid, 275625);
+assert.equal(indexedContemplationRow.adjustedCredit, 826875);
+
 console.log('Cálculos do plano, amortização, projeção e rendimento passaram.');

@@ -43,11 +43,18 @@
     const reservePct = Math.max(0, number(input.reservePct, 0));
     const paidBefore = clamp(Math.floor(number(input.paidBefore, 0)), 0, term);
     const remainingTerm = Math.max(0, term - paidBefore);
+    const indexRate = Math.max(0, number(input.indexRate, 0)) / 100;
+    const contemplationMonth = paidBefore + 1;
+    const indexPeriodsBeforeContemplation = Math.floor((contemplationMonth - 1) / 12);
+    const contemplationFactor = Math.pow(1 + indexRate, indexPeriodsBeforeContemplation);
+    const creditAtContemplation = credit * contemplationFactor;
     const redutor = clamp(number(input.redutor, 0), 0, 95);
     const assetType = input.assetType === 'auto' ? 'auto' : 'imovel';
     const minimumPct = assetType === 'auto' ? 1 : 0.5;
     const bidOwn = clamp(number(input.bidOwn, 0), 0, credit);
-    const bidEmbedded = clamp(number(input.bidEmbedded, 0), 0, credit);
+    const bidEmbedded = input.bidEmbeddedPct === undefined
+      ? clamp(number(input.bidEmbedded, 0), 0, credit)
+      : clamp(number(input.bidEmbeddedPct, 0), 0, 100) * creditAtContemplation / 100;
     const bidTotal = bidOwn + bidEmbedded;
     const mode = redutor === 0 ? 'prazo' : input.mode === 'parcelas' ? 'parcelas' : 'prazo';
     const adhesionMode = input.adhesionMode === 'diluida' ? 'diluida' : 'avista';
@@ -165,10 +172,13 @@
     const postInstallment = mode === 'prazo' ? selected.realInstallment : minimumInstallment;
     const postBalance = mode === 'prazo' ? selected.termBalance : selected.installmentBalance;
     const totalMonths = paidBefore + monthsAfter;
-    const creditAfterBid = Math.max(0, credit - bidEmbedded);
+    const creditAfterBid = Math.max(0, creditAtContemplation - bidEmbedded);
 
     return {
       credit,
+      creditAtContemplation,
+      contemplationFactor,
+      indexRate: indexRate * 100,
       term,
       grossAdminPct,
       adhesionPct,

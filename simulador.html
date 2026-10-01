@@ -7,7 +7,7 @@
 <link rel="icon" href="/logo.svg" type="image/svg+xml">
 <title>Simulador - João Vitor G.</title>
 <style>
-:root{color-scheme:light;--ink:#202326;--muted:#697278;--line:#dfe4e6;--paper:#fff;--bg:#f3f6f5;--teal:#087f78;--teal-soft:#e6f4f1;--gold:#b47b2b;--red:#a83f38;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+:root{color-scheme:light;--ink:#202326;--muted:#697278;--line:#dfe4e6;--paper:#fff;--bg:#f3f6f5;--teal:#087f78;--teal-soft:#e6f4f1;--gold:#b47b2b;--red:#a83f38;--print-primary:#087f78;--print-secondary:#b47b2b;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
 *{box-sizing:border-box}
 html,body{min-height:100%;margin:0}
 body{background:var(--bg);color:var(--ink);font-size:14px}
@@ -33,6 +33,10 @@ fieldset{border:0;border-top:1px solid var(--line);padding:20px 0 0;margin:0 0 2
 .projection-controls{display:flex;align-items:end;gap:14px;flex-wrap:wrap;margin:0 0 14px}.projection-controls .field{width:180px}.projection-controls .helper{flex:1;min-width:200px;margin:0 0 3px}.chart{display:block;width:100%;height:220px;border:1px solid var(--line);border-radius:8px;background:#fff;margin-bottom:12px}.projection-table{max-height:390px}.phase-event td{background:#fff7e8;font-weight:650}.yield-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}.yield-controls{display:grid;grid-template-columns:1fr 1fr;gap:14px;max-width:500px;margin:0 0 16px}
 @media(max-width:720px){header{height:60px;padding:0 15px}main{padding:28px 14px 48px}h1{font-size:25px}.form-shell{padding:20px 16px}.fields{grid-template-columns:1fr;gap:13px}.field-guide-grid{grid-template-columns:1fr;gap:10px}.modal{padding:0}.modal-card{min-height:100vh;border-radius:0}.modal-head{padding:12px 14px}.modal-body{padding:14px}.result-top{grid-template-columns:1fr}.metrics{grid-template-columns:repeat(2,minmax(0,1fr))}.section-head{display:block}.section-head p{margin-top:5px}.projection-controls .field{width:calc(50% - 8px)}.projection-controls .helper{flex-basis:100%}.yield-grid,.yield-controls{grid-template-columns:1fr}.chart{height:190px}}
 @media print{body{background:#fff}header,main,.modal-head button{display:none!important}.modal{position:static;display:block!important;padding:0;background:#fff}.modal-card{width:100%;min-height:0;box-shadow:none}.modal-head{position:static}.modal-body{padding:8px}.projection-table{max-height:none}.section{break-inside:avoid}}
+.modal-card{--print-primary:#087f78;--print-secondary:#b47b2b}.hero-stat.featured{border-color:var(--print-primary);background:color-mix(in srgb,var(--print-primary) 8%,white)}.hero-stat.featured .value{color:var(--print-primary)}.phase-event td{background:color-mix(in srgb,var(--print-secondary) 12%,white)}
+.print-settings{margin:0 0 22px;padding:0 0 18px;border-bottom:1px solid var(--line)}.print-settings h3{margin:0 0 14px;font-size:14px}.print-settings .fields{grid-template-columns:minmax(0,2fr) repeat(2,minmax(80px,.65fr));align-items:end}.print-settings .field{align-items:flex-start}.print-settings .field>label{width:100%;text-align:left}.print-settings .field input[type=color]{width:64px;height:42px;padding:4px;cursor:pointer}.print-settings .choice:has(input:checked){border-color:var(--print-primary);background:color-mix(in srgb,var(--print-primary) 8%,white);color:var(--print-primary)}.print-options{border:0;padding:0;margin:14px 0 0}.print-options legend{display:block;margin:0 0 8px;padding:0;color:var(--muted);font-size:11px;letter-spacing:0;text-transform:none}.print-client-line{display:none}
+@media(max-width:720px){.print-settings .fields{grid-template-columns:1fr 1fr}.print-settings .field:first-child{grid-column:1/-1}}
+@media print{header,main,.modal-head button,.print-settings,.actions{display:none!important}.modal-head{display:block;padding:8px 8px 14px;border-bottom:2px solid var(--print-primary);background:#fff;backdrop-filter:none}.modal-head h2,.section-head h3,.print-client-line{color:var(--print-primary)}.print-client-line{display:block;margin:5px 0 0;font-size:12px}[data-print-enabled="false"]{display:none!important}.phase-event td{background:color-mix(in srgb,var(--print-secondary) 12%,white)}.hero-stat,.stat,.table-wrap{break-inside:avoid;-webkit-print-color-adjust:exact;print-color-adjust:exact}.chart{-webkit-print-color-adjust:exact;print-color-adjust:exact}}
 </style>
 </head>
 <body>
@@ -106,26 +110,44 @@ fieldset{border:0;border-top:1px solid var(--line);padding:20px 0 0;margin:0 0 2
 
 <section class="modal" id="resultsModal" role="dialog" aria-modal="true" aria-labelledby="resultsTitle">
   <div class="modal-card">
-    <div class="modal-head"><h2 id="resultsTitle">Resultado da simulação</h2><button type="button" id="closeResults">Fechar</button></div>
+    <div class="modal-head"><div><h2 id="resultsTitle">Resultado da simulação</h2><p id="printClientLine" class="print-client-line"></p></div><button type="button" id="closeResults">Fechar</button></div>
     <div class="modal-body">
-      <div class="result-top">
+      <section class="print-settings" aria-labelledby="printSettingsTitle">
+        <h3 id="printSettingsTitle">Personalizar impressão</h3>
+        <div class="fields">
+          <div class="field"><label for="printClientName">Nome do cliente</label><input id="printClientName" type="text" maxlength="100" placeholder="Digite o nome do cliente"></div>
+          <div class="field"><label for="printPrimary">Cor principal</label><input id="printPrimary" type="color" value="#087f78"></div>
+          <div class="field"><label for="printSecondary">Cor secundária</label><input id="printSecondary" type="color" value="#b47b2b"></div>
+        </div>
+        <fieldset class="print-options">
+          <legend>Conteúdo para imprimir</legend>
+          <div class="choice-row">
+            <label class="choice"><input type="checkbox" data-print-option="summary" checked> Resumo</label>
+            <label class="choice"><input type="checkbox" data-print-option="plan" checked> Plano selecionado</label>
+            <label class="choice"><input type="checkbox" data-print-option="post" checked> Pós-contemplação</label>
+            <label class="choice"><input type="checkbox" data-print-option="projection" checked> Projeção INCC/IPCA</label>
+            <label class="choice"><input type="checkbox" data-print-option="yield" checked> Rendimento</label>
+          </div>
+        </fieldset>
+      </section>
+      <div class="result-top" data-print-section="summary">
         <div class="hero-stat featured"><div class="label">Parcela antes da contemplação</div><div class="value" id="beforeInstallment">—</div><div class="sub" id="beforeInstallmentSub"></div></div>
         <div class="hero-stat"><div class="label">Parcela após a contemplação</div><div class="value" id="afterInstallment">—</div><div class="sub" id="afterInstallmentSub"></div></div>
       </div>
-      <div class="metrics">
+      <div class="metrics" data-print-section="summary">
         <div class="stat"><div class="label">Crédito contemplado</div><div class="value" id="creditAfterBidResult">—</div></div>
         <div class="stat"><div class="label">Pagamentos antes da contemplação</div><div class="value" id="paidBeforeResult">—</div></div>
         <div class="stat"><div class="label">Prazo total estimado</div><div class="value" id="totalTermResult">—</div></div>
       </div>
-      <section class="section">
+      <section class="section" data-print-section="plan">
         <div class="section-head"><h3>Plano selecionado</h3><p id="selectedPlanLabel"></p></div>
         <div class="table-wrap"><table><thead><tr><th>Componente</th><th>Valor</th></tr></thead><tbody id="planRows"></tbody></table></div>
       </section>
-      <section class="section">
+      <section class="section" data-print-section="post">
         <div class="section-head"><h3>Após a contemplação</h3><p id="postModeLabel"></p></div>
         <div class="table-wrap"><table><thead><tr><th>Resumo</th><th>Valor</th></tr></thead><tbody id="postRows"></tbody></table></div>
       </section>
-      <section class="section">
+      <section class="section" data-print-section="projection">
         <div class="section-head"><h3>Evolução anual do crédito e saldo</h3><p id="indexName">INCC</p></div>
         <div class="projection-controls">
           <div class="field"><label for="indexRate">Reajuste anual</label><div class="input-shell"><input id="indexRate" inputmode="decimal" type="text" data-format="percent" data-min="0" value="5"><span>% ao ano</span></div></div>
@@ -134,7 +156,7 @@ fieldset{border:0;border-top:1px solid var(--line);padding:20px 0 0;margin:0 0 2
         <canvas class="chart" id="projectionChart" width="1000" height="260" aria-label="Gráfico de saldo devedor e parcela ao longo do prazo"></canvas>
         <div class="table-wrap projection-table"><table><thead><tr><th>Mês</th><th>Fase</th><th>Índice acumulado</th><th>Crédito atualizado</th><th>Parcela</th><th>Saldo devedor</th></tr></thead><tbody id="projectionRows"></tbody></table></div>
       </section>
-      <section class="section">
+      <section class="section" data-print-section="yield">
         <div class="section-head"><h3>Rendimento do crédito contemplado</h3><p>Juros compostos mensais, sem descontar parcelas</p></div>
         <div class="yield-controls">
           <div class="field"><label for="yieldRate">Rendimento mensal</label><div class="input-shell"><input id="yieldRate" inputmode="decimal" type="text" data-format="percent" data-min="0" value="1"><span>%</span></div></div>
@@ -234,7 +256,24 @@ function closeModal(){modal.classList.remove('open');document.body.style.overflo
 $('closeResults').addEventListener('click',closeModal);
 modal.addEventListener('click',event=>{if(event.target===modal)closeModal();});
 document.addEventListener('keydown',event=>{if(event.key==='Escape'&&modal.classList.contains('open'))closeModal();});
-$('printResults').addEventListener('click',()=>window.print());
+function updatePrintColors(){
+  const card=modal.querySelector('.modal-card');
+  card.style.setProperty('--print-primary',$('printPrimary').value);
+  card.style.setProperty('--print-secondary',$('printSecondary').value);
+  if(currentResult)updateProjection();
+}
+$('printPrimary').addEventListener('input',updatePrintColors);
+$('printSecondary').addEventListener('input',updatePrintColors);
+$('printResults').addEventListener('click',()=>{
+  updatePrintColors();
+  const selected=new Set([...document.querySelectorAll('[data-print-option]:checked')].map(input=>input.dataset.printOption));
+  document.querySelectorAll('[data-print-section]').forEach(section=>{
+    section.dataset.printEnabled=String(selected.has(section.dataset.printSection));
+  });
+  const clientName=$('printClientName').value.trim();
+  $('printClientLine').textContent=clientName?`Cliente: ${clientName}`:'';
+  window.print();
+});
 
 function readForm(){
   return {
@@ -249,7 +288,8 @@ function readForm(){
     redutor:numberValue('redutor'),
     assetType:$('assetType').value,
     bidOwn:numberValue('bidOwn'),
-    bidEmbedded:numberValue('bidEmbedded')*numberValue('credit')/100,
+    bidEmbeddedPct:numberValue('bidEmbedded'),
+    indexRate:numberValue('indexRate'),
     mode:checkedMode()
   };
 }
@@ -258,7 +298,7 @@ function tableRows(rows,scenarios){
   $('planRows').innerHTML=rows.map(([label,get])=>`<tr><td>${label}</td>${scenarios.map(item=>`<td>${get(item)}</td>`).join('')}</tr>`).join('');
 }
 
-function render(result){
+function render(result, openModal=true){
   const selected=result.selected;
   $('creditAfterBidResult').textContent=money(result.creditAfterBid);
   $('paidBeforeResult').textContent=`${result.paidBefore} pagamentos`;
@@ -295,7 +335,7 @@ function render(result){
   $('indexName').textContent=`${indexName} anual`;
   updateProjection();
   updateYield();
-  showModal();
+  if(openModal)showModal();
 }
 
 function updateProjection(){
@@ -308,6 +348,9 @@ function updateProjection(){
 function drawChart(rows){
   const canvas=$('projectionChart');
   const ctx=canvas.getContext('2d');
+  const printColors=getComputedStyle(modal.querySelector('.modal-card'));
+  const primary=printColors.getPropertyValue('--print-primary').trim()||'#087f78';
+  const secondary=printColors.getPropertyValue('--print-secondary').trim()||'#b47b2b';
   const width=canvas.width,height=canvas.height;
   ctx.clearRect(0,0,width,height);
   const maxBalance=Math.max(1,...rows.map(row=>row.balance));
@@ -324,8 +367,8 @@ function drawChart(rows){
     });
     ctx.stroke();
   }
-  line('balance',maxBalance,'#087f78');
-  line('payment',maxPayment,'#b47b2b');
+  line('balance',maxBalance,primary);
+  line('payment',maxPayment,secondary);
   const eventIndex=rows.findIndex(row=>row.phase==='Contemplação');
   if(eventIndex>=0){
     const x=left+eventIndex/Math.max(1,rows.length-1)*plotWidth;
@@ -349,7 +392,11 @@ form.addEventListener('submit',event=>{
   currentResult=SimuladorCalc.calculate(readForm());
   render(currentResult);
 });
-$('indexRate').addEventListener('input',updateProjection);
+$('indexRate').addEventListener('input',()=>{
+  if(!currentResult)return;
+  currentResult=SimuladorCalc.calculate(readForm());
+  render(currentResult,false);
+});
 $('yieldRate').addEventListener('input',updateYield);
 $('yieldMonths').addEventListener('input',updateYield);
 
